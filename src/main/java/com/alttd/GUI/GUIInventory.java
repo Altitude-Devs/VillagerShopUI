@@ -1,0 +1,50 @@
+package com.alttd.GUI;
+
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
+
+import java.util.HashMap;
+
+public abstract class GUIInventory implements GUI {
+
+    protected final Inventory inventory;
+    protected final HashMap<Integer, GUIAction> actions;
+
+    public GUIInventory(InventoryType type, Component name) {
+        inventory = Bukkit.createInventory(null, type, name);
+        actions = new HashMap<>();
+    }
+
+    public Merchant getMerchant() {
+        return null;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setItem(int slot, ItemStack stack, GUIAction action){
+        inventory.setItem(slot, stack);
+        if (action != null){
+            actions.put(slot, action);
+        }
+    }
+
+    public void setItem(int slot, ItemStack stack){
+        setItem(slot, stack, null);
+    }
+
+    public void open(Player player){
+        player.openInventory(inventory);
+        GUIByUUID.put(player.getUniqueId(), this);
+    }
+
+    public GUIAction getAction(int slot) {
+        return actions.get(slot);
+    }
+}
