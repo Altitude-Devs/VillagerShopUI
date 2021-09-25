@@ -23,8 +23,7 @@ public class Utilities {
         scale = (int) Math.pow(10, precision + 1);
         long tmp = (Math.round(num * scale));
 
-        while (tmp > 10)
-            tmp /= 10;
+        tmp %= 10;
         if (tmp > 4)
             total += 0.01;
 
