@@ -39,9 +39,7 @@ public class WorthConfig extends AbstractConfig {
                 VillagerUI.getInstance().getLogger().warning("Invalid key in worth.yml -> " + key);
                 continue;
             }
-
-            int price = (int) (worth.getDouble(key) * 100);
-            prices.put(Material.getMaterial(key), Utilities.round(price, 2));
+            prices.put(Material.getMaterial(key), Utilities.round(worth.getDouble(key), 2));
         }
     }
 }
