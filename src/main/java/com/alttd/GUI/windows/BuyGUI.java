@@ -19,7 +19,7 @@ public class BuyGUI extends GUIMerchant {
                 Template.of("trader", villagerType.getDisplayName()),
                 Template.of("percentage", "100")), villagerType); //TODO get percentage from player somehow
         for (ItemStack itemStack : villagerType.getBuying()) {
-            double price = Utilities.price(itemStack);
+            double price = Utilities.getWorth(itemStack);
             addItem(itemStack,
                     getPriceItem(price),
                     null,
