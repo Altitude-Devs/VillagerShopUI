@@ -2,8 +2,8 @@ package com.alttd.GUI.windows;
 
 import com.alttd.GUI.GUIMerchant;
 import com.alttd.config.Config;
-import com.alttd.economy.Calculation;
 import com.alttd.objects.VillagerType;
+import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Material;
@@ -19,7 +19,7 @@ public class BuyGUI extends GUIMerchant {
                 Template.of("trader", villagerType.getDisplayName()),
                 Template.of("percentage", "100")), villagerType); //TODO get percentage from player somehow
         for (ItemStack itemStack : villagerType.getBuying()) {
-            double price = Calculation.price(itemStack);
+            double price = Utilities.price(itemStack);
             addItem(itemStack,
                     getPriceItem(price),
                     null,
