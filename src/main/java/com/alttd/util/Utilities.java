@@ -47,7 +47,7 @@ public class Utilities {
 
         WorthConfig.prices.put(item.getType(), Utilities.round(getWorth(item, null), 2));
 
-        return WorthConfig.prices.getDouble(item.getType()) * item.getAmount();
+        return  Utilities.round(WorthConfig.prices.getDouble(item.getType()) * item.getAmount(), 2);
     }
 
     /**
@@ -115,7 +115,7 @@ public class Utilities {
         for (ItemStack item : items) {
             if (item == null)
                 continue;
-            double tmp = getWorth(item, blockedMaterial);
+            double tmp = getWorth(new ItemStack(item.getType()), blockedMaterial);
             if (tmp == -1)
                 return -1;
             WorthConfig.prices.put(item.getType(), Utilities.round(tmp, 2));
