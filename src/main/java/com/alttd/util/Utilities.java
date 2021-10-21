@@ -64,7 +64,6 @@ public class Utilities {
             return WorthConfig.prices.getDouble(item.getType());
         double price = -1;
         List<Recipe> recipes = Bukkit.getRecipesFor(item);
-        System.out.println(item.getType());
         for (Recipe recipe : recipes) {
             double possiblePrice;
             if (recipe instanceof ShapedRecipe shapedRecipe) {
