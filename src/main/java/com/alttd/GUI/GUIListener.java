@@ -10,10 +10,13 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.TradeSelectEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MerchantRecipe;
 
 public class GUIListener implements Listener {
 
+    /**
+     * Handles clicking inside a gui
+     * @param event gui click event
+     */
     @EventHandler
     public void onClick(InventoryClickEvent event){
         if (!(event.getWhoClicked() instanceof Player player)){
@@ -41,6 +44,11 @@ public class GUIListener implements Listener {
         }
     }
 
+    /**
+     * Handles clicking on an item in a gui result slot
+     * @param event click event
+     * @param gui gui that was clicked in
+     */
     private void onResultSlotClick(InventoryClickEvent event, GUI gui) {
         ItemStack currentItem = event.getCurrentItem();
         if (currentItem == null)
