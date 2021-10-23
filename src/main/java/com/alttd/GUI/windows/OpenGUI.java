@@ -1,6 +1,7 @@
 package com.alttd.GUI.windows;
 
 import com.alttd.GUI.GUIInventory;
+import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.objects.VillagerType;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -9,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class OpenGUI extends GUIInventory {
 
@@ -34,7 +36,29 @@ public class OpenGUI extends GUIInventory {
         super(InventoryType.HOPPER, MiniMessage.get().parse(Config.INITIAL_VILLAGER_WINDOW,
                 Template.of("trader", villagerType.getDisplayName()),
                 Template.of("percentage", "100"))); //TODO get percentage from player somehow
-        setItem(1, BUY, player -> new BuyGUI(villagerType).open(player));
-        setItem(3, SELL, player -> new SellGUI(villagerType).open(player));
+        setItem(1, BUY, player -> new BukkitRunnable() {
+            @Override
+            public void run() {
+                BuyGUI buyGUI = new BuyGUI(villagerType);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        buyGUI.open(player);
+                    }
+                }.runTask(VillagerUI.getInstance());
+            }
+        }.runTaskAsynchronously(VillagerUI.getInstance()));
+        setItem(3, SELL, player -> new BukkitRunnable() {
+            @Override
+            public void run() {
+                SellGUI sellGUI = new SellGUI(villagerType);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        sellGUI.open(player);
+                    }
+                }.runTask(VillagerUI.getInstance());
+            }
+        }.runTaskAsynchronously(VillagerUI.getInstance()));
     }
 }

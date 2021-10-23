@@ -2,6 +2,7 @@ package com.alttd.GUI.windows;
 
 import com.alttd.GUI.GUIMerchant;
 import com.alttd.config.Config;
+import com.alttd.objects.Price;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -19,11 +20,14 @@ public class SellGUI extends GUIMerchant {
                 Template.of("trader", villagerType.getDisplayName()),
                 Template.of("percentage", "100")), villagerType); //TODO get percentage from player somehow
         for (ItemStack itemStack : villagerType.getSelling()) {
-            double price = Utilities.getWorth(itemStack);
+            Price price = Utilities.getPrice(itemStack);
+            if (price == null)
+                continue;
+            double money = price.getPrice(itemStack.getAmount());;
             addItem(itemStack,
-                    getPriceItem(price),
+                    getPriceItem(money),
                     null,
-                    player -> player.sendMessage(MiniMessage.get().parse("Hi! you sold: " + itemStack.getAmount() + " " + itemStack.getType().name() + " for " + price + "."))
+                    player -> player.sendMessage(MiniMessage.get().parse("Hi! you sold: " + itemStack.getAmount() + " " + itemStack.getType().name() + " for " + money + "."))
             );
         }
     }
