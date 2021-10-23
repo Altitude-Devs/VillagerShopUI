@@ -1,13 +1,16 @@
 package com.alttd.config;
 
 import com.alttd.VillagerUI;
+import com.alttd.objects.Price;
 import com.alttd.util.Utilities;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Set;
 
 public class WorthConfig extends AbstractConfig {
@@ -27,19 +30,23 @@ public class WorthConfig extends AbstractConfig {
         config.readConfig(WorthConfig.class, null);
     }
 
-    public static Object2DoubleMap<Material> prices = new Object2DoubleOpenHashMap<>();
+    public static Object2ObjectOpenHashMap<Material, Price> prices = new Object2ObjectOpenHashMap<>();
 
     private static void loadWorth() {
         prices.clear();
         ConfigurationSection worth = config.getConfigurationSection("worth");
-        Set<String> keys = worth.getKeys(false);
-        for (String key : keys) {
-            Material material = Material.getMaterial(key);
-            if (material == null) {
-                VillagerUI.getInstance().getLogger().warning("Invalid key in worth.yml -> " + key);
-                continue;
+        Set<String> points = worth.getKeys(false);
+        for (String point : points) {
+            ConfigurationSection pointSection = worth.getConfigurationSection(point);
+            Set<String> materials = worth.getConfigurationSection(point).getKeys(false);
+            for (String key : materials) {
+                Material material = Material.getMaterial(key);
+                if (material == null) {
+                    VillagerUI.getInstance().getLogger().warning("Invalid key in worth.yml -> " + key);
+                    continue;
+                }
+                prices.put(Material.getMaterial(key), new Price(Utilities.round(pointSection.getDouble(key), 2), Integer.parseInt(point)));
             }
-            prices.put(Material.getMaterial(key), Utilities.round(worth.getDouble(key), 2));
         }
     }
 }

@@ -1,17 +1,12 @@
 package com.alttd.util;
 
 import com.alttd.config.WorthConfig;
-import jdk.swing.interop.SwingInterOpUtils;
+import com.alttd.objects.Price;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.*;
-import org.bukkit.material.MaterialData;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Utilities {
     /**
@@ -41,13 +36,14 @@ public class Utilities {
      * @param item to calculate price for
      * @return price or int < 0 for error
      */
-    public static double getWorth(ItemStack item) {
+    public static Price getPrice(ItemStack item) {
         if (WorthConfig.prices.containsKey(item.getType()))
-            return Utilities.round(WorthConfig.prices.getDouble(item.getType()) * item.getAmount(), 2);
-
-        WorthConfig.prices.put(item.getType(), Utilities.round(getWorth(item, null), 2));
-
-        return  Utilities.round(WorthConfig.prices.getDouble(item.getType()) * item.getAmount(), 2);
+            return (WorthConfig.prices.get(item.getType()));
+        Price price = getWorth(item, null);
+        if (price == null)
+            return (null);
+        WorthConfig.prices.put(item.getType(), price);
+        return (WorthConfig.prices.get(item.getType()));
     }
 
     /**
@@ -57,37 +53,48 @@ public class Utilities {
      * @param blockedMaterial Material to ignore set to null on initial call
      * @return Worth of the item as a double
      */
-    private static double getWorth(ItemStack item, Material blockedMaterial) {
+    private static Price getWorth(ItemStack item, Material blockedMaterial) {
+        Price price = null;
+
         if (item == null)
-            return -1;
+            return (null);
         if (WorthConfig.prices.containsKey(item.getType()))
-            return WorthConfig.prices.getDouble(item.getType());
-        double price = -1;
+            return (WorthConfig.prices.get(item.getType()));
+
         List<Recipe> recipes = Bukkit.getRecipesFor(item);
         for (Recipe recipe : recipes) {
-            double possiblePrice;
+            Price possiblePrice;
+
             if (recipe instanceof ShapedRecipe shapedRecipe) {
                 List<ItemStack> values = shapedRecipe.getIngredientMap().values().stream().toList();
                 if (!values.isEmpty() && blockedMaterial != null && values.stream()
                         .anyMatch(itemStack -> itemStack != null && itemStack.getType().equals(blockedMaterial)))
                     continue;
                 possiblePrice = getWorth(values, item.getType());
-                if (price < possiblePrice)
+                if (possiblePrice == null)
+                    continue;
+                if (price == null || price.price() > possiblePrice.price())
                     price = possiblePrice;
             } else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
                 if (shapelessRecipe.getIngredientList().stream()
                         .anyMatch(itemStack -> itemStack.getType().equals(blockedMaterial)))
                     continue;
                 possiblePrice = getWorth(shapelessRecipe.getIngredientList(), item.getType());
-                if (price < possiblePrice)
+                if (possiblePrice == null)
+                    continue;
+                if (price == null || price.price() > possiblePrice.price())
                     price = possiblePrice;
             } else if (recipe instanceof CampfireRecipe campfireRecipe) {
                 possiblePrice = getWorth(campfireRecipe.getInput(), item.getType());
-                if (price < possiblePrice)
+                if (possiblePrice == null)
+                    continue;
+                if (price == null || price.price() > possiblePrice.price())
                     price = possiblePrice;
             } else if (recipe instanceof StonecuttingRecipe stonecuttingRecipe) {
                 possiblePrice = getWorth(stonecuttingRecipe.getInput(), item.getType());
-                if (price < possiblePrice)
+                if (possiblePrice == null)
+                    continue;
+                if (price == null || price.price() > possiblePrice.price())
                     price = possiblePrice;
             } else if (recipe instanceof CookingRecipe cookingRecipe) {
                 if ((recipe instanceof FurnaceRecipe || recipe instanceof BlastingRecipe ) &&
@@ -95,7 +102,9 @@ public class Utilities {
                         !cookingRecipe.getInput().getType().equals(Material.CLAY_BALL)) //Needs exception for clay ball idk a better way to do it...
                         continue;
                 possiblePrice = getWorth(cookingRecipe.getInput(), item.getType());
-                if (price < possiblePrice)
+                if (possiblePrice == null)
+                    continue;
+                if (price == null || price.price() > possiblePrice.price())
                     price = possiblePrice;
             }
         }
@@ -109,17 +118,20 @@ public class Utilities {
      * @param blockedMaterial Material to ignore set to null on initial call
      * @return Worth of ItemStack as a double
      */
-    private static double getWorth(List<ItemStack> items, Material blockedMaterial) {
-        double price = 0;
+    private static Price getWorth(List<ItemStack> items, Material blockedMaterial) {
+        Price price = null;
         for (ItemStack item : items) {
             if (item == null)
                 continue;
-            double tmp = getWorth(new ItemStack(item.getType()), blockedMaterial);
-            if (tmp == -1)
-                return -1;
-            WorthConfig.prices.put(item.getType(), Utilities.round(tmp, 2));
-            price += tmp;
+            Price tmp = getWorth(new ItemStack(item.getType()), blockedMaterial);
+            if (tmp == null || tmp.price() == -1)
+                return null;
+            WorthConfig.prices.put(item.getType(), tmp);
+            if (price == null)
+                price = tmp;
+            else
+                price = Price.addPrice(price, tmp);
         }
-        return price;
+        return (price);
     }
 }
