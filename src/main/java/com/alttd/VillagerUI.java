@@ -7,6 +7,7 @@ import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.config.WorthConfig;
 import com.alttd.events.VillagerInteract;
+import com.alttd.util.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class VillagerUI extends JavaPlugin {
@@ -30,9 +31,9 @@ public class VillagerUI extends JavaPlugin {
         VillagerConfig.reload();
         WorthConfig.reload();
         Database.init();
-        getLogger().info("--------------------------------------------------");
-        getLogger().info("Villager UI started");
-        getLogger().info("--------------------------------------------------");
+        Logger.info("--------------------------------------------------");
+        Logger.info("Villager UI started");
+        Logger.info("--------------------------------------------------");
     }
 
     private void registerEvents() {

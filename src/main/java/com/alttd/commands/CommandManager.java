@@ -5,6 +5,7 @@ import com.alttd.commands.subcommands.CommandCreateVillager;
 import com.alttd.commands.subcommands.CommandHelp;
 import com.alttd.commands.subcommands.CommandReload;
 import com.alttd.config.Config;
+import com.alttd.util.Logger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.command.*;
@@ -27,7 +28,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         if (command == null) {
             subCommands = null;
             miniMessage = null;
-            villagerUI.getLogger().severe("Unable to find villager ui command.");
+            Logger.severe("Unable to find villager ui command.");
             return;
         }
         command.setExecutor(this);

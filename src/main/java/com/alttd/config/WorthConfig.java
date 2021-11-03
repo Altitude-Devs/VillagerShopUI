@@ -2,6 +2,7 @@ package com.alttd.config;
 
 import com.alttd.VillagerUI;
 import com.alttd.objects.Price;
+import com.alttd.util.Logger;
 import com.alttd.util.Utilities;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
@@ -42,7 +43,7 @@ public class WorthConfig extends AbstractConfig {
             for (String key : materials) {
                 Material material = Material.getMaterial(key);
                 if (material == null) {
-                    VillagerUI.getInstance().getLogger().warning("Invalid key in worth.yml -> " + key);
+                    Logger.warning("Invalid key in worth.yml: %.", key);
                     continue;
                 }
                 prices.put(Material.getMaterial(key), new Price(Utilities.round(pointSection.getDouble(key), 2), Integer.parseInt(point)));

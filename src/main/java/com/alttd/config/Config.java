@@ -2,6 +2,7 @@ package com.alttd.config;
 
 import com.alttd.VillagerUI;
 import com.alttd.objects.VillagerType;
+import com.alttd.util.Logger;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -83,13 +84,13 @@ public final class Config extends AbstractConfig {
         VillagerType.clearVillagerTypes();
         ConfigurationSection configurationSection = config.getConfigurationSection("villager-types");
         if (configurationSection == null) {
-            VillagerUI.getInstance().getLogger().warning("No villager types found in config.");
+            Logger.warning("No villager types found in config.");
             return;
         }
 
         Set<String> keys = configurationSection.getKeys(false);
         if (keys.isEmpty())
-            VillagerUI.getInstance().getLogger().warning("No villager types found in config.");
+            Logger.warning("No villager types found in config.");
 
         keys.forEach(key -> {
             ConfigurationSection villagerType = configurationSection.getConfigurationSection(key);
@@ -114,7 +115,7 @@ public final class Config extends AbstractConfig {
         productsSection.getKeys(false).forEach(item -> {
             Material material = Material.getMaterial(item);
             if (material == null) {
-                VillagerUI.getInstance().getLogger().warning("Invalid key in products -> " + item);
+                Logger.warning("Invalid key in products -> " + item);
                 return;
             }
             products.add(new ItemStack(material, productsSection.getInt(item)));

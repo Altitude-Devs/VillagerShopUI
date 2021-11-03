@@ -1,6 +1,7 @@
 package com.alttd.config;
 
 import com.alttd.VillagerUI;
+import com.alttd.util.Logger;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -16,13 +17,11 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @SuppressWarnings({"unused", "SameParameterValue"})
 abstract class AbstractConfig {
     File file;
     YamlConfiguration yaml;
-    Logger logger;
 
     AbstractConfig(String filename) {
         init(new File(VillagerUI.getInstance().getDataFolder(), filename), filename);
@@ -35,12 +34,11 @@ abstract class AbstractConfig {
     private void init(File file, String filename) {
         this.file = file;
         this.yaml = new YamlConfiguration();
-        this.logger = VillagerUI.getInstance().getLogger();
         try {
             yaml.load(file);
         } catch (IOException ignore) {
         } catch (InvalidConfigurationException ex) {
-            logger.severe(String.format("Could not load %s, please correct your syntax errors", filename));
+            Logger.severe(String.format("Could not load %s, please correct your syntax errors", filename));
             throw new RuntimeException(ex);
         }
         yaml.options().copyDefaults(true);
@@ -56,7 +54,7 @@ abstract class AbstractConfig {
                     } catch (InvocationTargetException ex) {
                         throw new RuntimeException(ex.getCause());
                     } catch (Exception ex) {
-                        logger.severe("Error invoking " + method);
+                        Logger.severe("Error invoking %.", method.toString());
                         ex.printStackTrace();
                     }
                 }
@@ -70,7 +68,7 @@ abstract class AbstractConfig {
         try {
             yaml.save(file);
         } catch (IOException ex) {
-            logger.severe("Could not save " + file);
+            Logger.severe("Could not save %.", file.toString());
             ex.printStackTrace();
         }
     }

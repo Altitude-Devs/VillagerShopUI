@@ -3,6 +3,7 @@ package com.alttd.config;
 import com.alttd.VillagerUI;
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
+import com.alttd.util.Logger;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Set;
@@ -33,7 +34,7 @@ public class VillagerConfig extends AbstractConfig {
             if (villagerType != null)
                 LoadedVillagers.addLoadedVillager(UUID.fromString(key), villagerType);
             else
-                VillagerUI.getInstance().getLogger().warning("Invalid config entry " + key + ".");
+                Logger.warning("Invalid config entry %.", key);
         });
     }
 
