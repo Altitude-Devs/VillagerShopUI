@@ -14,7 +14,6 @@ public final class Config extends AbstractConfig {
 
     static Config config;
     static int version;
-
     public Config() {
         super(new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "configs" + File.separator + "VillagerShopUI"), "config.yml");
     }
@@ -26,6 +25,22 @@ public final class Config extends AbstractConfig {
         config.set("config-version", 1);
 
         config.readConfig(Config.class, null);
+    }
+
+    public static String DRIVER = "mysql";
+    public static String IP = "localhost";
+    public static String PORT = "3306";
+    public static String DATABASE_NAME = "VillagerShopUI";
+    public static String USERNAME = "";
+    public static String PASSWORD = "";
+
+    private static void loadDatabase() {
+        DRIVER = config.getString("database.driver", DRIVER);
+        IP = config.getString("database.ip", IP);
+        PORT = config.getString("database.port", PORT);
+        DATABASE_NAME = config.getString("database.name", DATABASE_NAME);
+        USERNAME = config.getString("database.username", USERNAME);
+        PASSWORD = config.getString("database.password", PASSWORD);
     }
 
     public static String INITIAL_VILLAGER_WINDOW = "<trader> price: <percentage>%";

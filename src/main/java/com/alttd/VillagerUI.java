@@ -2,6 +2,7 @@ package com.alttd;
 
 import com.alttd.GUI.GUIListener;
 import com.alttd.commands.CommandManager;
+import com.alttd.commands.database.Database;
 import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.config.WorthConfig;
@@ -28,6 +29,7 @@ public class VillagerUI extends JavaPlugin {
         Config.reload();
         VillagerConfig.reload();
         WorthConfig.reload();
+        Database.init();
         getLogger().info("--------------------------------------------------");
         getLogger().info("Villager UI started");
         getLogger().info("--------------------------------------------------");
