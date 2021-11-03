@@ -8,6 +8,7 @@ import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -27,9 +28,18 @@ public class SellGUI extends GUIMerchant {
             addItem(itemStack,
                     getPriceItem(money),
                     null,
-                    player -> player.sendMessage(MiniMessage.get().parse("Hi! you sold: " + itemStack.getAmount() + " " + itemStack.getType().name() + " for " + money + "."))
+                    player -> sell(player, itemStack.getType(), itemStack.getAmount(), money)
             );
         }
+    }
+
+    private void sell(Player player, Material material, int amount, double price)
+    {
+        player.sendMessage(MiniMessage.get().parse(
+                "Hi! you sold: " + amount +
+                        " " + material.name() +
+                        " for " + price +
+                        "."));
     }
 
     private ItemStack getPriceItem(double price) {
