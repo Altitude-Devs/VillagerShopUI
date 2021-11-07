@@ -1,12 +1,14 @@
 package com.alttd.GUI.windows;
 
 import com.alttd.GUI.GUIMerchant;
+import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.objects.Price;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,11 +37,21 @@ public class BuyGUI extends GUIMerchant {
 
     private void buy(Player player, Material material, int amount, double price)
     {
-        player.sendMessage(MiniMessage.get().parse(
-                "Hi! you bought: " + amount +
-                        " " + material.name() +
-                        " for " + price +
-                        "."));
+        Economy econ = VillagerUI.getEcon();
+        double balance = econ.getBalance(player);
+
+        price *= amount;
+        if (balance < amount) {
+            player.sendMessage(MiniMessage.get().parse(Config.NOT_ENOUGH_MONEY,
+                    Template.of("money", String.valueOf(Utilities.round(balance, 2))),
+                    Template.of("price", String.valueOf(price))));
+            return;
+        }
+        econ.withdrawPlayer(player, price);
+        player.sendMessage(MiniMessage.get().parse(Config.PURCHASED_ITEM,
+                    Template.of("amount", String.valueOf(amount)),
+                    Template.of("item", material.toString()),
+                    Template.of("price", String.valueOf(price))));
     }
 
     private ItemStack getPriceItem(double price) {
