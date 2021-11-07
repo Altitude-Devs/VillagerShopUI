@@ -80,10 +80,11 @@ public final class Config extends AbstractConfig {
         VILLAGER_NAME = config.getString("idkyet.villager-name", VILLAGER_NAME); //TODO change path
     }
 
-    public static final String NOT_ENOUGH_MONEY = "<red>You only have $<money>, you need at least $<price> for this purchase.</red>";
-    public static final String PURCHASED_ITEM = "<green>You bought <amount> <item> for <price>!</green>";
+    public static String NOT_ENOUGH_MONEY = "<red>You only have $<money>, you need at least $<price> for this purchase.</red>";
+    public static String PURCHASED_ITEM = "<green>You bought <amount> <item> for <price>!</green>";
     private static void loadMessages() {
-
+        NOT_ENOUGH_MONEY = config.getString("messages.not-enough-money", NOT_ENOUGH_MONEY);
+        PURCHASED_ITEM = config.getString("messages.purchased-item", PURCHASED_ITEM);
     }
 
     private static void loadVillagerTypes() {
