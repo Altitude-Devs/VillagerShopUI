@@ -11,7 +11,7 @@ public record Price(double price, int points) {
         return (Utilities.round(price * multiplier, 2));
     }
 
-    public int getPoints(int multiplier) {
-        return (points * multiplier);
+    public int getPoints() {
+        return (points);
     }
 }

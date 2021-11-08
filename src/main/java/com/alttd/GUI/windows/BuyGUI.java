@@ -3,6 +3,7 @@ package com.alttd.GUI.windows;
 import com.alttd.GUI.GUIMerchant;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
+import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Utilities;
@@ -11,6 +12,7 @@ import net.kyori.adventure.text.minimessage.Template;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -26,28 +28,29 @@ public class BuyGUI extends GUIMerchant {
             Price price = Utilities.getPrice(itemStack);
             if (price == null)
                 continue;
-            double money = price.getPrice(itemStack.getAmount());
             addItem(itemStack,
-                    getPriceItem(money),
+                    getPriceItem(price.getPrice(itemStack.getAmount())),
                     null,
-                    player -> buy(player, itemStack.getType(), itemStack.getAmount(), money)
+                    player -> buy(villagerType, player, itemStack.getType(), itemStack.getAmount(), price)
             );
         }
     }
 
-    private void buy(Player player, Material material, int amount, double price)
+    private void buy(VillagerType villagerType, Player player, Material material, int amount, Price price)
     {
         Economy econ = VillagerUI.getEcon();
         double balance = econ.getBalance(player);
+        double cost = price.getPrice(amount);
 
-        price *= amount;
-        if (balance < amount) {
+        if (balance < cost) {
             player.sendMessage(MiniMessage.get().parse(Config.NOT_ENOUGH_MONEY,
                     Template.of("money", String.valueOf(Utilities.round(balance, 2))),
                     Template.of("price", String.valueOf(price))));
             return;
         }
-        econ.withdrawPlayer(player, price);
+        econ.withdrawPlayer(player, cost);
+        EconUser.users.get(player.getUniqueId())
+                .addPoints(villagerType.getName(), price.getPoints());
         player.sendMessage(MiniMessage.get().parse(Config.PURCHASED_ITEM,
                     Template.of("amount", String.valueOf(amount)),
                     Template.of("item", material.toString()),
