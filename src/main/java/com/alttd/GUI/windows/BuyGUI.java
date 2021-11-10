@@ -47,9 +47,11 @@ public class BuyGUI extends GUIMerchant {
                     Template.of("price", String.valueOf(price))));
             return;
         }
+        EconUser econUser = EconUser.users.get(player.getUniqueId());
+        int oldPoints = econUser.getPointsMap().get(villagerType.getName());
+
         econ.withdrawPlayer(player, cost);
-        EconUser.users.get(player.getUniqueId())
-                .addPoints(villagerType.getName(), price.getPoints());
+        econUser.addPoints(villagerType.getName(), price.getPoints());
         player.sendMessage(MiniMessage.get().parse(Config.PURCHASED_ITEM,
                 Template.of("amount", String.valueOf(amount)),
                 Template.of("item", material.toString()),
@@ -57,7 +59,7 @@ public class BuyGUI extends GUIMerchant {
 
         Bukkit.getServer().getPluginManager()
                 .callEvent(new SpawnShopEvent(player, amount, cost, material,
-                        0, 0, true));
+                        oldPoints, econUser.getPointsMap().get(villagerType.getName()), true));
     }
 
     private ItemStack getPriceItem(double price) {
