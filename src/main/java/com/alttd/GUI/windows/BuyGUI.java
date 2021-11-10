@@ -36,8 +36,7 @@ public class BuyGUI extends GUIMerchant {
         }
     }
 
-    private void buy(VillagerType villagerType, Player player, Material material, int amount, Price price)
-    {
+    private void buy(VillagerType villagerType, Player player, Material material, int amount, Price price) {
         Economy econ = VillagerUI.getEcon();
         double balance = econ.getBalance(player);
         double cost = price.getPrice(amount);
@@ -52,9 +51,9 @@ public class BuyGUI extends GUIMerchant {
         EconUser.users.get(player.getUniqueId())
                 .addPoints(villagerType.getName(), price.getPoints());
         player.sendMessage(MiniMessage.get().parse(Config.PURCHASED_ITEM,
-                    Template.of("amount", String.valueOf(amount)),
-                    Template.of("item", material.toString()),
-                    Template.of("price", String.valueOf(price))));
+                Template.of("amount", String.valueOf(amount)),
+                Template.of("item", material.toString()),
+                Template.of("price", String.valueOf(price))));
     }
 
     private ItemStack getPriceItem(double price) {

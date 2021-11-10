@@ -35,8 +35,7 @@ public class SellGUI extends GUIMerchant {
         }
     }
 
-    private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price)
-    {
+    private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price) {
         Economy econ = VillagerUI.getEcon();
         double cost = price.getPrice(amount);
 
