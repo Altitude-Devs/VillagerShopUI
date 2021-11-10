@@ -1,5 +1,6 @@
 package com.alttd.config;
 
+import com.alttd.VillagerUI;
 import com.alttd.objects.Price;
 import com.alttd.util.Logger;
 import com.alttd.util.Utilities;
@@ -31,10 +32,15 @@ public class WorthConfig extends AbstractConfig {
     private static void loadWorth() { //TODO test after removing points
         prices.clear();
         ConfigurationSection worth = config.getConfigurationSection("worth");
+        if (worth == null) {
+            Logger.severe("No worth in worth.yml! Stopping VillagerUI.");
+            VillagerUI.getInstance().getServer().getPluginManager().disablePlugin(VillagerUI.getInstance());
+            return;
+        }
         Set<String> materials = worth.getKeys(false);
         for (String key : materials) {
             if (key == null) {
-                Logger.warning("Invalid key in worth.yml: %.", key);
+                Logger.severe("Null key in worth.yml?");
                 continue;
             }
             prices.put(Material.getMaterial(key), new Price(Utilities.round(worth.getDouble(key), 2)));

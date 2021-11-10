@@ -5,10 +5,6 @@ import com.alttd.objects.VillagerType;
 import com.alttd.util.Logger;
 import com.google.common.collect.Range;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectSortedMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectSortedMaps;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -125,7 +121,7 @@ public final class Config extends AbstractConfig {
     public static Int2ObjectAVLTreeMap<Range<Double>> pointsRangeMap = new Int2ObjectAVLTreeMap<>();
     private static void loadPointRange() {
         pointsRangeMap.clear();
-        Pattern pattern = Pattern.compile("[1-9][0-9]{0,2}(.[0-9]{1,2})?-[1-9][0-9]{0,2}(.[0-9]{1,2})?");
+        Pattern pattern = Pattern.compile("(0|([1-9][0-9]{0,2}))(.[0-9]{1,2})?-(0|([1-9][0-9]{0,2}))(.[0-9]{1,2})?");
 
         ConfigurationSection configurationSection = config.getConfigurationSection("points");
         if (configurationSection == null) {
@@ -154,7 +150,7 @@ public final class Config extends AbstractConfig {
             Matcher matcher = pattern.matcher(range);
             if (!matcher.matches()) {
                 Logger.warning("Invalid point value % for % in config " +
-                        "should be double - double (0-2.05)", range, key);
+                        "should be double-double (0-2.05)", range, key);
                 continue;
             }
             String[] split = range.split("-");
