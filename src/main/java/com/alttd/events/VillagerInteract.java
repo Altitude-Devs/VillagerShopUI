@@ -2,6 +2,7 @@ package com.alttd.events;
 
 import com.alttd.GUI.windows.OpenGUI;
 import com.alttd.VillagerUI;
+import com.alttd.config.Config;
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
 import org.bukkit.entity.Villager;
@@ -21,6 +22,10 @@ public class VillagerInteract implements Listener {
         if (loadedVillager == null)
             return;
 
+        if (!event.getPlayer().hasPermission(loadedVillager.getPermission())) {
+            event.getPlayer().sendMessage(Config.NO_PERMISSION); //TODO more specific message?
+            return;
+        }
         new BukkitRunnable() {
             @Override
             public void run() {

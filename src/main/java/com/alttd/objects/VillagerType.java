@@ -56,4 +56,8 @@ public class VillagerType {
     public double getPriceModifier() {
         return priceModifier;
     }
+
+    public String getPermission() {
+        return "villagerui.villager." + getName();
+    }
 }
