@@ -3,6 +3,7 @@ package com.alttd.GUI.windows;
 import com.alttd.GUI.GUIMerchant;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
+import com.alttd.events.SpawnShopEvent;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
 import com.alttd.objects.VillagerType;
@@ -10,12 +11,11 @@ import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 public class BuyGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.get();
@@ -54,6 +54,10 @@ public class BuyGUI extends GUIMerchant {
                 Template.of("amount", String.valueOf(amount)),
                 Template.of("item", material.toString()),
                 Template.of("price", String.valueOf(price))));
+
+        Bukkit.getServer().getPluginManager()
+                .callEvent(new SpawnShopEvent(player, amount, cost, material,
+                        0, 0, true));
     }
 
     private ItemStack getPriceItem(double price) {

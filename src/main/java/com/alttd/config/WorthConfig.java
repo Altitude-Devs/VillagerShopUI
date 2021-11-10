@@ -1,17 +1,13 @@
 package com.alttd.config;
 
-import com.alttd.VillagerUI;
 import com.alttd.objects.Price;
 import com.alttd.util.Logger;
 import com.alttd.util.Utilities;
-import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
-import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Set;
 
 public class WorthConfig extends AbstractConfig {
@@ -32,22 +28,16 @@ public class WorthConfig extends AbstractConfig {
     }
 
     public static Object2ObjectOpenHashMap<Material, Price> prices = new Object2ObjectOpenHashMap<>();
-
-    private static void loadWorth() {
+    private static void loadWorth() { //TODO test after removing points
         prices.clear();
         ConfigurationSection worth = config.getConfigurationSection("worth");
-        Set<String> points = worth.getKeys(false);
-        for (String point : points) {
-            ConfigurationSection pointSection = worth.getConfigurationSection(point);
-            Set<String> materials = worth.getConfigurationSection(point).getKeys(false);
-            for (String key : materials) {
-                Material material = Material.getMaterial(key);
-                if (material == null) {
-                    Logger.warning("Invalid key in worth.yml: %.", key);
-                    continue;
-                }
-                prices.put(Material.getMaterial(key), new Price(Utilities.round(pointSection.getDouble(key), 2), Integer.parseInt(point)));
+        Set<String> materials = worth.getKeys(false);
+        for (String key : materials) {
+            if (key == null) {
+                Logger.warning("Invalid key in worth.yml: %.", key);
+                continue;
             }
+            prices.put(Material.getMaterial(key), new Price(Utilities.round(worth.getDouble(key), 2)));
         }
     }
 }
