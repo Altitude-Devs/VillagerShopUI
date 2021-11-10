@@ -2,6 +2,7 @@ name: VillagerShopUI
 version: ${project.version}
 main: com.alttd.VillagerUI
 api-version: 1.17
+depend: [Vault]
 commands:
   villagerui:
     permission: villagerui.use
