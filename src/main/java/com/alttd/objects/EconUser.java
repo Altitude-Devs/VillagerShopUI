@@ -1,7 +1,9 @@
 package com.alttd.objects;
 
+import com.alttd.VillagerUI;
 import com.alttd.commands.database.Queries;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
@@ -31,6 +33,11 @@ public class EconUser {
             pointsMap.put(villagerType, points);
         else
             pointsMap.put(villagerType, pointsMap.get(villagerType) + points);
-        Queries.updateUserPoints(uuid, villagerType, pointsMap.get(villagerType));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Queries.updateUserPoints(uuid, villagerType, pointsMap.get(villagerType));
+            }
+        }.runTaskAsynchronously(VillagerUI.getInstance());
     }
 }
