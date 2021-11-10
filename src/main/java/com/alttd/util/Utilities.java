@@ -73,7 +73,7 @@ public class Utilities {
                 possiblePrice = getWorth(values, item.getType());
                 if (possiblePrice == null)
                     continue;
-                if (price == null || price.price() > possiblePrice.price())
+                if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
                     price = possiblePrice;
             } else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
                 if (shapelessRecipe.getIngredientList().stream()
@@ -82,19 +82,19 @@ public class Utilities {
                 possiblePrice = getWorth(shapelessRecipe.getIngredientList(), item.getType());
                 if (possiblePrice == null)
                     continue;
-                if (price == null || price.price() > possiblePrice.price())
+                if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
                     price = possiblePrice;
             } else if (recipe instanceof CampfireRecipe campfireRecipe) {
                 possiblePrice = getWorth(campfireRecipe.getInput(), item.getType());
                 if (possiblePrice == null)
                     continue;
-                if (price == null || price.price() > possiblePrice.price())
+                if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
                     price = possiblePrice;
             } else if (recipe instanceof StonecuttingRecipe stonecuttingRecipe) {
                 possiblePrice = getWorth(stonecuttingRecipe.getInput(), item.getType());
                 if (possiblePrice == null)
                     continue;
-                if (price == null || price.price() > possiblePrice.price())
+                if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
                     price = possiblePrice;
             } else if (recipe instanceof CookingRecipe cookingRecipe) {
                 if ((recipe instanceof FurnaceRecipe || recipe instanceof BlastingRecipe ) &&
@@ -104,7 +104,7 @@ public class Utilities {
                 possiblePrice = getWorth(cookingRecipe.getInput(), item.getType());
                 if (possiblePrice == null)
                     continue;
-                if (price == null || price.price() > possiblePrice.price())
+                if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
                     price = possiblePrice;
             }
         }
@@ -124,7 +124,7 @@ public class Utilities {
             if (item == null)
                 continue;
             Price tmp = getWorth(new ItemStack(item.getType()), blockedMaterial);
-            if (tmp == null || tmp.price() == -1)
+            if (tmp == null || tmp.getPrice(1) == -1)
                 return null;
             WorthConfig.prices.put(item.getType(), tmp);
             if (price == null)
