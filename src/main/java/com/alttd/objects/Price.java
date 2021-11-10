@@ -1,6 +1,7 @@
 package com.alttd.objects;
 
 import com.alttd.config.Config;
+import com.alttd.util.Logger;
 import com.alttd.util.Utilities;
 
 public final class Price {
@@ -15,6 +16,7 @@ public final class Price {
                 return;
             }
         }
+        Logger.severe("Points set to -1 for a price: %", String.valueOf(price));
         points = -1; //TODO check for if points is -1
     }
 
