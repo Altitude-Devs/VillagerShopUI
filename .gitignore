@@ -49,3 +49,4 @@ out/
 
 !gradle/wrapper/gradle-wrapper.jar
 build.bat
+build.sh
