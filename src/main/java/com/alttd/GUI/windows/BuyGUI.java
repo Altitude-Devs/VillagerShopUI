@@ -37,7 +37,7 @@ public class BuyGUI extends GUIMerchant {
     }
 
     private void buy(VillagerType villagerType, Player player, Material material, int amount, Price price) {
-        Economy econ = VillagerUI.getEcon();
+        Economy econ = VillagerUI.getInstance().getEconomy();
         double balance = econ.getBalance(player);
         double cost = price.getPrice(amount);
 

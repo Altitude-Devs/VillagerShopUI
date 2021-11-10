@@ -9,20 +9,17 @@ import com.alttd.config.WorthConfig;
 import com.alttd.events.VillagerInteract;
 import com.alttd.util.Logger;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class VillagerUI extends JavaPlugin {
 
     public static VillagerUI instance;
-    private static Economy econ = null;
+    private Economy economy = null;
 
     public static VillagerUI getInstance() {
         return instance;
-    }
-
-    public static Economy getEcon() {
-        return econ;
     }
 
     @Override
@@ -37,11 +34,8 @@ public class VillagerUI extends JavaPlugin {
         Config.reload();
         VillagerConfig.reload();
         WorthConfig.reload();
-        if (!setupEconomy()) {
-            Logger.severe("% - Unable to find vault", getDescription().getName());
-            getServer().getPluginManager().disablePlugin(this);
+        if (!setupEconomy())
             return;
-        }
         Database.init();
         Logger.info("--------------------------------------------------");
         Logger.info("Villager UI started");
@@ -53,13 +47,28 @@ public class VillagerUI extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new VillagerInteract(), this);
     }
 
-    private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) return false;
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) return false;
-        econ = rsp.getProvider();
+    public Economy getEconomy() {
+        if(economy == null)
+            setupEconomy();
+        return economy;
+    }
 
-        return econ != null;
+    private boolean setupEconomy() {
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            this.getLogger().severe("Vault was not found. Please download vault.");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return false;
+        } else {
+            RegisteredServiceProvider rsp = this.getServer().getServicesManager().getRegistration(Economy.class);
+            if (rsp == null) {
+                this.getLogger().severe("Can't find economy! Disabling plugin.");
+                Bukkit.getPluginManager().disablePlugin(this);
+                return false;
+            } else {
+                this.economy = (Economy)rsp.getProvider();
+                return this.economy != null;
+            }
+        }
     }
 
 }
