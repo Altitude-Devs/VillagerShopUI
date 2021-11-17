@@ -56,7 +56,7 @@ public class Database {
 
             connection = DriverManager.getConnection(
                     "jdbc:mysql://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE_NAME +
-                            "?autoReconnect=true&useSSL=false",
+                            "?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true",
                     Config.USERNAME, Config.PASSWORD);
         }
     }
