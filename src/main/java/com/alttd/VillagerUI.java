@@ -36,7 +36,7 @@ public class VillagerUI extends JavaPlugin {
         WorthConfig.reload();
         if (!setupEconomy())
             return;
-        Database.init();
+        Database.getDatabase().init();
         Logger.info("--------------------------------------------------");
         Logger.info("Villager UI started");
         Logger.info("--------------------------------------------------");

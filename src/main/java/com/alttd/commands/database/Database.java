@@ -11,27 +11,54 @@ import java.sql.SQLException;
 
 public class Database {
 
+    private static Database instance = null;
     public static Connection connection = null;
 
-    public static void init() { //Not static so we know for sure it loads on time
-        String url = "jdbc:" + Config.DRIVER +
-                "://" + Config.IP +
-                ":" + Config.PORT +
-                "/" + Config.DATABASE_NAME +
-                "?autoReconnect=true&useSSL=false";
+    private Database() {
+
+    }
+
+    public static Database getDatabase(){
+        if (instance == null)
+            instance = new Database();
+        return (instance);
+    }
+
+    public void init() {
         try {
-            connection = DriverManager.getConnection(url, Config.USERNAME, Config.PASSWORD);
+            openConnection();
         } catch (SQLException e) {
             e.printStackTrace();
-            Logger.severe("Connection to database failed!");
-            connection = null;
-            Logger.severe("Shutting down VillagerUI");
-            Bukkit.getPluginManager().disablePlugin(VillagerUI.getInstance());
-            return;
         }
 
         // Tables
         createUserPointsTable();
+    }
+
+    /**
+     * Opens the connection if it's not already open.
+     * @throws SQLException If it can't create the connection.
+     */
+    private void openConnection() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
+            return;
+        }
+
+        synchronized (this) {
+            if (connection != null && !connection.isClosed()) {
+                return;
+            }
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            connection = DriverManager.getConnection(
+                    "jdbc:mysql://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE_NAME +
+                            "?autoReconnect=true&useSSL=false",
+                    Config.USERNAME, Config.PASSWORD);
+        }
     }
 
     private static void createUserPointsTable() {
