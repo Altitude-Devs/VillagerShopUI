@@ -3,6 +3,7 @@ package com.alttd.GUI.windows;
 import com.alttd.GUI.GUIMerchant;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
+import com.alttd.config.WorthConfig;
 import com.alttd.events.SpawnShopEvent;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
@@ -39,9 +40,10 @@ public class SellGUI extends GUIMerchant {
 
     private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price) {
         Economy econ = VillagerUI.getInstance().getEconomy();
-        double cost = price.getPrice(amount);
         EconUser econUser = EconUser.users.get(player.getUniqueId());
         int oldPoints = econUser.getPointsMap().get(villagerType.getName());
+        int trans_pts = (int) (Math.floor(price.getPrice(amount)/ WorthConfig.POINT_MOD) * amount);
+        double cost = price.calculatePriceThing(oldPoints, trans_pts);
 
         econ.depositPlayer(player, cost);
         econUser.addPoints(villagerType.getName(), -price.getPoints());

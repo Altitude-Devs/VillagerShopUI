@@ -46,4 +46,9 @@ public class WorthConfig extends AbstractConfig {
             prices.put(Material.getMaterial(key), new Price(Utilities.round(worth.getDouble(key), 2)));
         }
     }
+
+    public static int POINT_MOD = 4;
+    private static void loadOtherStuff() {
+        POINT_MOD = config.getInt("point-mod", POINT_MOD);
+    }
 }

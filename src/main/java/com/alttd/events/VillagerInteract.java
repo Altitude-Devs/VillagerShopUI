@@ -5,6 +5,7 @@ import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,7 +24,7 @@ public class VillagerInteract implements Listener {
             return;
 
         if (!event.getPlayer().hasPermission(loadedVillager.getPermission())) {
-            event.getPlayer().sendMessage(Config.NO_PERMISSION); //TODO more specific message?
+            event.getPlayer().sendMessage(MiniMessage.get().parse(Config.NO_PERMISSION)); //TODO more specific message?
             return;
         }
         new BukkitRunnable() {

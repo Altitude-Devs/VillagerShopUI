@@ -1,12 +1,8 @@
 package com.alttd.config;
 
-import com.alttd.VillagerUI;
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Logger;
-import org.bukkit.configuration.ConfigurationSection;
-
-import java.util.Set;
 import java.util.UUID;
 
 public class VillagerConfig extends AbstractConfig {

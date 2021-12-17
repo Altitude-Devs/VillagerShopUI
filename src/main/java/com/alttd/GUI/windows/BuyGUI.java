@@ -3,6 +3,7 @@ package com.alttd.GUI.windows;
 import com.alttd.GUI.GUIMerchant;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
+import com.alttd.config.WorthConfig;
 import com.alttd.events.SpawnShopEvent;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
@@ -39,7 +40,10 @@ public class BuyGUI extends GUIMerchant {
     private void buy(VillagerType villagerType, Player player, Material material, int amount, Price price) {
         Economy econ = VillagerUI.getInstance().getEconomy();
         double balance = econ.getBalance(player);
-        double cost = price.getPrice(amount);
+        int trans_pts = (int) (Math.floor(price.getPrice(amount)/ WorthConfig.POINT_MOD) * amount);
+        EconUser econUser = EconUser.users.get(player.getUniqueId());
+        int oldPoints = econUser.getPointsMap().get(villagerType.getName());
+        double cost = price.calculatePriceThing(oldPoints, trans_pts);
 
         if (balance < cost) {
             player.sendMessage(MiniMessage.get().parse(Config.NOT_ENOUGH_MONEY,
@@ -47,11 +51,9 @@ public class BuyGUI extends GUIMerchant {
                     Template.of("price", String.valueOf(price))));
             return;
         }
-        EconUser econUser = EconUser.users.get(player.getUniqueId());
-        int oldPoints = econUser.getPointsMap().get(villagerType.getName());
 
         econ.withdrawPlayer(player, cost);
-        econUser.addPoints(villagerType.getName(), price.getPoints());
+        econUser.addPoints(villagerType.getName(), trans_pts);
         player.sendMessage(MiniMessage.get().parse(Config.PURCHASED_ITEM,
                 Template.of("amount", String.valueOf(amount)),
                 Template.of("item", material.toString()),
