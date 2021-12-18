@@ -1,4 +1,4 @@
-package com.alttd.commands.database;
+package com.alttd.database;
 
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;

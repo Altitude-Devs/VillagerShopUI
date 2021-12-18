@@ -1,9 +1,8 @@
-package com.alttd.commands.database;
+package com.alttd.database;
 
 import com.alttd.objects.EconUser;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Logger;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 import java.sql.PreparedStatement;
