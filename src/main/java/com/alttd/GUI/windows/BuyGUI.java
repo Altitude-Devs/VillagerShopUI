@@ -4,6 +4,7 @@ import com.alttd.GUI.GUIMerchant;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.config.WorthConfig;
+import com.alttd.database.Queries;
 import com.alttd.events.SpawnShopEvent;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
@@ -17,6 +18,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Objects;
+
 public class BuyGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.get();
@@ -41,8 +45,8 @@ public class BuyGUI extends GUIMerchant {
         Economy econ = VillagerUI.getInstance().getEconomy();
         double balance = econ.getBalance(player);
         int trans_pts = (int) (Math.floor(price.getPrice(amount)/ WorthConfig.POINT_MOD) * amount);
-        EconUser econUser = EconUser.users.get(player.getUniqueId());
-        int oldPoints = econUser.getPointsMap().get(villagerType.getName());
+        EconUser econUser = EconUser.getUser(player.getUniqueId());
+        int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
         double cost = price.calculatePriceThing(oldPoints, trans_pts);
 
         if (balance < cost) {

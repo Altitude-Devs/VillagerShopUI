@@ -40,7 +40,7 @@ public class SellGUI extends GUIMerchant {
 
     private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price) {
         Economy econ = VillagerUI.getInstance().getEconomy();
-        EconUser econUser = EconUser.users.get(player.getUniqueId());
+        EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = econUser.getPointsMap().get(villagerType.getName());
         int trans_pts = (int) (Math.floor(price.getPrice(amount)/ WorthConfig.POINT_MOD) * amount);
         double cost = price.calculatePriceThing(oldPoints, trans_pts);

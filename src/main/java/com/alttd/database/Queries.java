@@ -81,7 +81,7 @@ public class Queries {
      * @return success
      */
     public static boolean createUserPointsEntry(UUID uuid, String villagerType, int points) {
-        String sql = "INSERT INTO Points " +
+        String sql = "INSERT INTO user_points " +
                 "(uuid, villager_type, points) " +
                 "(?, ?, ?)";
 
@@ -101,7 +101,7 @@ public class Queries {
     }
 
     public static EconUser getEconUser(UUID uuid) {
-        String sql = "SELECT * FROM POINTS WHERE uuid = ?";
+        String sql = "SELECT * FROM user_points WHERE uuid = ?";
 
         try {
             PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);

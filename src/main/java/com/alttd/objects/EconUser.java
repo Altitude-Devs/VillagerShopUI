@@ -1,7 +1,7 @@
 package com.alttd.objects;
 
 import com.alttd.VillagerUI;
-import com.alttd.commands.database.Queries;
+import com.alttd.database.Queries;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class EconUser {
 
-    public static Object2ObjectArrayMap<UUID, EconUser> users = new Object2ObjectArrayMap<>();
+    private final static Object2ObjectArrayMap<UUID, EconUser> users = new Object2ObjectArrayMap<>();
 
     private final UUID uuid;
     private final Object2ObjectArrayMap<String, Integer> pointsMap;
@@ -39,5 +39,10 @@ public class EconUser {
                 Queries.updateUserPoints(uuid, villagerType, pointsMap.get(villagerType));
             }
         }.runTaskAsynchronously(VillagerUI.getInstance());
+    }
+
+    public static EconUser getUser(UUID uuid) {
+        EconUser user = users.get(uuid);
+        return (user == null ? Queries.getEconUser(uuid) : user);
     }
 }
