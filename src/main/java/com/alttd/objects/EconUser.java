@@ -5,6 +5,7 @@ import com.alttd.database.Queries;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class EconUser {
@@ -32,7 +33,7 @@ public class EconUser {
         if (pointsMap.containsKey(villagerType))
             pointsMap.put(villagerType, points);
         else
-            pointsMap.put(villagerType, pointsMap.get(villagerType) + points);
+            pointsMap.put(villagerType, Objects.requireNonNullElse(pointsMap.get(villagerType), 0) + points);
         new BukkitRunnable() {
             @Override
             public void run() {
