@@ -16,7 +16,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class SellGUI extends GUIMerchant {
 
@@ -39,22 +43,52 @@ public class SellGUI extends GUIMerchant {
     }
 
     private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price) {
+        PlayerInventory inventory = player.getInventory();
+
+        if (!inventory.containsAtLeast(new ItemStack(material), amount))
+        {
+            player.sendMessage(miniMessage.parse(Config.NOT_ENOUGH_ITEMS,
+                    Template.of("type", material.name()),
+                    Template.of("amount",String.valueOf(amount))));
+            return;
+        }
+
         Economy econ = VillagerUI.getInstance().getEconomy();
         EconUser econUser = EconUser.getUser(player.getUniqueId());
-        int oldPoints = econUser.getPointsMap().get(villagerType.getName());
+        int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
         int trans_pts = (int) (Math.floor(price.getPrice(amount)/ WorthConfig.POINT_MOD) * amount);
         double cost = price.calculatePriceThing(oldPoints, trans_pts);
 
         econ.depositPlayer(player, cost);
         econUser.addPoints(villagerType.getName(), -price.getPoints());
+        var ref = new Object() {
+            int tmpAmount = amount;
+        };
+        Arrays.stream(inventory.getContents())
+                .filter(Objects::nonNull)
+                .filter(itemStack -> itemStack.getType().equals(material))
+                .forEach(itemStack -> {
+                    if (ref.tmpAmount == 0)
+                        return;
+                    if (itemStack.getAmount() > ref.tmpAmount)
+                    {
+                        itemStack.setAmount(itemStack.getAmount() - ref.tmpAmount);
+                        ref.tmpAmount = 0;
+                    } else {
+                        ref.tmpAmount -= itemStack.getAmount();
+                        itemStack.setAmount(0);
+                    }
+                });
+        //TODO remove items from inv
         player.sendMessage(MiniMessage.get().parse(Config.PURCHASED_ITEM,
                 Template.of("amount", String.valueOf(amount)),
                 Template.of("item", material.toString()),
-                Template.of("price", String.valueOf(price))));
+                Template.of("price", String.valueOf(cost))));
 
-        Bukkit.getServer().getPluginManager()
-                .callEvent(new SpawnShopEvent(player, amount, cost, material,
-                        oldPoints, econUser.getPointsMap().get(villagerType.getName()), false));
+//        Bukkit.getServer().getPluginManager()
+//                .callEvent(new SpawnShopEvent(player, amount, cost, material,
+//                        oldPoints, econUser.getPointsMap().get(villagerType.getName()), false));
+        //TODO FIX LOGGING
     }
 
     private ItemStack getPriceItem(double price) {
