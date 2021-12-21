@@ -18,17 +18,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommandCreateVillager extends SubCommand {
 
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
-        if (args.length < 8) {
+        if (args.length != 9) {
             commandSender.sendMessage(getMiniMessage().parse(getHelpMessage()));
             return true;
         }
@@ -40,16 +37,23 @@ public class CommandCreateVillager extends SubCommand {
         }
         VillagerType villagerType = first.get();
 
-        World world = Bukkit.getServer().getWorld(args[7]);
+        Villager.Type type = Villager.Type.valueOf(args[2].toUpperCase());
+        if (type == null) { //TODO test if this might need a try catch?
+            commandSender.sendMessage(getMiniMessage().parse(getHelpMessage()));
+            return true;
+        }
+
+        World world = Bukkit.getServer().getWorld(args[8]);
         if (world == null) {
             commandSender.sendMessage(getMiniMessage().parse(getHelpMessage()));
             return true;
         }
-        Location location = new Location(world, Double.parseDouble(args[2]),Double.parseDouble(args[3]),Double.parseDouble(args[4]), Float.parseFloat(args[5]), Float.parseFloat(args[6]));
+        Location location = new Location(world, Double.parseDouble(args[3]),Double.parseDouble(args[4]),Double.parseDouble(args[5]), Float.parseFloat(args[6]), Float.parseFloat(args[7]));
         Villager villager = (Villager) world.spawnEntity(location, EntityType.VILLAGER, CreatureSpawnEvent.SpawnReason.CUSTOM);
         villager.setPersistent(true);
         villager.setInvulnerable(true);
-//        villager.setVillagerType(Villager.Type.); TODO choose villager type?
+        villager.setVillagerType(type);
+        villager.setProfession(villagerType.getProfession());
         villager.setRemoveWhenFarAway(false);
         villager.customName(getMiniMessage().parse(Config.VILLAGER_NAME, Template.of("name", villagerType.getDisplayName())));
         villager.setCustomNameVisible(true);
@@ -74,32 +78,33 @@ public class CommandCreateVillager extends SubCommand {
             case 2 -> res.addAll(VillagerType.getVillagerTypes().stream()
                     .map(VillagerType::getName)
                     .collect(Collectors.toList()));
-            case 3 -> {
+            case 3 -> res.addAll(Arrays.stream(Villager.Type.values()).map(Enum::name).collect(Collectors.toList()));
+            case 4 -> {
                 if (commandSender instanceof Player player) {
                     res.add(String.valueOf(Utilities.round(player.getLocation().getX(), 2)));
                 }
             }
-            case 4 -> {
+            case 5 -> {
                 if (commandSender instanceof Player player) {
                     res.add(String.valueOf(Utilities.round(player.getLocation().getY(), 1)));
                 }
             }
-            case 5 -> {
+            case 6 -> {
                 if (commandSender instanceof Player player) {
                     res.add(String.valueOf(Utilities.round(player.getLocation().getZ(), 2)));
                 }
             }
-            case 6 -> {
+            case 7 -> {
                 if (commandSender instanceof Player player) {
                     res.add(String.valueOf(Utilities.round(player.getLocation().getYaw(), 2)));
                 }
             }
-            case 7 -> {
+            case 8 -> {
                 if (commandSender instanceof Player player) {
                     res.add(String.valueOf(Utilities.round(player.getLocation().getPitch(), 2)));
                 }
             }
-            case 8 -> {
+            case 9 -> {
                 if (commandSender instanceof Player player) {
                     res.add(player.getLocation().getWorld().getName());
                 }
