@@ -4,8 +4,6 @@ import com.alttd.GUI.GUIMerchant;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.config.WorthConfig;
-import com.alttd.database.Queries;
-import com.alttd.events.SpawnShopEvent;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
 import com.alttd.objects.VillagerType;
@@ -13,11 +11,12 @@ import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.StringUtil;
 
 import java.util.Objects;
 
@@ -61,7 +60,8 @@ public class BuyGUI extends GUIMerchant {
         player.getInventory().addItem(new ItemStack(material, amount));
         player.sendMessage(MiniMessage.get().parse(Config.PURCHASED_ITEM,
                 Template.of("amount", String.valueOf(amount)),
-                Template.of("item", material.toString()),
+                Template.of("item", StringUtils.capitalize(material.name()
+                        .toLowerCase().replaceAll("_", " "))),
                 Template.of("price", String.valueOf(cost))));
 
 //        Bukkit.getServer().getPluginManager()
