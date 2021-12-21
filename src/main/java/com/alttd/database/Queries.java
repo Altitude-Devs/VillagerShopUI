@@ -50,7 +50,7 @@ public class Queries {
      * @return success
      */
     public static boolean updateUserPoints(UUID uuid, String villagerType, int points) {
-        String sql = "UPDATE Points = SET user_points = user_points + ? " +
+        String sql = "UPDATE user_points SET points = points + ? " +
                 "WHERE UUID = ? " +
                 "AND villager_type = ?;";
 
@@ -82,14 +82,14 @@ public class Queries {
      */
     public static boolean createUserPointsEntry(UUID uuid, String villagerType, int points) {
         String sql = "INSERT INTO user_points " +
-                "(uuid, villager_type, points) " +
-                "(?, ?, ?)";
+                "(UUID, points, villager_type) " +
+                "VALUES (?, ?, ?)";
 
         try {
             PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
             preparedStatement.setString(1, uuid.toString());
-            preparedStatement.setString(2, villagerType);
-            preparedStatement.setInt(3, points);
+            preparedStatement.setInt(2, points);
+            preparedStatement.setString(3, villagerType);
 
             return (preparedStatement.execute());
         } catch (SQLException e) {
