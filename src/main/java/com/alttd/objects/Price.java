@@ -1,7 +1,5 @@
 package com.alttd.objects;
 
-import com.alttd.config.Config;
-import com.alttd.util.Logger;
 import com.alttd.util.Utilities;
 import org.apache.commons.math3.analysis.function.StepFunction;
 import org.apache.commons.math3.analysis.integration.TrapezoidIntegrator;
@@ -10,20 +8,13 @@ public final class Price {
     private final double price;
     private final int points;
 
-    double x_mult[] = {0, 500, 2000, 4000};
-    double y_mult[] = {1.0, 1.5, 2.5, 5.0};
-    StepFunction multiplierModel = new StepFunction(x_mult, y_mult);
+    private static final double x_mult[] = {0, 500, 2000, 4000};
+    private static final double y_mult[] = {1.0, 1.5, 2.5, 5.0};
+    private static final StepFunction multiplierModel = new StepFunction(x_mult, y_mult);
 
     public Price(double price) {
         this.price = price;
-        for (int key : Config.pointsRangeMap.keySet()) {
-            if (Config.pointsRangeMap.get(key).contains(price)) {
-                points = key;
-                return;
-            }
-        }
-        Logger.severe("Points set to -1 for a price: %", String.valueOf(price));
-        points = -1; //TODO check for if points is -1
+        this.points = (int) price;
     }
 
     public static Price addPrice(Price one, Price two) {
@@ -37,7 +28,7 @@ public final class Price {
     public double calculatePriceThing(int oldPoints, int transPts) {
         // Compute numerical integration to determine price
         TrapezoidIntegrator trapez = new TrapezoidIntegrator();
-        return (price * trapez.integrate(10, multiplierModel, oldPoints, oldPoints + transPts));
+        return (Utilities.round(price * trapez.integrate(10, multiplierModel, oldPoints, oldPoints + transPts), 2));
     }
 
     public int getPoints() {
