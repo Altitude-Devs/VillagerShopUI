@@ -61,7 +61,7 @@ public final class Config extends AbstractConfig {
     public static String HELP_MESSAGE_WRAPPER = "<gold>VillagerShopUI help:\n<commands></gold>";
     public static String HELP_MESSAGE = "<green>Show this menu: <gold>/villagerui help</gold></green>";
     public static String RELOAD_MESSAGE = "<green>Reload configs: <gold>/villagerui reload</gold></green>";
-    public static String CREATE_VILLAGER_MESSAGE = "<green>Create a new trading villager: <gold>/villagerui createvillager <type> <x> <y> <z> <yaw> <pitch> <world></gold></green>";
+    public static String CREATE_VILLAGER_MESSAGE = "<green>Create a new trading villager: <gold>/villagerui createvillager <type> <biome> <x> <y> <z> <yaw> <pitch> <world></gold></green>";
 
     private static void loadHelp() {
         HELP_MESSAGE_WRAPPER = config.getString("help.help-wrapper", HELP_MESSAGE_WRAPPER);
@@ -85,10 +85,14 @@ public final class Config extends AbstractConfig {
     }
 
     public static String NOT_ENOUGH_MONEY = "<red>You only have $<money>, you need at least $<price> for this purchase.</red>";
+    public static String NOT_ENOUGH_ITEMS = "<red>You only have don't have enough <type> you need at least <amount>.</red>";
     public static String PURCHASED_ITEM = "<green>You bought <amount> <item> for <price>!</green>";
+    public static String SOLD_ITEM = "<green>You sold <amount> <item> for <price>!</green>";
     private static void loadMessages() {
         NOT_ENOUGH_MONEY = config.getString("messages.not-enough-money", NOT_ENOUGH_MONEY);
+        NOT_ENOUGH_ITEMS = config.getString("messages.not-enough-items", NOT_ENOUGH_ITEMS);
         PURCHASED_ITEM = config.getString("messages.purchased-item", PURCHASED_ITEM);
+        SOLD_ITEM = config.getString("messages.sold-item", SOLD_ITEM);
     }
 
     private static void loadVillagerTypes() {
@@ -113,7 +117,8 @@ public final class Config extends AbstractConfig {
                     villagerType.getString("name"),
                     loadProducts(villagerType.getConfigurationSection("buying")),
                     loadProducts(villagerType.getConfigurationSection("selling")),
-                    villagerType.getDouble("price-modifier"))
+                    villagerType.getDouble("price-modifier"),
+                    villagerType.getString("profession"))
             );
         });
     }
