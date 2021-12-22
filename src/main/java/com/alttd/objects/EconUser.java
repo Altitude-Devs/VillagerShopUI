@@ -5,6 +5,7 @@ import com.alttd.database.Queries;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -34,16 +35,49 @@ public class EconUser {
             pointsMap.put(villagerType, points);
         else
             pointsMap.put(villagerType, Objects.requireNonNullElse(pointsMap.get(villagerType), 0) + points);
+    }
+
+    public void syncPoints() {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Queries.updateUserPoints(uuid, villagerType, pointsMap.get(villagerType));
+                Queries.updateUserPoints(uuid, pointsMap);
             }
         }.runTaskAsynchronously(VillagerUI.getInstance());
     }
 
+    public void removePoints(int remove) {
+        pointsMap.forEach((villagerType, points) -> {
+            if (points == 0)
+                return;
+            if (points > 0)
+                if (points < remove)
+                    points = 0;
+                else
+                    points -= remove;
+            else
+                if (-points < remove)
+                    points = 0;
+                else
+                    points += remove;
+            pointsMap.put(villagerType, points);
+        });
+    }
+
     public static EconUser getUser(UUID uuid) {
         EconUser user = users.get(uuid);
-        return (user == null ? Queries.getEconUser(uuid) : user);
+        if (user == null) {
+            user = Queries.getEconUser(uuid);
+            EconUser.users.put(uuid, user);
+        }
+        return (user);
+    }
+
+    public static void removeUser(UUID uuid) {
+        users.remove(uuid);
+    }
+
+    public static void syncAllPoints() {
+        Collections.unmodifiableMap(users).values().forEach(EconUser::syncPoints);
     }
 }
