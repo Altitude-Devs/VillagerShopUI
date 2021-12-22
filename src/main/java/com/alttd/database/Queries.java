@@ -44,15 +44,15 @@ public class Queries {
      * NOTE: run async
      * Add a specified amount of points to the user for the given villager type
      *
-     * @param uuid         Uuid for the user you want to add the points to
-     * @param villagerType Type of villager you want to add the points to
-     * @param points       The amount of points to add
-     * @return success
+     * @param   uuid        Uuid for the user you want to add the points to
+     * @param   pointsMap   Contains all (villagerType, points) entries for user
+     * @return  success
      */
-    public static boolean updateUserPoints(UUID uuid, String villagerType, int points) {
-        String sql = "UPDATE user_points SET points = points + ? " +
-                "WHERE UUID = ? " +
-                "AND villager_type = ?;";
+    public static boolean updateUserPoints(UUID uuid, Object2ObjectArrayMap<String, Integer> pointsMap) {
+        String sql = "INSERT INTO user_points " +
+                "(uuid, villager_type, points) " +
+                "VALUES (?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE points = ?";
 
         try {
             PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
