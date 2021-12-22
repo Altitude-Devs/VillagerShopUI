@@ -55,7 +55,7 @@ public class SellGUI extends GUIMerchant {
         Economy econ = VillagerUI.getInstance().getEconomy();
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
-        int trans_pts = (int) (Math.floor(price.getPrice(amount)/ WorthConfig.POINT_MOD) * amount);
+        int trans_pts = (int) ((Math.floor(price.getPrice(amount) / WorthConfig.POINT_MOD) + 1) * amount);
         double cost = price.calculatePriceThing(oldPoints, trans_pts);
 
         econ.depositPlayer(player, cost);
