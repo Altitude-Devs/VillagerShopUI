@@ -6,6 +6,8 @@ import com.alttd.database.Database;
 import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.config.WorthConfig;
+import com.alttd.events.LoginEvent;
+import com.alttd.events.LogoutEvent;
 import com.alttd.events.VillagerInteract;
 import com.alttd.util.Logger;
 import net.milkbowl.vault.economy.Economy;
@@ -45,6 +47,8 @@ public class VillagerUI extends JavaPlugin {
     private void registerEvents() {
         getServer().getPluginManager().registerEvents(new GUIListener(), this);
         getServer().getPluginManager().registerEvents(new VillagerInteract(), this);
+        getServer().getPluginManager().registerEvents(new LogoutEvent(), this);
+        getServer().getPluginManager().registerEvents(new LoginEvent(), this);
     }
 
     public Economy getEconomy() {
