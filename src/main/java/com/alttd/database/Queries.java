@@ -73,6 +73,7 @@ public class Queries {
             e.printStackTrace();
             return (false);
         }
+        setLastUpdated(uuid);
         return (true);
     }
 
@@ -125,5 +126,49 @@ public class Queries {
             e.printStackTrace();
         }
         return (null);
+    }
+
+    /**
+     * @param uuid
+     */
+    private static void setLastUpdated(UUID uuid) {
+        String sql = "INSERT INTO user_seen " +
+                "(uuid, seen) " +
+                "VALUES (?, ?) " +
+                "ON DUPLICATE KEY UPDATE seen = ?";
+
+        try {
+            PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
+            preparedStatement.setString(1, uuid.toString());
+            preparedStatement.setLong(2, new Date().getTime());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.warning("Unable to set last updated time for %.", uuid.toString());
+        }
+    }
+
+    /**
+     * @param   uuid    UUID of user to get last seen for
+     *
+     * @return  minutes since last seen
+     */
+    public static int getMinutesSinceUpdated(UUID uuid) {
+        String sql = "SELECT seen FROM user_seen WHERE uuid = ?";
+
+        try {
+            PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
+            preparedStatement.setString(1, uuid.toString());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            long time = resultSet.getLong("seen");
+            if (time != 0)
+                return (int) TimeUnit.MILLISECONDS.toMinutes(new Date().getTime() - time);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.warning("Unable to set last updated time for %.", uuid.toString());
+        }
+
+        return (0);
     }
 }
