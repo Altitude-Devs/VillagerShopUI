@@ -56,16 +56,21 @@ public class Queries {
 
         try {
             PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
-            preparedStatement.setInt(1, points);
-            preparedStatement.setString(2, uuid.toString());
-            preparedStatement.setString(3, villagerType);
-
-            if (preparedStatement.executeUpdate() == 0)
-                return createUserPointsEntry(uuid, villagerType, points);
+            preparedStatement.setString(1, uuid.toString());
+            pointsMap.forEach((villagerType, points) -> {
+                try {
+                    preparedStatement.setString(2, villagerType);
+                    preparedStatement.setInt(3, points);
+                    preparedStatement.setInt(4, points);
+                    preparedStatement.addBatch();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    Logger.warning("Unable to add % points to %" +
+                            " for villager type %", String.valueOf(points), uuid.toString(), villagerType);
+                }
+            });
         } catch (SQLException e) {
             e.printStackTrace();
-            Logger.warning("Unable to add % points to %" +
-                    " for villager type %", String.valueOf(points), uuid.toString(), villagerType);
             return (false);
         }
         return (true);
