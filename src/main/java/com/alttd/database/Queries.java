@@ -13,34 +13,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class Queries {
-    /**
-     * NOTE: run async
-     * Get the points a user has for a villager type
-     *
-     * @param uuid         Uuid for the user you want to get the points for
-     * @param villagerType Type of villager you want to get the points for
-     * @return The amount of points a user has for the given villager type
-     */
-    public static int getUserPoints(UUID uuid, VillagerType villagerType) {
-        String sql = "SELECT points FROM user_points " +
-                "WHERE UUID = ? " +
-                "AND villager_type = ?;";
-        int points = 0;
-
-        try {
-            PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
-            preparedStatement.setString(1, uuid.toString());
-            preparedStatement.setString(2, villagerType.getName());
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet != null && resultSet.next()) {
-                points = resultSet.getInt("points");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return (points);
-    }
 
     /**
      * NOTE: run async
@@ -80,34 +52,11 @@ public class Queries {
     }
 
     /**
-     * NOTE: run async
-     * Create a new user entry
+     * Get the econ user
+     * @param   uuid    UUID of the user to get
      *
-     * @param uuid         Uuid for the user you want to create an entry for
-     * @param villagerType Type of villager you want to use in that entry
-     * @param points       The amount of points to set the start to
-     * @return success
+     * @return  EconUser
      */
-    public static boolean createUserPointsEntry(UUID uuid, String villagerType, int points) {
-        String sql = "INSERT INTO user_points " +
-                "(UUID, points, villager_type) " +
-                "VALUES (?, ?, ?)";
-
-        try {
-            PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
-            preparedStatement.setString(1, uuid.toString());
-            preparedStatement.setInt(2, points);
-            preparedStatement.setString(3, villagerType);
-
-            return (preparedStatement.execute());
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Logger.warning("Unable to create point entry for %" +
-                    " for villager type %", uuid.toString(), villagerType);
-            return (false);
-        }
-    }
-
     public static EconUser getEconUser(UUID uuid) {
         String sql = "SELECT * FROM user_points WHERE uuid = ?";
 
@@ -131,7 +80,8 @@ public class Queries {
     }
 
     /**
-     * @param uuid
+     * Set last seen to current time for user
+     * @param   uuid    UUID of user to update last seen for
      */
     private static void setLastUpdated(UUID uuid) {
         String sql = "INSERT INTO user_seen " +
@@ -151,6 +101,7 @@ public class Queries {
     }
 
     /**
+     * Get last seen for user
      * @param   uuid    UUID of user to get last seen for
      *
      * @return  minutes since last seen
