@@ -33,6 +33,7 @@ public class Database {
 
         // Tables
         createUserPointsTable();
+        createUserSeenTable();
     }
 
     /**
@@ -64,9 +65,9 @@ public class Database {
     private static void createUserPointsTable() {
         try {
             String sql = "CREATE TABLE IF NOT EXISTS user_points(" +
-                    "UUID varchar(36) NOT NULL, " +
+                    "UUID VARCHAR(36) NOT NULL, " +
                     "points int NOT NULL, " +
-                    "villager_type varchar(128) NOT NULL, " +
+                    "villager_type VARCHAR(128) NOT NULL, " +
                     "PRIMARY KEY (UUID), " +
                     "UNIQUE KEY (villager_type)" +
                     ")";
@@ -74,6 +75,22 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
             Logger.severe("Error while trying to create user point table");
+            Logger.severe("Shutting down VillagerUI");
+            Bukkit.getPluginManager().disablePlugin(VillagerUI.getInstance());
+        }
+    }
+
+    private static void createUserSeenTable() {
+        try {
+            String sql = "CREATE TABLE IF NOT EXISTS user_seen(" +
+                    "UUID VARCHAR(36) NOT NULL, " +
+                    "seen BIGINT NOT NULL, " +
+                    "PRIMARY KEY (UUID)" +
+                    ")";
+            connection.prepareStatement(sql).executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.severe("Error while trying to create user seen table");
             Logger.severe("Shutting down VillagerUI");
             Bukkit.getPluginManager().disablePlugin(VillagerUI.getInstance());
         }
