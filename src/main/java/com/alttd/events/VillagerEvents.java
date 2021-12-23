@@ -29,6 +29,7 @@ public class VillagerEvents implements Listener {
         if (loadedVillager == null)
             return;
 
+        event.setCancelled(true);
         if (!event.getPlayer().hasPermission(loadedVillager.getPermission())) {
             event.getPlayer().sendMessage(MiniMessage.get().parse(Config.NO_PERMISSION)); //TODO more specific message?
             return;
