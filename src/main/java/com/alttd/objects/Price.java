@@ -8,9 +8,12 @@ public final class Price {
     private final double price;
     private final int points;
 
-    private static final double x_mult[] = {0, 500, 2000, 4000};
-    private static final double y_mult[] = {1.0, 1.5, 2.5, 5.0};
-    private static final StepFunction multiplierModel = new StepFunction(x_mult, y_mult);
+    private static final double[] xMult = {Integer.MIN_VALUE, -4000, -2000, -500, 500, 2000, 4000};
+    private static final double[] yMultSell = {2.5, 1.75, 1.25, 1, 1.5, 2.5, 5};
+    private static final double[] yMultBuy = {5, 2.5, 1.5, 1, 1.25, 1.75, 2.5};
+
+    private static final StepFunction multiplierModelBuy = new StepFunction(xMult, yMultBuy);
+    private static final StepFunction multiplierModelSell = new StepFunction(xMult, yMultSell);
 
     public Price(double price) {
         this.price = price;
@@ -25,10 +28,14 @@ public final class Price {
         return (Utilities.round(price * multiplier, 2));
     }
 
-    public double calculatePriceThing(int oldPoints, int transPts) {
+    public double calculatePriceThing(int oldPoints, int transPts, boolean buying) {
         // Compute numerical integration to determine price
         TrapezoidIntegrator trapez = new TrapezoidIntegrator();
-        return (Utilities.round(price * trapez.integrate(10, multiplierModel, oldPoints, oldPoints + transPts), 2));
+        if (buying) {
+            return (Utilities.round(price * trapez.integrate(10, multiplierModelBuy, oldPoints, oldPoints + transPts), 2));
+        } else {
+            return (Utilities.round(price * trapez.integrate(10, multiplierModelSell, oldPoints - transPts, oldPoints), 2));
+        }
     }
 
     public int getPoints() {
