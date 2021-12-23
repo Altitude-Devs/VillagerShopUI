@@ -54,6 +54,8 @@ public class VillagerUI extends JavaPlugin {
                 if (Config.DEBUG)
                     Logger.info("Syncing users.");
                 EconUser.getEconUsers().forEach(econUser -> {
+                    if (Config.DEBUG)
+                        Logger.info("Syncing %", econUser.getUuid().toString());
                     econUser.removePoints();
                     econUser.syncPoints();
                 });

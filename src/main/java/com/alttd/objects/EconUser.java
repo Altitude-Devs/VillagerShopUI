@@ -1,7 +1,9 @@
 package com.alttd.objects;
 
 import com.alttd.VillagerUI;
+import com.alttd.config.Config;
 import com.alttd.database.Queries;
+import com.alttd.util.Logger;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -22,6 +24,8 @@ public class EconUser {
         this.uuid = uuid;
         this.pointsMap = points;
         users.put(this.uuid, this);
+        if (Config.DEBUG)
+            Logger.info("Created EconUser for: %", uuid.toString());
     }
 
     public UUID getUuid() {
@@ -63,6 +67,9 @@ public class EconUser {
         else
             points += remove;
         pointsMap.put(villagerType, points);
+        if (Config.DEBUG)
+            Logger.info("Removed % points from villagerType: % for %",
+                    String.valueOf(points), villagerType, uuid.toString());
     }
 
     public void removePoints(int remove) {
