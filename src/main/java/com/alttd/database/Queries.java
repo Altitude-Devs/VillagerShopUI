@@ -43,6 +43,7 @@ public class Queries {
                             " for villager type %", String.valueOf(points), uuid.toString(), villagerType);
                 }
             });
+            preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
             return (false);
