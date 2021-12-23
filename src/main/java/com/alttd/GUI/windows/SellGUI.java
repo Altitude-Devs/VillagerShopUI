@@ -63,9 +63,25 @@ public class SellGUI extends GUIMerchant {
 
         econ.depositPlayer(player, cost);
         econUser.addPoints(villagerType.getName(), -price.getPoints());
+
+        removeItems(inventory, material, amount);
+
+        player.sendMessage(MiniMessage.get().parse(Config.SOLD_ITEM,
+                Template.of("amount", String.valueOf(amount)),
+                Template.of("item", StringUtils.capitalize(material.name()
+                        .toLowerCase().replaceAll("_", " "))),
+                Template.of("price", String.valueOf(cost))));
+
+        Bukkit.getServer().getPluginManager()
+                .callEvent(new SpawnShopEvent(player, amount, cost, material,
+                        oldPoints, econUser.getPointsMap().get(villagerType.getName()), false));
+    }
+
+    private void removeItems(Inventory inventory, Material material, int amount) {
         var ref = new Object() {
             int tmpAmount = amount;
         };
+
         Arrays.stream(inventory.getContents())
                 .filter(Objects::nonNull)
                 .filter(itemStack -> itemStack.getType().equals(material))
@@ -81,16 +97,6 @@ public class SellGUI extends GUIMerchant {
                         itemStack.setAmount(0);
                     }
                 });
-        //TODO remove items from inv
-        player.sendMessage(MiniMessage.get().parse(Config.SOLD_ITEM,
-                Template.of("amount", String.valueOf(amount)),
-                Template.of("item", StringUtils.capitalize(material.name()
-                        .toLowerCase().replaceAll("_", " "))),
-                Template.of("price", String.valueOf(cost))));
-
-        Bukkit.getServer().getPluginManager()
-                .callEvent(new SpawnShopEvent(player, amount, cost, material,
-                        oldPoints, econUser.getPointsMap().get(villagerType.getName()), false));
     }
 
     private ItemStack getPriceItem(double price) {
