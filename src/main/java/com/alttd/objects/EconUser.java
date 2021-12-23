@@ -4,8 +4,10 @@ import com.alttd.VillagerUI;
 import com.alttd.database.Queries;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -46,21 +48,35 @@ public class EconUser {
         }.runTaskAsynchronously(VillagerUI.getInstance());
     }
 
+    private void removePoints(String villagerType, int points, int remove)
+    {
+        if (points == 0)
+            return;
+        if (points > 0)
+            if (points < remove)
+                points = 0;
+            else
+                points -= remove;
+        else
+        if (-points < remove)
+            points = 0;
+        else
+            points += remove;
+        pointsMap.put(villagerType, points);
+    }
+
     public void removePoints(int remove) {
+        pointsMap.forEach((villagerType, points) -> removePoints(villagerType, points, remove));
+    }
+
+    public void removePoints() {
         pointsMap.forEach((villagerType, points) -> {
             if (points == 0)
                 return;
-            if (points > 0)
-                if (points < remove)
-                    points = 0;
-                else
-                    points -= remove;
-            else
-                if (-points < remove)
-                    points = 0;
-                else
-                    points += remove;
-            pointsMap.put(villagerType, points);
+            int remove = points;
+            if (remove < 0)
+                remove *= -1;
+            removePoints(villagerType, points, (int) (0.9 * remove) - 10);
         });
     }
 
@@ -77,7 +93,8 @@ public class EconUser {
         users.remove(uuid);
     }
 
-    public static void syncAllPoints() {
-        Collections.unmodifiableMap(users).values().forEach(EconUser::syncPoints);
+    @Unmodifiable
+    public static List<EconUser> getEconUsers() {
+        return Collections.unmodifiableList(users.values().stream().toList());
     }
 }

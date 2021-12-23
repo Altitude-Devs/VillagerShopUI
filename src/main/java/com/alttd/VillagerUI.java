@@ -6,14 +6,22 @@ import com.alttd.database.Database;
 import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.config.WorthConfig;
+import com.alttd.database.Queries;
 import com.alttd.events.LoginEvent;
 import com.alttd.events.LogoutEvent;
 import com.alttd.events.VillagerInteract;
+import com.alttd.objects.EconUser;
 import com.alttd.util.Logger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
+
+import java.util.Collections;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class VillagerUI extends JavaPlugin {
 
@@ -39,9 +47,22 @@ public class VillagerUI extends JavaPlugin {
         if (!setupEconomy())
             return;
         Database.getDatabase().init();
+        scheduleTasks();
         Logger.info("--------------------------------------------------");
         Logger.info("Villager UI started");
         Logger.info("--------------------------------------------------");
+    }
+
+    private void scheduleTasks() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                EconUser.getEconUsers().forEach(econUser -> {
+                    econUser.removePoints();
+                    econUser.syncPoints();
+                });
+            }
+        }.runTaskTimerAsynchronously(getInstance(), 0L, 5 * 60 * 20L);
     }
 
     private void registerEvents() {
