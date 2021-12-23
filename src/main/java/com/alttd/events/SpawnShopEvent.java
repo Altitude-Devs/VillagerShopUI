@@ -14,6 +14,7 @@ public final class SpawnShopEvent extends Event {
     private final int pointsBefore;
     private final int pointsAfter;
     private final boolean buy;
+    private final HandlerList handlers = new HandlerList();
 
     public SpawnShopEvent(Player player, int amount, double price, Material item,
                           int pointsBefore, int pointsAfter, boolean buy) {
@@ -56,7 +57,7 @@ public final class SpawnShopEvent extends Event {
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return null;
+        return handlers;
     }
 }
 
