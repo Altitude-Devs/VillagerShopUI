@@ -4,6 +4,7 @@ import com.alttd.VillagerUI;
 import com.alttd.commands.subcommands.CommandCreateVillager;
 import com.alttd.commands.subcommands.CommandHelp;
 import com.alttd.commands.subcommands.CommandReload;
+import com.alttd.commands.subcommands.CommandRemoveVillager;
 import com.alttd.config.Config;
 import com.alttd.util.Logger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -37,7 +38,8 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         subCommands = Arrays.asList(
                 new CommandHelp(this),
                 new CommandCreateVillager(),
-                new CommandReload());
+                new CommandReload(),
+                new CommandRemoveVillager());
         miniMessage = MiniMessage.get();
     }
 

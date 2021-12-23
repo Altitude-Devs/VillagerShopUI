@@ -62,12 +62,14 @@ public final class Config extends AbstractConfig {
     public static String HELP_MESSAGE = "<green>Show this menu: <gold>/villagerui help</gold></green>";
     public static String RELOAD_MESSAGE = "<green>Reload configs: <gold>/villagerui reload</gold></green>";
     public static String CREATE_VILLAGER_MESSAGE = "<green>Create a new trading villager: <gold>/villagerui createvillager <type> <biome> <x> <y> <z> <yaw> <pitch> <world></gold></green>";
+    public static String REMOVE_VILLAGER_MESSAGE = "<green>Removes all existing trading villagers in a 2 block radius: <gold>/villagerui removevillager</gold></green>";
 
     private static void loadHelp() {
         HELP_MESSAGE_WRAPPER = config.getString("help.help-wrapper", HELP_MESSAGE_WRAPPER);
         HELP_MESSAGE = config.getString("help.help", HELP_MESSAGE);
         RELOAD_MESSAGE = config.getString("help.reload", RELOAD_MESSAGE);
         CREATE_VILLAGER_MESSAGE = config.getString("help.create-villager", CREATE_VILLAGER_MESSAGE);
+        REMOVE_VILLAGER_MESSAGE = config.getString("help.remove-villager", REMOVE_VILLAGER_MESSAGE);
     }
 
     public static String NO_PERMISSION = "<red>You do not have permission to do that.</red>";

@@ -1,4 +1,51 @@
 package com.alttd.commands.subcommands;
 
-public class CommandRemoveVillager {
+import com.alttd.commands.SubCommand;
+import com.alttd.config.Config;
+import com.alttd.config.VillagerConfig;
+import com.alttd.objects.LoadedVillagers;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class CommandRemoveVillager extends SubCommand {
+
+    @Override
+    public boolean onCommand(CommandSender commandSender, String[] args) {
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage(getMiniMessage().parse(Config.NO_CONSOLE));
+            return true;
+        }
+
+        for(Entity entity : player.getNearbyEntities(2, 2, 2)){
+            if (!entity.getType().equals(EntityType.VILLAGER))
+                continue;
+            UUID uuid = entity.getUniqueId();
+            if (LoadedVillagers.getLoadedVillager(uuid) == null)
+                continue;
+            LoadedVillagers.removeLoadedVillager(uuid);
+            VillagerConfig.removeVillager(uuid);
+        }
+        return true;
+    }
+
+    @Override
+    public String getName() {
+        return "removevillager";
+    }
+
+    @Override
+    public List<String> getTabComplete(CommandSender commandSender, String[] args) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String getHelpMessage() {
+        return Config.REMOVE_VILLAGER_MESSAGE;
+    }
 }

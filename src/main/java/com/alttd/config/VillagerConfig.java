@@ -34,6 +34,10 @@ public class VillagerConfig extends AbstractConfig {
         });
     }
 
+    public static void removeVillager(UUID uuid) {
+        config.getConfigurationSection("").set(uuid.toString(), null);
+    }
+
     public static void addVillager(UUID uuid, VillagerType villagerType) {
         config.set(uuid.toString(), villagerType.getName());
     }
