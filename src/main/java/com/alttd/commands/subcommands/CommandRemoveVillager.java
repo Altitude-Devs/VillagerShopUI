@@ -4,6 +4,7 @@ import com.alttd.commands.SubCommand;
 import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.objects.LoadedVillagers;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -30,6 +31,8 @@ public class CommandRemoveVillager extends SubCommand {
                 continue;
             LoadedVillagers.removeLoadedVillager(uuid);
             VillagerConfig.removeVillager(uuid);
+            entity.remove();
+            player.sendMessage(getMiniMessage().parse(Config.REMOVED_VILLAGER, Template.of("uuid", uuid.toString())));
         }
         return true;
     }
