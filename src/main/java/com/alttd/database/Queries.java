@@ -1,7 +1,6 @@
 package com.alttd.database;
 
 import com.alttd.objects.EconUser;
-import com.alttd.objects.VillagerType;
 import com.alttd.util.Logger;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
@@ -20,9 +19,8 @@ public class Queries {
      *
      * @param   uuid        Uuid for the user you want to add the points to
      * @param   pointsMap   Contains all (villagerType, points) entries for user
-     * @return  success
      */
-    public static boolean updateUserPoints(UUID uuid, Object2ObjectArrayMap<String, Integer> pointsMap) {
+    public static void updateUserPoints(UUID uuid, Object2ObjectArrayMap<String, Integer> pointsMap) {
         String sql = "INSERT INTO user_points " +
                 "(uuid, villager_type, points) " +
                 "VALUES (?, ?, ?) " +
@@ -46,10 +44,9 @@ public class Queries {
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-            return (false);
+            return;
         }
         setLastUpdated(uuid);
-        return (true);
     }
 
     /**
