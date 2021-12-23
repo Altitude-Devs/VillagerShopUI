@@ -41,9 +41,9 @@ public class EconUser {
         if (Config.DEBUG)
             Logger.info("Adding % points to % for %", String.valueOf(points), villagerType, uuid.toString());
         if (pointsMap.containsKey(villagerType))
-            pointsMap.put(villagerType, points);
+            pointsMap.put(villagerType,pointsMap.get(villagerType) + points);
         else
-            pointsMap.put(villagerType, Objects.requireNonNullElse(pointsMap.get(villagerType), 0) + points);
+            pointsMap.put(villagerType, points);
     }
 
     public void syncPoints() {
