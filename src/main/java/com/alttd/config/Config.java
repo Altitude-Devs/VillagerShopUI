@@ -90,11 +90,18 @@ public final class Config extends AbstractConfig {
     public static String NOT_ENOUGH_ITEMS = "<red>You only have don't have enough <type> you need at least <amount>.</red>";
     public static String PURCHASED_ITEM = "<green>You bought <amount> <item> for <price>!</green>";
     public static String SOLD_ITEM = "<green>You sold <amount> <item> for <price>!</green>";
+
     private static void loadMessages() {
         NOT_ENOUGH_MONEY = config.getString("messages.not-enough-money", NOT_ENOUGH_MONEY);
         NOT_ENOUGH_ITEMS = config.getString("messages.not-enough-items", NOT_ENOUGH_ITEMS);
         PURCHASED_ITEM = config.getString("messages.purchased-item", PURCHASED_ITEM);
         SOLD_ITEM = config.getString("messages.sold-item", SOLD_ITEM);
+    }
+
+    public static boolean DEBUG = false;
+
+    private static void loadSettings() {
+        DEBUG = config.getBoolean("settings.debug", DEBUG);
     }
 
     private static void loadVillagerTypes() {

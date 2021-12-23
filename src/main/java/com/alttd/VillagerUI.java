@@ -57,6 +57,8 @@ public class VillagerUI extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (Config.DEBUG)
+                    Logger.info("Syncing users.");
                 EconUser.getEconUsers().forEach(econUser -> {
                     econUser.removePoints();
                     econUser.syncPoints();

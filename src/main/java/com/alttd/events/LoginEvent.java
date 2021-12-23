@@ -1,8 +1,10 @@
 package com.alttd.events;
 
 import com.alttd.VillagerUI;
+import com.alttd.config.Config;
 import com.alttd.database.Queries;
 import com.alttd.objects.EconUser;
+import com.alttd.util.Logger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -21,6 +23,9 @@ public class LoginEvent implements Listener {
                 int minutes = Queries.getMinutesSinceUpdated(uuid);
 
                 user.removePoints(minutes * 2);
+                if (Config.DEBUG)
+                    Logger.info("Loaded EconUser for % and removed % points",
+                            event.getPlayer().getName(), String.valueOf(minutes * 2));
             }
         }.runTask(VillagerUI.getInstance());
     }
