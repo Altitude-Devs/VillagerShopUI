@@ -62,7 +62,7 @@ public class VillagerUI extends JavaPlugin {
                     econUser.syncPoints();
                 });
             }
-        }.runTaskTimerAsynchronously(getInstance(), 0L, 5 * 60 * 20L);
+        }.runTaskTimerAsynchronously(getInstance(), 0L, 10 * 60 * 20L);
     }
 
     private void registerEvents() {
