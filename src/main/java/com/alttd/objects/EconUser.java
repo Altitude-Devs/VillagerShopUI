@@ -5,6 +5,7 @@ import com.alttd.config.Config;
 import com.alttd.database.Queries;
 import com.alttd.util.Logger;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import org.apache.commons.math3.analysis.function.Log;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -37,6 +38,8 @@ public class EconUser {
     }
 
     public void addPoints(String villagerType, int points) {
+        if (Config.DEBUG)
+            Logger.info("Adding % points to % for %", String.valueOf(points), villagerType, uuid.toString());
         if (pointsMap.containsKey(villagerType))
             pointsMap.put(villagerType, points);
         else

@@ -3,6 +3,7 @@ package com.alttd.GUI.windows;
 import com.alttd.GUI.GUIInventory;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
+import com.alttd.objects.EconUser;
 import com.alttd.objects.VillagerType;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
@@ -11,6 +12,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Objects;
 
 public class OpenGUI extends GUIInventory {
 
@@ -32,14 +35,14 @@ public class OpenGUI extends GUIInventory {
         }
     }
 
-    public OpenGUI(VillagerType villagerType) {
+    public OpenGUI(VillagerType villagerType, EconUser econUser) {
         super(InventoryType.HOPPER, MiniMessage.get().parse(Config.INITIAL_VILLAGER_WINDOW,
                 Template.of("trader", villagerType.getDisplayName()),
-                Template.of("percentage", "100"))); //TODO get percentage from player somehow
+                Template.of("points", String.valueOf(Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0)))));
         setItem(1, BUY, player -> new BukkitRunnable() {
             @Override
             public void run() {
-                BuyGUI buyGUI = new BuyGUI(villagerType);
+                BuyGUI buyGUI = new BuyGUI(villagerType, econUser);
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -51,7 +54,7 @@ public class OpenGUI extends GUIInventory {
         setItem(3, SELL, player -> new BukkitRunnable() {
             @Override
             public void run() {
-                SellGUI sellGUI = new SellGUI(villagerType);
+                SellGUI sellGUI = new SellGUI(villagerType, econUser);
                 new BukkitRunnable() {
                     @Override
                     public void run() {

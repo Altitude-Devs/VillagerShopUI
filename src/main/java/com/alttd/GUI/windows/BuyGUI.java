@@ -25,10 +25,10 @@ public class BuyGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.get();
 
-    public BuyGUI(VillagerType villagerType) {
+    public BuyGUI(VillagerType villagerType, EconUser econUser) {
         super(MiniMessage.get().parse(Config.BUY_WINDOW,
                 Template.of("trader", villagerType.getDisplayName()),
-                Template.of("percentage", "100")), villagerType); //TODO get percentage from player somehow
+                Template.of("points", String.valueOf(Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0)))), villagerType);
         for (ItemStack itemStack : villagerType.getBuying()) {
             Price price = Utilities.getPrice(itemStack);
             if (price == null)
@@ -47,7 +47,7 @@ public class BuyGUI extends GUIMerchant {
         int trans_pts = (int) (Math.floor(price.getPrice(amount)/ WorthConfig.POINT_MOD) * amount);
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
-        double cost = price.calculatePriceThing(oldPoints, trans_pts);
+        double cost = price.calculatePriceThing(oldPoints, trans_pts, true);
 
         if (balance < cost) {
             player.sendMessage(MiniMessage.get().parse(Config.NOT_ENOUGH_MONEY,

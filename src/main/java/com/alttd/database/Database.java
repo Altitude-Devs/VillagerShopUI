@@ -68,8 +68,7 @@ public class Database {
                     "UUID VARCHAR(36) NOT NULL, " +
                     "points int NOT NULL, " +
                     "villager_type VARCHAR(128) NOT NULL, " +
-                    "PRIMARY KEY (UUID), " +
-                    "UNIQUE KEY (villager_type)" +
+                    "PRIMARY KEY (UUID, villager_type)" +
                     ")";
             connection.prepareStatement(sql).executeUpdate();
         } catch (SQLException e) {

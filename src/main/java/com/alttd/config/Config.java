@@ -48,9 +48,9 @@ public final class Config extends AbstractConfig {
         PASSWORD = config.getString("database.password", PASSWORD);
     }
 
-    public static String INITIAL_VILLAGER_WINDOW = "<trader> price: <percentage>%";
-    public static String BUY_WINDOW = "<trader> price: <percentage>%";
-    public static String SELL_WINDOW = "<trader> price: <percentage>%";
+    public static String INITIAL_VILLAGER_WINDOW = "<trader> points: <points>";
+    public static String BUY_WINDOW = "<trader> points: <points>";
+    public static String SELL_WINDOW = "<trader> points: <points>";
 
     private static void loadUI() {
         INITIAL_VILLAGER_WINDOW = config.getString("ui.initial-window-name", INITIAL_VILLAGER_WINDOW);
@@ -90,12 +90,14 @@ public final class Config extends AbstractConfig {
     public static String NOT_ENOUGH_ITEMS = "<red>You only have don't have enough <type> you need at least <amount>.</red>";
     public static String PURCHASED_ITEM = "<green>You bought <amount> <item> for <price>!</green>";
     public static String SOLD_ITEM = "<green>You sold <amount> <item> for <price>!</green>";
+    public static String REMOVED_VILLAGER = "<green>Removed villager with uuid <uuid></green>";
 
     private static void loadMessages() {
         NOT_ENOUGH_MONEY = config.getString("messages.not-enough-money", NOT_ENOUGH_MONEY);
         NOT_ENOUGH_ITEMS = config.getString("messages.not-enough-items", NOT_ENOUGH_ITEMS);
         PURCHASED_ITEM = config.getString("messages.purchased-item", PURCHASED_ITEM);
         SOLD_ITEM = config.getString("messages.sold-item", SOLD_ITEM);
+        REMOVED_VILLAGER = config.getString("messages.removed-villager", REMOVED_VILLAGER);
     }
 
     public static boolean DEBUG = false;

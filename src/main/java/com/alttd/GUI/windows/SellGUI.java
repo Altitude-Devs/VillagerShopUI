@@ -28,10 +28,10 @@ public class SellGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.get();
 
-    public SellGUI(VillagerType villagerType) {
+    public SellGUI(VillagerType villagerType, EconUser econUser) {
         super(MiniMessage.get().parse(Config.SELL_WINDOW,
                 Template.of("trader", villagerType.getDisplayName()),
-                Template.of("percentage", "100")), villagerType); //TODO get percentage from player somehow
+                Template.of("points", String.valueOf(Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0)))), villagerType);
         for (ItemStack itemStack : villagerType.getSelling()) {
             Price price = Utilities.getPrice(itemStack);
             if (price == null)
@@ -47,11 +47,10 @@ public class SellGUI extends GUIMerchant {
     private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price) {
         PlayerInventory inventory = player.getInventory();
 
-        if (!inventory.containsAtLeast(new ItemStack(material), amount))
-        {
+        if (!inventory.containsAtLeast(new ItemStack(material), amount)) {
             player.sendMessage(miniMessage.parse(Config.NOT_ENOUGH_ITEMS,
                     Template.of("type", material.name()),
-                    Template.of("amount",String.valueOf(amount))));
+                    Template.of("amount", String.valueOf(amount))));
             return;
         }
 
@@ -59,7 +58,7 @@ public class SellGUI extends GUIMerchant {
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
         int trans_pts = (int) ((Math.floor(price.getPrice(amount) / WorthConfig.POINT_MOD) + 1) * amount);
-        double cost = price.calculatePriceThing(oldPoints, trans_pts);
+        double cost = price.calculatePriceThing(oldPoints, trans_pts, false);
 
         econ.depositPlayer(player, cost);
         econUser.addPoints(villagerType.getName(), -price.getPoints());
@@ -88,8 +87,7 @@ public class SellGUI extends GUIMerchant {
                 .forEach(itemStack -> {
                     if (ref.tmpAmount == 0)
                         return;
-                    if (itemStack.getAmount() > ref.tmpAmount)
-                    {
+                    if (itemStack.getAmount() > ref.tmpAmount) {
                         itemStack.setAmount(itemStack.getAmount() - ref.tmpAmount);
                         ref.tmpAmount = 0;
                     } else {

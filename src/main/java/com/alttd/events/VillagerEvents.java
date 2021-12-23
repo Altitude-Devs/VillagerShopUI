@@ -4,6 +4,7 @@ import com.alttd.GUI.windows.OpenGUI;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
+import com.alttd.objects.EconUser;
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -35,7 +36,7 @@ public class VillagerEvents implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                OpenGUI openGUI = new OpenGUI(loadedVillager);
+                OpenGUI openGUI = new OpenGUI(loadedVillager, EconUser.getUser(event.getPlayer().getUniqueId()));
                 new BukkitRunnable() {
                     @Override
                     public void run() {
