@@ -88,11 +88,13 @@ public class Queries {
                 "(uuid, seen) " +
                 "VALUES (?, ?) " +
                 "ON DUPLICATE KEY UPDATE seen = ?";
+        long time = new Date().getTime();
 
         try {
             PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
             preparedStatement.setString(1, uuid.toString());
-            preparedStatement.setLong(2, new Date().getTime());
+            preparedStatement.setLong(2, time);
+            preparedStatement.setLong(3, time);
             preparedStatement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,13 +110,17 @@ public class Queries {
      */
     public static int getMinutesSinceUpdated(UUID uuid) {
         String sql = "SELECT seen FROM user_seen WHERE uuid = ?";
+        long time;
 
         try {
             PreparedStatement preparedStatement = Database.connection.prepareStatement(sql);
             preparedStatement.setString(1, uuid.toString());
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            long time = resultSet.getLong("seen");
+            if (resultSet.next())
+                time = resultSet.getLong("seen");
+            else
+                return (0);
             if (time != 0)
                 return (int) TimeUnit.MILLISECONDS.toMinutes(new Date().getTime() - time);
         } catch (SQLException e) {
