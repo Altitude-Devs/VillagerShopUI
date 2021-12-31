@@ -1,19 +1,14 @@
 package com.alttd.objects;
 
 import com.alttd.util.Utilities;
-import org.apache.commons.math3.analysis.function.StepFunction;
-import org.apache.commons.math3.analysis.integration.TrapezoidIntegrator;
 
 public final class Price {
     private final double price;
     private final int points;
 
-    private static final double[] xMult = {Integer.MIN_VALUE, -4000, -2000, -500, 500, 2000, 4000};
-    private static final double[] yMultSell = {2.5, 1.75, 1.25, 1, 1.5, 2.5, 5};
-    private static final double[] yMultBuy = {5, 2.5, 1.5, 1, 1.25, 1.75, 2.5};
-
-    private static final StepFunction multiplierModelBuy = new StepFunction(xMult, yMultBuy);
-    private static final StepFunction multiplierModelSell = new StepFunction(xMult, yMultSell);
+    private static final double[] xMult = {Integer.MIN_VALUE, -4000, -2000, -500, 500, 2000, 4000, Integer.MAX_VALUE};
+    private static final double[] yMultBuy = {2.5, 1.75, 1.25, 1, 1.5, 2.5, 5};
+    private static final double[] yMultSell = {5, 2.5, 1.5, 1, 1.25, 1.75, 2.5};
 
     public Price(double price) {
         this.price = price;
@@ -28,14 +23,43 @@ public final class Price {
         return (Utilities.round(price * multiplier, 2));
     }
 
-    public double calculatePriceThing(int oldPoints, int transPts, boolean buying) {
-        // Compute numerical integration to determine price
-        TrapezoidIntegrator trapez = new TrapezoidIntegrator();
-        if (buying) {
-            return (Utilities.round(price * trapez.integrate(10, multiplierModelBuy, oldPoints, oldPoints + transPts), 2));
-        } else {
-            return (Utilities.round(price * trapez.integrate(10, multiplierModelSell, oldPoints - transPts, oldPoints), 2));
+    public double calculatePriceThing(int oldPoints, int transPts, boolean buying, int itemPts) {
+        double finalPrice = 0; //Initialize final price
+        int segment = 1; //Start segment at one
+        int high = oldPoints + transPts; //Will be the highest point value
+
+        if (oldPoints > high) //If high is not the highest point value, swap it with oldPoints so it is
+        {
+            int temp = oldPoints;
+            oldPoints = high;
+            high = temp;
         }
+
+        while (oldPoints > xMult[segment] && segment < xMult.length - 1) { //Calculate the start segment (first value smaller than lower)
+            segment++;
+        }
+
+        for (int i = segment; i < xMult.length && high > xMult[i - 1]; i++)
+            finalPrice += getPricePerInterval(oldPoints, high, i, buying, itemPts);
+        return Utilities.round(finalPrice, 2);
+    }
+
+    private double getPricePerInterval(int start_points, int end_points, int segment, boolean buying, int itemPts) {
+        double bottom = xMult[segment - 1];
+        double top = xMult[segment];
+        double priceMult = buying ? yMultBuy[segment - 1] : yMultSell[segment - 1];
+        double pricePerPoint = price / itemPts;
+
+        if (start_points <= bottom && end_points <= top)// +_---+---
+            return (end_points - bottom) * pricePerPoint * priceMult;
+        else if (start_points <= bottom && end_points >= top) // +_---_+
+            return (top - bottom) * pricePerPoint * priceMult;
+        else if (start_points >= bottom && end_points <= top) // _--+--+--_
+            return (end_points - start_points) * pricePerPoint * priceMult;
+        else if (start_points >= bottom && end_points >= top) // _--+--_+
+            return (top - start_points) * pricePerPoint * priceMult;
+        else
+            return 0;
     }
 
     public int getPoints() {
