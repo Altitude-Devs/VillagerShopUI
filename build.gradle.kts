@@ -48,5 +48,4 @@ dependencies {
     compileOnly("com.github.milkbowl:VaultAPI:1.7") {
         exclude("org.bukkit","bukkit")
     }
-    shadow("org.apache.commons:commons-math3:3.2")
 }

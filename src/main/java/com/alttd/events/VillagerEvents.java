@@ -31,7 +31,7 @@ public class VillagerEvents implements Listener {
 
         event.setCancelled(true);
         if (!event.getPlayer().hasPermission(loadedVillager.getPermission())) {
-            event.getPlayer().sendMessage(MiniMessage.get().parse(Config.NO_PERMISSION)); //TODO more specific message?
+            event.getPlayer().sendMiniMessage(Config.NO_PERMISSION, null); //TODO more specific message?
             return;
         }
         new BukkitRunnable() {

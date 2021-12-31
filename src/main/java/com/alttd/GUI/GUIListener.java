@@ -54,9 +54,11 @@ public class GUIListener implements Listener {
         if (currentItem == null)
             return;
         if (event.getClick().isShiftClick())
-            event.getWhoClicked().sendMessage(MiniMessage.get().parse(currentItem.getType().name() + ": " + event.getCurrentItem().getType().getMaxStackSize()));
+            event.getWhoClicked().sendMiniMessage(currentItem.getType().name() + ": " +
+                    event.getCurrentItem().getType().getMaxStackSize(), null);
         else
-            event.getWhoClicked().sendMessage(MiniMessage.get().parse(currentItem.getType().name() + ": " + event.getCurrentItem().getAmount()));
+            event.getWhoClicked().sendMiniMessage(currentItem.getType().name() + ": " +
+                    event.getCurrentItem().getAmount(), null);
     }
 
     @EventHandler

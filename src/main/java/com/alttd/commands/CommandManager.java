@@ -40,23 +40,25 @@ public class CommandManager implements CommandExecutor, TabExecutor {
                 new CommandCreateVillager(),
                 new CommandReload(),
                 new CommandRemoveVillager());
-        miniMessage = MiniMessage.get();
+        miniMessage = MiniMessage.miniMessage();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String cmd, @NotNull String[] args) {
         if (args.length == 0) {
-            commandSender.sendMessage(miniMessage.parse(Config.HELP_MESSAGE_WRAPPER, Template.of("commands", subCommands.stream()
+            commandSender.sendMiniMessage(Config.HELP_MESSAGE_WRAPPER, List.of(
+                    Template.template("commands", subCommands.stream()
                     .filter(subCommand -> commandSender.hasPermission(subCommand.getPermission()))
                     .map(SubCommand::getHelpMessage)
-                    .collect(Collectors.joining("\n")))));
+                    .collect(Collectors.joining("\n")))
+            ));
             return true;
         }
 
         SubCommand subCommand = getSubCommand(args[0]);
 
         if (!commandSender.hasPermission(subCommand.getPermission())) {
-            commandSender.sendMessage(miniMessage.parse(Config.NO_PERMISSION));
+            commandSender.sendMiniMessage(Config.NO_PERMISSION, null);
             return true;
         }
 

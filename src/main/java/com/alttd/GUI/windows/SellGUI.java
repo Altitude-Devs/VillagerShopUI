@@ -11,6 +11,7 @@ import com.alttd.objects.VillagerType;
 import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -22,16 +23,19 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class SellGUI extends GUIMerchant {
 
-    private static final MiniMessage miniMessage = MiniMessage.get();
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public SellGUI(VillagerType villagerType, EconUser econUser) {
-        super(MiniMessage.get().parse(Config.SELL_WINDOW,
-                Template.of("trader", villagerType.getDisplayName()),
-                Template.of("points", String.valueOf(Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0)))), villagerType);
+        super(MiniMessage.miniMessage().deserialize(Config.SELL_WINDOW, TemplateResolver.resolving(
+                Template.template("trader", villagerType.getDisplayName()),
+                Template.template("points", String.valueOf(Objects
+                        .requireNonNullElse(econUser.getPointsMap().get(villagerType.getName())
+                                , 0))))), villagerType);
         for (ItemStack itemStack : villagerType.getSelling()) {
             Price price = Utilities.getPrice(itemStack);
             if (price == null)
@@ -48,28 +52,29 @@ public class SellGUI extends GUIMerchant {
         PlayerInventory inventory = player.getInventory();
 
         if (!inventory.containsAtLeast(new ItemStack(material), amount)) {
-            player.sendMessage(miniMessage.parse(Config.NOT_ENOUGH_ITEMS,
-                    Template.of("type", material.name()),
-                    Template.of("amount", String.valueOf(amount))));
+            player.sendMiniMessage(Config.NOT_ENOUGH_ITEMS, List.of(
+                    Template.template("type", material.name()),
+                    Template.template("amount", String.valueOf(amount))));
             return;
         }
 
         Economy econ = VillagerUI.getInstance().getEconomy();
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
-        int trans_pts = (int) ((Math.floor(price.getPrice(amount) / WorthConfig.POINT_MOD) + 1) * amount);
-        double cost = price.calculatePriceThing(oldPoints, trans_pts, false);
+        int itemPts = (int) (Math.floor(price.getPrice(amount) / WorthConfig.POINT_MOD) + 1);
+        int transPts = itemPts * amount;
+        double cost = price.calculatePriceThing(oldPoints, transPts, false, itemPts);
 
         econ.depositPlayer(player, cost);
         econUser.addPoints(villagerType.getName(), -price.getPoints());
 
         removeItems(inventory, material, amount);
 
-        player.sendMessage(MiniMessage.get().parse(Config.SOLD_ITEM,
-                Template.of("amount", String.valueOf(amount)),
-                Template.of("item", StringUtils.capitalize(material.name()
+        player.sendMiniMessage(Config.SOLD_ITEM, List.of(
+                Template.template("amount", String.valueOf(amount)),
+                Template.template("item", StringUtils.capitalize(material.name()
                         .toLowerCase().replaceAll("_", " "))),
-                Template.of("price", String.valueOf(cost))));
+                Template.template("price", String.valueOf(cost))));
 
         Bukkit.getServer().getPluginManager()
                 .callEvent(new SpawnShopEvent(player, amount, cost, material,
@@ -107,7 +112,7 @@ public class SellGUI extends GUIMerchant {
 
     private ItemStack nameItem(ItemStack itemStack, double price) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.displayName(miniMessage.parse("<red>" + price * -1 + "</red>")); //TODO configurable
+        itemMeta.displayName(miniMessage.deserialize("<red>" + price * -1 + "</red>")); //TODO configurable
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }

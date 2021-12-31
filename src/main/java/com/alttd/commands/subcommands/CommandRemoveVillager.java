@@ -19,7 +19,7 @@ public class CommandRemoveVillager extends SubCommand {
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(getMiniMessage().parse(Config.NO_CONSOLE));
+            commandSender.sendMiniMessage(Config.NO_CONSOLE, null);
             return true;
         }
 
@@ -32,7 +32,8 @@ public class CommandRemoveVillager extends SubCommand {
             LoadedVillagers.removeLoadedVillager(uuid);
             VillagerConfig.removeVillager(uuid);
             entity.remove();
-            player.sendMessage(getMiniMessage().parse(Config.REMOVED_VILLAGER, Template.of("uuid", uuid.toString())));
+            player.sendMiniMessage(Config.REMOVED_VILLAGER, List.of(
+                    Template.template("uuid", uuid.toString())));
         }
         return true;
     }

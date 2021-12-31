@@ -5,13 +5,11 @@ import com.alttd.config.Config;
 import com.alttd.database.Queries;
 import com.alttd.util.Logger;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import org.apache.commons.math3.analysis.function.Log;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class EconUser {

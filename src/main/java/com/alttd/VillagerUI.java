@@ -6,6 +6,7 @@ import com.alttd.database.Database;
 import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.config.WorthConfig;
+import com.alttd.database.Queries;
 import com.alttd.events.LoginEvent;
 import com.alttd.events.LogoutEvent;
 import com.alttd.events.VillagerEvents;
@@ -47,6 +48,15 @@ public class VillagerUI extends JavaPlugin {
         Logger.info("--------------------------------------------------");
     }
 
+    @Override
+    public void onDisable() {
+        EconUser.getEconUsers().forEach(econUser -> {
+            if (Config.DEBUG)
+                Logger.info("Syncing %", econUser.getUuid().toString());
+            Queries.updateUserPoints(econUser.getUuid(), econUser.getPointsMap());
+        });
+    }
+
     private void scheduleTasks() {
         new BukkitRunnable() {
             @Override
@@ -54,6 +64,8 @@ public class VillagerUI extends JavaPlugin {
                 if (Config.DEBUG)
                     Logger.info("Syncing users.");
                 EconUser.getEconUsers().forEach(econUser -> {
+                    if (econUser == null)
+                        return;
                     if (Config.DEBUG)
                         Logger.info("Syncing %", econUser.getUuid().toString());
                     econUser.removePoints();

@@ -16,7 +16,7 @@ public class CommandReload extends SubCommand {
         Config.reload();
         VillagerConfig.reload();
         WorthConfig.reload();
-        commandSender.sendMessage(getMiniMessage().parse("<green>Reloaded VillagerShopUI config.</green>"));
+        commandSender.sendMiniMessage("<green>Reloaded VillagerShopUI config.</green>", null);
         return true;
     }
 

@@ -11,6 +11,7 @@ import com.alttd.objects.VillagerType;
 import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -19,16 +20,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.Objects;
 
 public class BuyGUI extends GUIMerchant {
 
-    private static final MiniMessage miniMessage = MiniMessage.get();
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public BuyGUI(VillagerType villagerType, EconUser econUser) {
-        super(MiniMessage.get().parse(Config.BUY_WINDOW,
-                Template.of("trader", villagerType.getDisplayName()),
-                Template.of("points", String.valueOf(Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0)))), villagerType);
+        super(miniMessage.deserialize(Config.BUY_WINDOW, TemplateResolver.resolving(
+                Template.template("trader", villagerType.getDisplayName()),
+                Template.template("points", String.valueOf(Objects.requireNonNullElse(
+                        econUser.getPointsMap().get(villagerType.getName()),
+                        0)))
+        )), villagerType);
         for (ItemStack itemStack : villagerType.getBuying()) {
             Price price = Utilities.getPrice(itemStack);
             if (price == null)
@@ -44,26 +49,27 @@ public class BuyGUI extends GUIMerchant {
     private void buy(VillagerType villagerType, Player player, Material material, int amount, Price price) {
         Economy econ = VillagerUI.getInstance().getEconomy();
         double balance = econ.getBalance(player);
-        int trans_pts = (int) (Math.floor(price.getPrice(amount)/ WorthConfig.POINT_MOD) * amount);
+        int itemPts = (int) (Math.floor(price.getPrice(amount) / WorthConfig.POINT_MOD) + 1);
+        int transPts = itemPts * amount;
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
-        double cost = price.calculatePriceThing(oldPoints, trans_pts, true);
+        double cost = price.calculatePriceThing(oldPoints, transPts, true, itemPts);
 
         if (balance < cost) {
-            player.sendMessage(MiniMessage.get().parse(Config.NOT_ENOUGH_MONEY,
-                    Template.of("money", String.valueOf(Utilities.round(balance, 2))),
-                    Template.of("price", String.valueOf(price))));
+            player.sendMiniMessage(Config.NOT_ENOUGH_MONEY, List.of(
+                    Template.template("money", String.valueOf(Utilities.round(balance, 2))),
+                    Template.template("price", String.valueOf(cost))));
             return;
         }
 
         econ.withdrawPlayer(player, cost);
-        econUser.addPoints(villagerType.getName(), trans_pts);
+        econUser.addPoints(villagerType.getName(), transPts);
         player.getInventory().addItem(new ItemStack(material, amount));
-        player.sendMessage(MiniMessage.get().parse(Config.PURCHASED_ITEM,
-                Template.of("amount", String.valueOf(amount)),
-                Template.of("item", StringUtils.capitalize(material.name()
+        player.sendMiniMessage(Config.PURCHASED_ITEM, List.of(
+                Template.template("amount", String.valueOf(amount)),
+                Template.template("item", StringUtils.capitalize(material.name()
                         .toLowerCase().replaceAll("_", " "))),
-                Template.of("price", String.valueOf(cost))));
+                Template.template("price", String.valueOf(cost))));
 
         Bukkit.getServer().getPluginManager()
                 .callEvent(new SpawnShopEvent(player, amount, cost, material,
@@ -80,7 +86,7 @@ public class BuyGUI extends GUIMerchant {
 
     private ItemStack nameItem(ItemStack itemStack, double price) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.displayName(miniMessage.parse("<green>" + price + "</green>")); //TODO configurable
+        itemMeta.displayName(miniMessage.deserialize("<green>" + price + "</green>")); //TODO configurable
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }

@@ -10,7 +10,7 @@ public abstract class SubCommand {
     private final MiniMessage miniMessage;
 
     public SubCommand() {
-        miniMessage = MiniMessage.get();
+        miniMessage = MiniMessage.miniMessage();
     }
 
     public abstract boolean onCommand(CommandSender commandSender, String[] args);
