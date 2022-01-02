@@ -88,7 +88,7 @@ public final class Config extends AbstractConfig {
 
     public static String NOT_ENOUGH_MONEY = "<red>You only have $<money>, you need at least $<price> for this purchase.</red>";
     public static String NOT_ENOUGH_ITEMS = "<red>You only have don't have enough <type> you need at least <amount>.</red>";
-    public static String PURCHASED_ITEM = "<green>You bought <amount> <item> for <price>!</green>";
+    public static String PURCHASED_ITEM = "<green>You bought <amount> <item> for <price> and got <points> points!</green>";
     public static String SOLD_ITEM = "<green>You sold <amount> <item> for <price>!</green>";
     public static String REMOVED_VILLAGER = "<green>Removed villager with uuid <uuid></green>";
 

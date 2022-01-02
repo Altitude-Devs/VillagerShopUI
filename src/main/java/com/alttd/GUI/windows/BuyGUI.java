@@ -49,7 +49,7 @@ public class BuyGUI extends GUIMerchant {
     private void buy(VillagerType villagerType, Player player, Material material, int amount, Price price) {
         Economy econ = VillagerUI.getInstance().getEconomy();
         double balance = econ.getBalance(player);
-        int itemPts = (int) (Math.floor(price.getPrice(amount) / WorthConfig.POINT_MOD) + 1);
+        int itemPts = (int) (Math.floor(price.getPrice(1) / WorthConfig.POINT_MOD) + 1);
         int transPts = itemPts * amount;
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
@@ -69,7 +69,8 @@ public class BuyGUI extends GUIMerchant {
                 Template.template("amount", String.valueOf(amount)),
                 Template.template("item", StringUtils.capitalize(material.name()
                         .toLowerCase().replaceAll("_", " "))),
-                Template.template("price", String.valueOf(cost))));
+                Template.template("price", String.valueOf(cost)),
+                Template.template("points", String.valueOf(transPts))));
 
         Bukkit.getServer().getPluginManager()
                 .callEvent(new SpawnShopEvent(player, amount, cost, material,
