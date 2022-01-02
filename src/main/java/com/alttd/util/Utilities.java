@@ -2,6 +2,7 @@ package com.alttd.util;
 
 import com.alttd.config.WorthConfig;
 import com.alttd.objects.Price;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.*;
@@ -36,14 +37,14 @@ public class Utilities {
      * @param item to calculate price for
      * @return price or int < 0 for error
      */
-    public static Price getPrice(ItemStack item) {
-        if (WorthConfig.prices.containsKey(item.getType()))
-            return (WorthConfig.prices.get(item.getType()));
-        Price price = getWorth(item, null);
+    public static Price getPrice(ItemStack item, Object2ObjectOpenHashMap<Material, Price> map) {
+        if (map.containsKey(item.getType()))
+            return (map.get(item.getType()));
+        Price price = getWorth(item, null, map);
         if (price == null)
             return (null);
-        WorthConfig.prices.put(item.getType(), price);
-        return (WorthConfig.prices.get(item.getType()));
+        map.put(item.getType(), price);
+        return (map.get(item.getType()));
     }
 
     /**
@@ -53,13 +54,13 @@ public class Utilities {
      * @param blockedMaterial Material to ignore set to null on initial call
      * @return Worth of the item as a double
      */
-    private static Price getWorth(ItemStack item, Material blockedMaterial) {
+    private static Price getWorth(ItemStack item, Material blockedMaterial, Object2ObjectOpenHashMap<Material, Price> map) {
         Price price = null;
 
         if (item == null)
             return (null);
-        if (WorthConfig.prices.containsKey(item.getType()))
-            return (WorthConfig.prices.get(item.getType()));
+        if (map.containsKey(item.getType()))
+            return (map.get(item.getType()));
 
         List<Recipe> recipes = Bukkit.getRecipesFor(item);
         for (Recipe recipe : recipes) {
@@ -70,7 +71,7 @@ public class Utilities {
                 if (!values.isEmpty() && blockedMaterial != null && values.stream()
                         .anyMatch(itemStack -> itemStack != null && itemStack.getType().equals(blockedMaterial)))
                     continue;
-                possiblePrice = getWorth(values, item.getType());
+                possiblePrice = getWorth(values, item.getType(), map);
                 if (possiblePrice == null)
                     continue;
                 if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
@@ -79,19 +80,19 @@ public class Utilities {
                 if (shapelessRecipe.getIngredientList().stream()
                         .anyMatch(itemStack -> itemStack.getType().equals(blockedMaterial)))
                     continue;
-                possiblePrice = getWorth(shapelessRecipe.getIngredientList(), item.getType());
+                possiblePrice = getWorth(shapelessRecipe.getIngredientList(), item.getType(), map);
                 if (possiblePrice == null)
                     continue;
                 if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
                     price = possiblePrice;
             } else if (recipe instanceof CampfireRecipe campfireRecipe) {
-                possiblePrice = getWorth(campfireRecipe.getInput(), item.getType());
+                possiblePrice = getWorth(campfireRecipe.getInput(), item.getType(), map);
                 if (possiblePrice == null)
                     continue;
                 if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
                     price = possiblePrice;
             } else if (recipe instanceof StonecuttingRecipe stonecuttingRecipe) {
-                possiblePrice = getWorth(stonecuttingRecipe.getInput(), item.getType());
+                possiblePrice = getWorth(stonecuttingRecipe.getInput(), item.getType(), map);
                 if (possiblePrice == null)
                     continue;
                 if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
@@ -101,7 +102,7 @@ public class Utilities {
                         !cookingRecipe.getInput().getType().isBlock() &&
                         !cookingRecipe.getInput().getType().equals(Material.CLAY_BALL)) //Needs exception for clay ball idk a better way to do it...
                         continue;
-                possiblePrice = getWorth(cookingRecipe.getInput(), item.getType());
+                possiblePrice = getWorth(cookingRecipe.getInput(), item.getType(), map);
                 if (possiblePrice == null)
                     continue;
                 if (price == null || price.getPrice(1) > possiblePrice.getPrice(1))
@@ -118,15 +119,15 @@ public class Utilities {
      * @param blockedMaterial Material to ignore set to null on initial call
      * @return Worth of ItemStack as a double
      */
-    private static Price getWorth(List<ItemStack> items, Material blockedMaterial) {
+    private static Price getWorth(List<ItemStack> items, Material blockedMaterial, Object2ObjectOpenHashMap<Material, Price> map) {
         Price price = null;
         for (ItemStack item : items) {
             if (item == null)
                 continue;
-            Price tmp = getWorth(new ItemStack(item.getType()), blockedMaterial);
+            Price tmp = getWorth(new ItemStack(item.getType()), blockedMaterial, map);
             if (tmp == null || tmp.getPrice(1) == -1)
                 return null;
-            WorthConfig.prices.put(item.getType(), tmp);
+            map.put(item.getType(), tmp);
             if (price == null)
                 price = tmp;
             else

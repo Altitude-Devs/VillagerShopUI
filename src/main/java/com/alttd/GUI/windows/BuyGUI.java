@@ -35,7 +35,7 @@ public class BuyGUI extends GUIMerchant {
                         0)))
         )), villagerType);
         for (ItemStack itemStack : villagerType.getBuying()) {
-            Price price = Utilities.getPrice(itemStack);
+            Price price = Utilities.getPrice(itemStack, WorthConfig.buy);
             if (price == null)
                 continue;
             addItem(itemStack,

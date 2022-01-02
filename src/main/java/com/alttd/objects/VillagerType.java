@@ -28,15 +28,13 @@ public class VillagerType {
     private final String displayName;
     private final Set<ItemStack> buying;
     private final Set<ItemStack> selling;
-    private final double priceModifier;
     private final Villager.Profession profession;
 
-    public VillagerType(String name, String displayName, Set<ItemStack> buying, Set<ItemStack> selling, double priceModifier, String profession) {
+    public VillagerType(String name, String displayName, Set<ItemStack> buying, Set<ItemStack> selling, String profession) {
         this.name = name;
         this.displayName = displayName;
         this.buying = buying;
         this.selling = selling;
-        this.priceModifier = priceModifier;
         this.profession = Villager.Profession.valueOf(profession.toUpperCase());
     }
 
@@ -54,10 +52,6 @@ public class VillagerType {
 
     public Set<ItemStack> getSelling() {
         return selling;
-    }
-
-    public double getPriceModifier() {
-        return priceModifier;
     }
 
     public Villager.Profession getProfession() {

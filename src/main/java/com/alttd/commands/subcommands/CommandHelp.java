@@ -22,12 +22,11 @@ public class CommandHelp extends SubCommand {
 
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
-        commandSender.sendMiniMessage(Config.HELP_MESSAGE_WRAPPER,
-                List.of(Template.template("commands", commandManager
+        commandSender.sendMiniMessage(Config.HELP_MESSAGE_WRAPPER.replaceAll("<commands>", commandManager
                         .getSubCommands().stream()
                         .filter(subCommand -> commandSender.hasPermission(subCommand.getPermission()))
                         .map(SubCommand::getHelpMessage)
-                        .collect(Collectors.joining("\n")))));
+                        .collect(Collectors.joining("\n"))), null);
         return true;
     }
 

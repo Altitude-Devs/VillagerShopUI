@@ -5,6 +5,7 @@ import com.alttd.config.Config;
 import com.alttd.database.Queries;
 import com.alttd.objects.EconUser;
 import com.alttd.util.Logger;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -15,17 +16,18 @@ import java.util.UUID;
 public class LoginEvent implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        final Player player = event.getPlayer();
         new BukkitRunnable() {
             @Override
             public void run() {
-                UUID uuid = event.getPlayer().getUniqueId();
+                UUID uuid = player.getUniqueId();
                 EconUser user = EconUser.getUser(uuid);
                 int minutes = Queries.getMinutesSinceUpdated(uuid);
 
                 user.removePoints(minutes * 2);
                 if (Config.DEBUG)
                     Logger.info("Loaded EconUser for % and removed % points",
-                            event.getPlayer().getName(), String.valueOf(minutes * 2));
+                            player.getName(), String.valueOf(minutes * 2));
             }
         }.runTask(VillagerUI.getInstance());
     }

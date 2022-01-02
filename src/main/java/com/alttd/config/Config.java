@@ -128,7 +128,6 @@ public final class Config extends AbstractConfig {
                     villagerType.getString("name"),
                     loadProducts(villagerType.getConfigurationSection("buying")),
                     loadProducts(villagerType.getConfigurationSection("selling")),
-                    villagerType.getDouble("price-modifier"),
                     villagerType.getString("profession"))
             );
         });

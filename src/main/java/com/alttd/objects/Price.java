@@ -7,8 +7,8 @@ public final class Price {
     private final int points;
 
     private static final double[] xMult = {Integer.MIN_VALUE, -4000, -2000, -500, 500, 2000, 4000, Integer.MAX_VALUE};
-    private static final double[] yMultBuy = {2.5, 1.75, 1.25, 1, 1.5, 2.5, 5};
-    private static final double[] yMultSell = {5, 2.5, 1.5, 1, 1.25, 1.75, 2.5};
+    private static final double[] yMultBuy = {0.4, 0.65, 0.85, 1, 1.5, 2.5, 5};
+    private static final double[] yMultSell = {5, 2.5, 1.5, 1, 0.85, 0.65, 0.4};
 
     public Price(double price) {
         this.price = price;

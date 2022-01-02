@@ -25,12 +25,12 @@ public class GUIListener implements Listener {
 
         GUI gui = GUI.GUIByUUID.get(player.getUniqueId());
         if (gui == null || gui.getInventory() == null) {
-            if (event.getSlotType().equals(InventoryType.SlotType.CRAFTING) && event.getRawSlot() < 2)
-                event.setCancelled(true);
-            else if (event.getRawSlot() == 2 && event.getSlotType().equals(InventoryType.SlotType.RESULT)) {
-                event.setCancelled(true);
-                onResultSlotClick(event, gui);
-            }
+//            if (event.getSlotType().equals(InventoryType.SlotType.CRAFTING) && event.getRawSlot() < 2)
+//                event.setCancelled(true);
+//            else if (event.getRawSlot() == 2 && event.getSlotType().equals(InventoryType.SlotType.RESULT)) {
+//                event.setCancelled(true);
+//                onResultSlotClick(event, gui);
+//            }
             return;
         }
         if (!gui.getInventory().equals(event.getInventory())) {

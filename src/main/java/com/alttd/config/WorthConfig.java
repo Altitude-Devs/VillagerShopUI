@@ -28,12 +28,18 @@ public class WorthConfig extends AbstractConfig {
         config.readConfig(WorthConfig.class, null);
     }
 
-    public static Object2ObjectOpenHashMap<Material, Price> prices = new Object2ObjectOpenHashMap<>();
+    public static Object2ObjectOpenHashMap<Material, Price> buy = new Object2ObjectOpenHashMap<>();
+    public static Object2ObjectOpenHashMap<Material, Price> sell = new Object2ObjectOpenHashMap<>();
     private static void loadWorth() { //TODO test after removing points
-        prices.clear();
-        ConfigurationSection worth = config.getConfigurationSection("worth");
+        loadWorth("buy", buy);
+        loadWorth("sell", sell);
+    }
+
+    private static void loadWorth(String path, Object2ObjectOpenHashMap<Material, Price> map) {
+        map.clear();
+        ConfigurationSection worth = config.getConfigurationSection(path);
         if (worth == null) {
-            Logger.severe("No worth in worth.yml! Stopping VillagerUI.");
+            Logger.severe("No ? in worth.yml! Stopping VillagerUI.", path);
             VillagerUI.getInstance().getServer().getPluginManager().disablePlugin(VillagerUI.getInstance());
             return;
         }
@@ -43,7 +49,7 @@ public class WorthConfig extends AbstractConfig {
                 Logger.severe("Null key in worth.yml?");
                 continue;
             }
-            prices.put(Material.getMaterial(key), new Price(Utilities.round(worth.getDouble(key), 2)));
+            map.put(Material.getMaterial(key), new Price(Utilities.round(worth.getDouble(key), 2)));
         }
     }
 

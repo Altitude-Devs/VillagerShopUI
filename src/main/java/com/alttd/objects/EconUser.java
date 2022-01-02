@@ -57,20 +57,27 @@ public class EconUser {
     {
         if (points == 0)
             return;
-        if (points > 0)
+        if (points > 0) {
             if (points < remove)
                 points = 0;
             else
                 points -= remove;
-        else
-        if (-points < remove)
-            points = 0;
-        else
-            points += remove;
+        } else {
+            if (-points < remove)
+                points = 0;
+            else
+                points += remove;
+        }
         pointsMap.put(villagerType, points);
         if (Config.DEBUG)
             Logger.info("Removed % points from villagerType: % for %",
-                    String.valueOf(points), villagerType, uuid.toString());
+                    String.valueOf(remove), villagerType, uuid.toString());
+    }
+
+    private void setPoints(String villagerType, int points) {
+        if (pointsMap.get(villagerType) < 0)
+            points *= -1;
+        pointsMap.put(villagerType, points);
     }
 
     public void removePoints(int remove) {
@@ -84,7 +91,8 @@ public class EconUser {
             int remove = points;
             if (remove < 0)
                 remove *= -1;
-            removePoints(villagerType, points, (int) (0.9 * remove) - 10);
+            int i = (int) (0.9 * remove) - 10;
+            setPoints(villagerType, i < 10 && i > -10 ? 0 : i);
         });
     }
 

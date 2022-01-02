@@ -37,7 +37,7 @@ public class SellGUI extends GUIMerchant {
                         .requireNonNullElse(econUser.getPointsMap().get(villagerType.getName())
                                 , 0))))), villagerType);
         for (ItemStack itemStack : villagerType.getSelling()) {
-            Price price = Utilities.getPrice(itemStack);
+            Price price = Utilities.getPrice(itemStack, WorthConfig.sell);
             if (price == null)
                 continue;
             addItem(itemStack,
