@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocatio
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("maven-publish")
 }
 
 group = "com.alttd"
@@ -14,6 +15,16 @@ apply<JavaLibraryPlugin>()
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+publishing {
+    repositories{
+        maven {
+            name = "alttd"
+            url = uri("https://repo.destro.xyz/snapshots")
+            credentials(PasswordCredentials::class)
+        }
     }
 }
 
