@@ -133,65 +133,6 @@ public final class Config extends AbstractConfig {
         });
     }
 
-    public static Int2ObjectAVLTreeMap<Range<Double>> pointsRangeMap = new Int2ObjectAVLTreeMap<>();
-    private static void loadPointRange() {
-        pointsRangeMap.clear();
-        Pattern pattern = Pattern.compile("(0|([1-9][0-9]{0,2}))(.[0-9]{1,2})?-(0|([1-9][0-9]{0,2}))(.[0-9]{1,2})?");
-
-        ConfigurationSection configurationSection = config.getConfigurationSection("points");
-        if (configurationSection == null) {
-            Logger.severe("""
-                    No point entries in config (see example). Please add them and restart the plugin.
-                    points:
-                    \t1: 0.5-1.5
-                    \t3: 1.5-2.25
-                    \t5: 2.25-0 #2.25 and higher""");
-            VillagerUI.getInstance().getServer().getPluginManager().disablePlugin(VillagerUI.getInstance());
-            return;
-        }
-        Set<String> keys = configurationSection.getKeys(false);
-        for (String key : keys) {
-            int points = Integer.parseInt(key);
-            if (points == 0) {
-                Logger.warning("Invalid point entry % in config", key);
-                continue;
-            }
-
-            String range = configurationSection.getString(key);
-            if (range == null) {
-                Logger.warning("Invalid point value for % in config", key);
-                continue;
-            }
-            Matcher matcher = pattern.matcher(range);
-            if (!matcher.matches()) {
-                Logger.warning("Invalid point value % for % in config " +
-                        "should be double-double (0-2.05)", range, key);
-                continue;
-            }
-            String[] split = range.split("-");
-            if (split.length != 2) {
-                Logger.severe("""
-                        The logic for the regex failed when loading points.
-                        key:%
-                        value:%""", key, range);
-                continue;
-            }
-            double d1 = Double.parseDouble(split[0]);
-            double d2 = Double.parseDouble(split[1]);
-            Range<Double> doubleRange;
-            if (d2 == 0 && d1 > d2)
-                doubleRange = Range.greaterThan(d1);
-            else if (d2 > d1)
-                doubleRange = Range.closed(d1, d2);
-            else {
-                Logger.warning("Invalid range d1:% to d2:%, can't be the same, d1 can't be bigger " +
-                        "than d2 unless d2 is 0 (infinite)", String.valueOf(d1), String.valueOf(d2));
-                continue;
-            }
-            pointsRangeMap.put(points, doubleRange);
-        }
-    }
-
     private static HashSet<ItemStack> loadProducts(ConfigurationSection productsSection) {
         HashSet<ItemStack> products = new HashSet<>();
         if (productsSection == null)
