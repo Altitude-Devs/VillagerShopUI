@@ -9,6 +9,7 @@ import com.alttd.config.WorthConfig;
 import com.alttd.database.Queries;
 import com.alttd.events.LoginEvent;
 import com.alttd.events.LogoutEvent;
+import com.alttd.events.VehicleEvent;
 import com.alttd.events.VillagerEvents;
 import com.alttd.objects.EconUser;
 import com.alttd.util.Logger;
@@ -80,6 +81,7 @@ public class VillagerUI extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new VillagerEvents(), this);
         getServer().getPluginManager().registerEvents(new LogoutEvent(), this);
         getServer().getPluginManager().registerEvents(new LoginEvent(), this);
+        getServer().getPluginManager().registerEvents(new VehicleEvent(), this);
     }
 
     public Economy getEconomy() {
