@@ -24,41 +24,16 @@ public class GUIListener implements Listener {
         }
 
         GUI gui = GUI.GUIByUUID.get(player.getUniqueId());
-        if (gui == null || gui.getInventory() == null) {
-//            if (event.getSlotType().equals(InventoryType.SlotType.CRAFTING) && event.getRawSlot() < 2)
-//                event.setCancelled(true);
-//            else if (event.getRawSlot() == 2 && event.getSlotType().equals(InventoryType.SlotType.RESULT)) {
-//                event.setCancelled(true);
-//                onResultSlotClick(event, gui);
-//            }
+        if (gui == null || gui.getInventory() == null)
             return;
-        }
-        if (!gui.getInventory().equals(event.getInventory())) {
+        if (!gui.getInventory().equals(event.getInventory()))
             return;
-        }
         event.setCancelled(true);
         GUIAction action = gui.getAction(event.getSlot());
 
         if (action != null){
             action.click(player);
         }
-    }
-
-    /**
-     * Handles clicking on an item in a gui result slot
-     * @param event click event
-     * @param gui gui that was clicked in
-     */
-    private void onResultSlotClick(InventoryClickEvent event, GUI gui) {
-        ItemStack currentItem = event.getCurrentItem();
-        if (currentItem == null)
-            return;
-        if (event.getClick().isShiftClick())
-            event.getWhoClicked().sendMiniMessage(currentItem.getType().name() + ": " +
-                    event.getCurrentItem().getType().getMaxStackSize(), null);
-        else
-            event.getWhoClicked().sendMiniMessage(currentItem.getType().name() + ": " +
-                    event.getCurrentItem().getAmount(), null);
     }
 
     @EventHandler
