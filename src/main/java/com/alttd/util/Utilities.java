@@ -1,6 +1,5 @@
 package com.alttd.util;
 
-import com.alttd.config.WorthConfig;
 import com.alttd.objects.Price;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.Bukkit;
@@ -19,16 +18,15 @@ public class Utilities {
      */
     public static double round(double num, int precision) {
         double scale = Math.pow(10, precision);
-        double total = (double) (Math.round(num * scale)) / scale;
 
-        scale = (int) Math.pow(10, precision + 1);
-        long tmp = (Math.round(num * scale));
+//        scale = (int) Math.pow(10, precision + 1);
+//        long tmp = (Math.round(num * scale));
+//
+//        tmp %= 10;
+//        if (tmp > 4)
+//            total += 0.01;
 
-        tmp %= 10;
-        if (tmp > 4)
-            total += 0.01;
-
-        return total;
+        return (double) (Math.round(num * scale)) / scale;
     }
 
     /**
