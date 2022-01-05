@@ -60,6 +60,10 @@ public class Utilities {
         if (map.containsKey(item.getType()))
             return (map.get(item.getType()));
 
+        if (map.containsKey(blockedMaterial))
+            blockedMaterial = null;
+
+        Material finalBlockedMaterial = blockedMaterial;
         List<Recipe> recipes = Bukkit.getRecipesFor(item);
         for (Recipe recipe : recipes) {
             Price possiblePrice;
@@ -67,7 +71,7 @@ public class Utilities {
             if (recipe instanceof ShapedRecipe shapedRecipe) {
                 List<ItemStack> values = shapedRecipe.getIngredientMap().values().stream().toList();
                 if (!values.isEmpty() && blockedMaterial != null && values.stream()
-                        .anyMatch(itemStack -> itemStack != null && itemStack.getType().equals(blockedMaterial)))
+                        .anyMatch(itemStack -> itemStack != null && itemStack.getType().equals(finalBlockedMaterial)))
                     continue;
                 possiblePrice = getWorth(values, item.getType(), map);
                 if (possiblePrice == null)
@@ -76,7 +80,7 @@ public class Utilities {
                     price = possiblePrice;
             } else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
                 if (shapelessRecipe.getIngredientList().stream()
-                        .anyMatch(itemStack -> itemStack.getType().equals(blockedMaterial)))
+                        .anyMatch(itemStack -> itemStack.getType().equals(finalBlockedMaterial)))
                     continue;
                 possiblePrice = getWorth(shapelessRecipe.getIngredientList(), item.getType(), map);
                 if (possiblePrice == null)
