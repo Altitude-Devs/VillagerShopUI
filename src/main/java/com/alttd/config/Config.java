@@ -88,13 +88,17 @@ public final class Config extends AbstractConfig {
 
     public static String NOT_ENOUGH_MONEY = "<red>You only have $<money>, you need at least $<price> for this purchase.</red>";
     public static String NOT_ENOUGH_ITEMS = "<red>You only have don't have enough <type> you need at least <amount>.</red>";
-    public static String PURCHASED_ITEM = "<green>You bought <amount> <item> for <price> and got <points> points!</green>";
-    public static String SOLD_ITEM = "<green>You sold <amount> <item> for <price>!</green>";
+    public static String NOT_ENOUGH_SPACE = "<red>You only have <space> free, you need at least <amount>.</red>";
+    public static String PURCHASED_ITEM = "<green>You bought <amount> <item> for <price> and got <points> points for a total of " +
+            "<total_points> for <villager_name>!</green>";
+    public static String SOLD_ITEM = "<green>You sold <amount> <item> for <price> and got <points> points for a total of " +
+            "<total_points> for <villager_name>!</green>";
     public static String REMOVED_VILLAGER = "<green>Removed villager with uuid <uuid></green>";
 
     private static void loadMessages() {
         NOT_ENOUGH_MONEY = config.getString("messages.not-enough-money", NOT_ENOUGH_MONEY);
         NOT_ENOUGH_ITEMS = config.getString("messages.not-enough-items", NOT_ENOUGH_ITEMS);
+        NOT_ENOUGH_SPACE = config.getString("messages.not-enough-space", NOT_ENOUGH_SPACE);
         PURCHASED_ITEM = config.getString("messages.purchased-item", PURCHASED_ITEM);
         SOLD_ITEM = config.getString("messages.sold-item", SOLD_ITEM);
         REMOVED_VILLAGER = config.getString("messages.removed-villager", REMOVED_VILLAGER);
