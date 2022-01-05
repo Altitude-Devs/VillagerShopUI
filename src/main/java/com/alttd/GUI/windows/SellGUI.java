@@ -36,7 +36,8 @@ public class SellGUI extends GUIMerchant {
                 Template.template("points", String.valueOf(Objects
                         .requireNonNullElse(econUser.getPointsMap().get(villagerType.getName())
                                 , 0))))), villagerType);
-        for (ItemStack itemStack : villagerType.getSelling()) {
+        for (ItemStack is : villagerType.getSelling()) {
+            ItemStack itemStack = is.clone();
             if (bulk)
                 itemStack.setAmount(1);
             Price price = Utilities.getPrice(itemStack, WorthConfig.sell);
@@ -84,7 +85,8 @@ public class SellGUI extends GUIMerchant {
                         .toLowerCase().replaceAll("_", " "))),
                 Template.template("price", String.valueOf(cost)),
                 Template.template("points", String.valueOf(transPts)),
-                Template.template("total_points", String.valueOf(newPoints))
+                Template.template("total_points", String.valueOf(newPoints)),
+                Template.template("villager_name", villagerType.getDisplayName())
         ));
 
         Bukkit.getServer().getPluginManager()
