@@ -30,34 +30,41 @@ public class SellGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
-    public SellGUI(VillagerType villagerType, EconUser econUser) {
+    public SellGUI(VillagerType villagerType, EconUser econUser, boolean bulk) {
         super(MiniMessage.miniMessage().deserialize(Config.SELL_WINDOW, TemplateResolver.resolving(
                 Template.template("trader", villagerType.getDisplayName()),
                 Template.template("points", String.valueOf(Objects
                         .requireNonNullElse(econUser.getPointsMap().get(villagerType.getName())
                                 , 0))))), villagerType);
         for (ItemStack itemStack : villagerType.getSelling()) {
+            if (bulk)
+                itemStack.setAmount(1);
             Price price = Utilities.getPrice(itemStack, WorthConfig.sell);
             if (price == null)
                 continue;
             addItem(itemStack,
                     getPriceItem(price.getPrice(itemStack.getAmount())),
                     null,
-                    player -> sell(villagerType, player, itemStack.getType(), itemStack.getAmount(), price)
+                    player -> sell(villagerType, player, itemStack.getType(), itemStack.getAmount(), price, bulk)
             );
         }
     }
 
-    private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price) {
+    private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price, boolean bulk) {
         PlayerInventory inventory = player.getInventory();
 
-        if (!inventory.containsAtLeast(new ItemStack(material), amount)) {
+        if (!inventory.containsAtLeast(new ItemStack(material), bulk ? 1 : amount)) {
             player.sendMiniMessage(Config.NOT_ENOUGH_ITEMS, List.of(
                     Template.template("type", material.name()),
-                    Template.template("amount", String.valueOf(amount))));
+                    Template.template("amount", String.valueOf(bulk ? 1 : amount))));
             return;
         }
 
+        if (bulk)
+            amount = Arrays.stream(inventory.getContents())
+                    .filter(Objects::nonNull)
+                    .filter(itemStack -> itemStack.getType().equals(material))
+                    .mapToInt(ItemStack::getAmount).sum();
         Economy econ = VillagerUI.getInstance().getEconomy();
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);

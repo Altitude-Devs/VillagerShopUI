@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,7 +28,7 @@ public class BuyGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
-    public BuyGUI(VillagerType villagerType, EconUser econUser) {
+    public BuyGUI(VillagerType villagerType, EconUser econUser, boolean bulk) {
         super(miniMessage.deserialize(Config.BUY_WINDOW, TemplateResolver.resolving(
                 Template.template("trader", villagerType.getDisplayName()),
                 Template.template("points", String.valueOf(Objects.requireNonNullElse(
@@ -35,6 +36,8 @@ public class BuyGUI extends GUIMerchant {
                         0)))
         )), villagerType);
         for (ItemStack itemStack : villagerType.getBuying()) {
+            if (bulk)
+                itemStack.setAmount(itemStack.getMaxStackSize());
             Price price = Utilities.getPrice(itemStack, WorthConfig.buy);
             if (price == null)
                 continue;
@@ -58,7 +61,8 @@ public class BuyGUI extends GUIMerchant {
         if (balance < cost) {
             player.sendMiniMessage(Config.NOT_ENOUGH_MONEY, List.of(
                     Template.template("money", String.valueOf(Utilities.round(balance, 2))),
-                    Template.template("price", String.valueOf(cost))));
+                    Template.template("price", String.valueOf(cost))
+            ));
             return;
         }
 

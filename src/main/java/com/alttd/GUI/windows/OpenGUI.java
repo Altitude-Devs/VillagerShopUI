@@ -18,8 +18,10 @@ import java.util.Objects;
 
 public class OpenGUI extends GUIInventory {
 
+    private static final ItemStack BULK_BUY = new ItemStack(Material.GOLD_BLOCK);
     private static final ItemStack BUY = new ItemStack(Material.GOLD_INGOT);
     private static final ItemStack SELL = new ItemStack(Material.BUCKET);
+    private static final ItemStack BULK_SELL = new ItemStack(Material.CAULDRON);
     private static final MiniMessage miniMessage;
     static {
         miniMessage = MiniMessage.miniMessage();
@@ -34,6 +36,16 @@ public class OpenGUI extends GUIInventory {
             itemMeta.displayName(miniMessage.deserialize("<green>Sell</green>"));
             SELL.setItemMeta(itemMeta);
         }
+        {
+            itemMeta = BULK_BUY.getItemMeta();
+            itemMeta.displayName(miniMessage.deserialize("<green>Bulk Buy</green>"));
+            BULK_BUY.setItemMeta(itemMeta);
+        }
+        {
+            itemMeta = BULK_SELL.getItemMeta();
+            itemMeta.displayName(miniMessage.deserialize("<green>Bulk Sell</green>"));
+            BULK_SELL.setItemMeta(itemMeta);
+        }
     }
 
     public OpenGUI(VillagerType villagerType, EconUser econUser) {
@@ -43,29 +55,57 @@ public class OpenGUI extends GUIInventory {
                             econUser.getPointsMap().get(villagerType.getName()),
                             0)))))
         );
-        setItem(1, BUY, player -> new BukkitRunnable() {
-            @Override
-            public void run() {
-                BuyGUI buyGUI = new BuyGUI(villagerType, econUser);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        buyGUI.open(player);
-                    }
-                }.runTask(VillagerUI.getInstance());
-            }
-        }.runTaskAsynchronously(VillagerUI.getInstance()));
-        setItem(3, SELL, player -> new BukkitRunnable() {
-            @Override
-            public void run() {
-                SellGUI sellGUI = new SellGUI(villagerType, econUser);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        sellGUI.open(player);
-                    }
-                }.runTask(VillagerUI.getInstance());
-            }
-        }.runTaskAsynchronously(VillagerUI.getInstance()));
+        if (!villagerType.getBuying().isEmpty()) {
+            setItem(0, BULK_BUY, player -> new BukkitRunnable() {
+                @Override
+                public void run() {
+                    BuyGUI buyGUI = new BuyGUI(villagerType, econUser, true);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            buyGUI.open(player);
+                        }
+                    }.runTask(VillagerUI.getInstance());
+                }
+            }.runTaskAsynchronously(VillagerUI.getInstance()));
+            setItem(1, BUY, player -> new BukkitRunnable() {
+                @Override
+                public void run() {
+                    BuyGUI buyGUI = new BuyGUI(villagerType, econUser, false);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            buyGUI.open(player);
+                        }
+                    }.runTask(VillagerUI.getInstance());
+                }
+            }.runTaskAsynchronously(VillagerUI.getInstance()));
+        }
+        if (!villagerType.getSelling().isEmpty()) {
+            setItem(3, SELL, player -> new BukkitRunnable() {
+                @Override
+                public void run() {
+                    SellGUI sellGUI = new SellGUI(villagerType, econUser, false);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            sellGUI.open(player);
+                        }
+                    }.runTask(VillagerUI.getInstance());
+                }
+            }.runTaskAsynchronously(VillagerUI.getInstance()));
+            setItem(4, BULK_SELL, player -> new BukkitRunnable() {
+                @Override
+                public void run() {
+                    SellGUI sellGUI = new SellGUI(villagerType, econUser, true);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            sellGUI.open(player);
+                        }
+                    }.runTask(VillagerUI.getInstance());
+                }
+            }.runTaskAsynchronously(VillagerUI.getInstance()));
+        }
     }
 }
