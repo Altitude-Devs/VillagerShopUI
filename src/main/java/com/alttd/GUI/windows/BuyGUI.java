@@ -114,7 +114,7 @@ public class BuyGUI extends GUIMerchant {
 
     private ItemStack nameItem(ItemStack itemStack, double price) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.displayName(miniMessage.deserialize("<red>" + price + "</red>")); //TODO configurable
+        itemMeta.displayName(miniMessage.deserialize("<green>" + price + "</green>")); //TODO configurable
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
