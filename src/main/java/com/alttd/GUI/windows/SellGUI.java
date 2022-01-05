@@ -77,16 +77,19 @@ public class SellGUI extends GUIMerchant {
 
         removeItems(inventory, material, amount);
 
+        int newPoints = econUser.getPointsMap().get(villagerType.getName());
         player.sendMiniMessage(Config.SOLD_ITEM, List.of(
                 Template.template("amount", String.valueOf(amount)),
                 Template.template("item", StringUtils.capitalize(material.name()
                         .toLowerCase().replaceAll("_", " "))),
                 Template.template("price", String.valueOf(cost)),
-                Template.template("points", String.valueOf(transPts))));
+                Template.template("points", String.valueOf(transPts)),
+                Template.template("total_points", String.valueOf(newPoints))
+        ));
 
         Bukkit.getServer().getPluginManager()
                 .callEvent(new SpawnShopEvent(player, amount, cost, material,
-                        oldPoints, econUser.getPointsMap().get(villagerType.getName()), false));
+                        oldPoints, newPoints, false));
     }
 
     private void removeItems(Inventory inventory, Material material, int amount) {
@@ -120,7 +123,7 @@ public class SellGUI extends GUIMerchant {
 
     private ItemStack nameItem(ItemStack itemStack, double price) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.displayName(miniMessage.deserialize("<red>" + price * -1 + "</red>")); //TODO configurable
+        itemMeta.displayName(miniMessage.deserialize("<green>" + price + "</green>")); //TODO configurable
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
