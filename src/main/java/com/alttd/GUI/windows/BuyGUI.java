@@ -66,6 +66,25 @@ public class BuyGUI extends GUIMerchant {
             return;
         }
 
+        var ref = new Object() {
+            int space = 0;
+        };
+        Arrays.stream(player.getInventory().getContents())
+                .filter(itemStack -> itemStack == null || itemStack.getType().equals(material))
+                .forEach(itemStack -> {
+                    if (itemStack == null)
+                        ref.space += material.getMaxStackSize();
+                    else
+                        ref.space += itemStack.getMaxStackSize() - itemStack.getAmount();
+                });
+        if (ref.space < amount) {
+            player.sendMiniMessage(Config.NOT_ENOUGH_SPACE, List.of(
+                    Template.template("space", String.valueOf(ref.space)),
+                    Template.template("amount", String.valueOf(amount))
+            ));
+            return;
+        }
+
         econ.withdrawPlayer(player, cost);
         econUser.addPoints(villagerType.getName(), transPts);
         player.getInventory().addItem(new ItemStack(material, amount));
