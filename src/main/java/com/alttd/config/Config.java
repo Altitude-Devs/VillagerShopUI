@@ -1,10 +1,7 @@
 package com.alttd.config;
 
-import com.alttd.VillagerUI;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Logger;
-import com.google.common.collect.Range;
-import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -12,8 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class Config extends AbstractConfig {
 
