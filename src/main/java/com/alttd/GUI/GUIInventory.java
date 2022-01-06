@@ -13,11 +13,13 @@ import java.util.HashMap;
 public abstract class GUIInventory implements GUI {
 
     protected final Inventory inventory;
-    protected final HashMap<Integer, GUIAction> actions;
+    protected final HashMap<Integer, GUIAction> tradeActions;
+    protected final HashMap<Integer, GUIAction> guiActions;
 
     public GUIInventory(InventoryType type, Component name) {
         inventory = Bukkit.createInventory(null, type, name);
-        actions = new HashMap<>();
+        tradeActions = new HashMap<>();
+        guiActions = new HashMap<>();
     }
 
     public Merchant getMerchant() {
@@ -31,7 +33,7 @@ public abstract class GUIInventory implements GUI {
     public void setItem(int slot, ItemStack stack, GUIAction action){
         inventory.setItem(slot, stack);
         if (action != null){
-            actions.put(slot, action);
+            guiActions.put(slot, action);
         }
     }
 
@@ -44,7 +46,11 @@ public abstract class GUIInventory implements GUI {
         GUIByUUID.put(player.getUniqueId(), this);
     }
 
-    public GUIAction getAction(int slot) {
-        return actions.get(slot);
+    public GUIAction getTradeAction(int slot) {
+        return tradeActions.get(slot);
+    }
+
+    public GUIAction getGuiAction(int slot) {
+        return guiActions.get(slot);
     }
 }

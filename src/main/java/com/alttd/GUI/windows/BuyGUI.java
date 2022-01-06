@@ -66,7 +66,16 @@ public class BuyGUI extends GUIMerchant {
             ));
             return;
         }
+        buy2(player, amount, cost, material, econUser, villagerType, transPts, oldPoints, price);
+//        setItem(0, new ItemStack(material), null);
+//        setItem(1, new ItemStack(Material.CANDLE), null);
+//        setItem(2, new ItemStack(Material.EMERALD_BLOCK), player1 ->
+//                buy2(player1, amount, cost, material, econUser, villagerType, transPts, oldPoints, price));
+//        player.updateInventory();
+    }
 
+    private void buy2(Player player, int amount, double cost, Material material, EconUser econUser, VillagerType villagerType, int transPts, int oldPoints, Price price) {
+        Economy econ = VillagerUI.getInstance().getEconomy();
         var ref = new Object() {
             int space = 0;
         };
@@ -95,7 +104,7 @@ public class BuyGUI extends GUIMerchant {
                 Template.template("amount", String.valueOf(amount)),
                 Template.template("item", StringUtils.capitalize(material.name()
                         .toLowerCase().replaceAll("_", " "))),
-                Template.template("price", String.valueOf(cost)),
+                Template.template("price", "-" + cost),
                 Template.template("points", String.valueOf(transPts)),
                 Template.template("total_points", String.valueOf(newPoints)),
                 Template.template("villager_name", villagerType.getDisplayName())
@@ -104,6 +113,7 @@ public class BuyGUI extends GUIMerchant {
         Bukkit.getServer().getPluginManager()
                 .callEvent(new SpawnShopEvent(player, amount, cost, material,
                         oldPoints, newPoints, true));
+//        buy(villagerType, player, material, amount, price);
     }
 
     private ItemStack getPriceItem(double price) {
@@ -116,7 +126,7 @@ public class BuyGUI extends GUIMerchant {
 
     private ItemStack nameItem(ItemStack itemStack, double price) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.displayName(miniMessage.deserialize("<green>" + price + "</green>")); //TODO configurable
+        itemMeta.displayName(miniMessage.deserialize("<red>-" + price + "</red>")); //TODO configurable
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }

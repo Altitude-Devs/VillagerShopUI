@@ -26,7 +26,7 @@ public class GUIListener implements Listener {
         if (!gui.getInventory().equals(event.getInventory()))
             return;
         event.setCancelled(true);
-        GUIAction action = gui.getAction(event.getSlot());
+        GUIAction action = gui.getGuiAction(event.getSlot());
 
         if (action != null){
             action.click(player);
@@ -46,7 +46,7 @@ public class GUIListener implements Listener {
             return;
         }
         event.setCancelled(true);
-        GUIAction action = guiMerchant.getAction(event.getIndex());
+        GUIAction action = guiMerchant.getTradeAction(event.getIndex());
 
         if (action != null){
             action.click(player);

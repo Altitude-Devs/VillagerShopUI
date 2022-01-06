@@ -12,7 +12,9 @@ public interface GUI {
 
     void open(Player player);
 
-    GUIAction getAction(int slot);
+    GUIAction getTradeAction(int slot);
+
+    GUIAction getGuiAction(int slot);
 
     Inventory getInventory();
 
