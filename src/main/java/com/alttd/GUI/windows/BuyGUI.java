@@ -27,6 +27,15 @@ import java.util.Objects;
 public class BuyGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private static final ItemStack confirm;
+
+    static {
+        ItemStack itemStack = new ItemStack(Material.EMERALD_BLOCK);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.displayName(MiniMessage.miniMessage().deserialize("<green>Confirm</green>"));
+        itemStack.setItemMeta(itemMeta);
+        confirm = itemStack;
+    }
 
     public BuyGUI(VillagerType villagerType, EconUser econUser, boolean bulk) {
         super(miniMessage.deserialize(Config.BUY_WINDOW, TemplateResolver.resolving(
@@ -66,12 +75,15 @@ public class BuyGUI extends GUIMerchant {
             ));
             return;
         }
-        buy2(player, amount, cost, material, econUser, villagerType, transPts, oldPoints, price);
-//        setItem(0, new ItemStack(material), null);
-//        setItem(1, new ItemStack(Material.CANDLE), null);
-//        setItem(2, new ItemStack(Material.EMERALD_BLOCK), player1 ->
-//                buy2(player1, amount, cost, material, econUser, villagerType, transPts, oldPoints, price));
-//        player.updateInventory();
+        ItemStack itemStack = new ItemStack(Material.CANDLE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.displayName(miniMessage.deserialize(String.valueOf(cost)));
+        itemStack.setItemMeta(itemMeta);
+        setItem(0, new ItemStack(material), null);
+        setItem(1, new ItemStack(Material.CANDLE), null);
+        setItem(2, confirm, player1 ->
+                buy2(player1, amount, cost, material, econUser, villagerType, transPts, oldPoints, price));
+        player.updateInventory();
     }
 
     private void buy2(Player player, int amount, double cost, Material material, EconUser econUser, VillagerType villagerType, int transPts, int oldPoints, Price price) {
@@ -113,7 +125,7 @@ public class BuyGUI extends GUIMerchant {
         Bukkit.getServer().getPluginManager()
                 .callEvent(new SpawnShopEvent(player, amount, cost, material,
                         oldPoints, newPoints, true));
-//        buy(villagerType, player, material, amount, price);
+        buy(villagerType, player, material, amount, price);
     }
 
     private ItemStack getPriceItem(double price) {

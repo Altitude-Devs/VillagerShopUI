@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.TradeSelectEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.MerchantInventory;
 
 public class GUIListener implements Listener {
 
@@ -47,6 +48,8 @@ public class GUIListener implements Listener {
         }
         event.setCancelled(true);
         GUIAction action = guiMerchant.getTradeAction(event.getIndex());
+
+        gui.setMerchantInventory(event.getInventory());
 
         if (action != null){
             action.click(player);

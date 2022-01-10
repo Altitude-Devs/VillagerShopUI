@@ -7,6 +7,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantInventory;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -31,7 +33,7 @@ public abstract class GUIInventory implements GUI {
     }
 
     public void setItem(int slot, ItemStack stack, GUIAction action){
-        inventory.setItem(slot, stack);
+        this.inventory.setItem(slot, stack);
         if (action != null){
             guiActions.put(slot, action);
         }
@@ -52,5 +54,10 @@ public abstract class GUIInventory implements GUI {
 
     public GUIAction getGuiAction(int slot) {
         return guiActions.get(slot);
+    }
+
+    @Override
+    public void setMerchantInventory(MerchantInventory merchantInventory) {
+
     }
 }

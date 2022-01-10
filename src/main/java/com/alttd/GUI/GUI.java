@@ -3,6 +3,7 @@ package com.alttd.GUI;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantInventory;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -19,4 +20,6 @@ public interface GUI {
     Inventory getInventory();
 
     Merchant getMerchant();
+
+    void setMerchantInventory(MerchantInventory merchantInventory);
 }

@@ -26,7 +26,7 @@ public class Utilities {
 //        if (tmp > 4)
 //            total += 0.01;
 
-        return (double) (Math.round(num * scale)) / scale;
+        return ((int) (num * scale)) / scale;
     }
 
     /**
