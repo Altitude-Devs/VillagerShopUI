@@ -106,7 +106,7 @@ public class SellGUI extends GUIMerchant {
                 Template.template("amount", String.valueOf(purchase.amount())),
                 Template.template("item", StringUtils.capitalize(purchase.material().name()
                         .toLowerCase().replaceAll("_", " "))),
-                Template.template("price", String.valueOf(purchase.price())),
+                Template.template("price", String.format("%,.2f", purchase.price())),
                 Template.template("points", String.valueOf(purchase.totalPointCost())),
                 Template.template("total_points", String.valueOf(newPoints)),
                 Template.template("villager_name", villagerType.getDisplayName())
@@ -127,7 +127,7 @@ public class SellGUI extends GUIMerchant {
         for (String entry : Config.TRANSACTION_ITEM_DESCRIPTION) {
             lore.add(miniMessage.deserialize(entry, TemplateResolver.resolving(
                     Template.template("amount", String.valueOf(purchase.amount())),
-                    Template.template("price", String.valueOf(purchase.price())),
+                    Template.template("price", String.format("%,.2f", purchase.price())),
                     Template.template("points", String.valueOf(purchase.totalPointCost()))
             )));
         }
