@@ -46,7 +46,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String cmd, @NotNull String[] args) {
         if (args.length == 0) {
-            commandSender.sendMiniMessage(Config.HELP_MESSAGE_WRAPPER.replaceAll("<config>", subCommands.stream()
+            commandSender.sendMiniMessage(Config.HELP_MESSAGE_WRAPPER.replaceAll("<commands>", subCommands.stream()
                     .filter(subCommand -> commandSender.hasPermission(subCommand.getPermission()))
                     .map(SubCommand::getHelpMessage)
                     .collect(Collectors.joining("\n"))), null);
