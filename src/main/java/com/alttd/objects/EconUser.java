@@ -91,7 +91,7 @@ public class EconUser {
             int remove = points;
             if (remove < 0)
                 remove *= -1;
-            int i = (int) (0.9 * remove) - 10;
+            int i = (int) (0.93 * remove) - 30;
             setPoints(villagerType, i < 10 && i > -10 ? 0 : i);
         });
     }

@@ -3,18 +3,17 @@ package com.alttd.GUI;
 import com.alttd.objects.VillagerType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public abstract class GUIMerchant implements GUI{
 
+    private MerchantInventory merchantInventory;
     protected final Merchant merchant;
     protected final HashMap<Integer, GUIAction> tradeActions;
     protected final HashMap<Integer, GUIAction> guiActions;
@@ -50,8 +49,7 @@ public abstract class GUIMerchant implements GUI{
     }
 
     public void setItem(int slot, @NotNull ItemStack itemStack, @Nullable GUIAction action) {
-        Inventory inventory = (Inventory) merchant;
-        inventory.setItem(slot, itemStack);
+        merchantInventory.setItem(slot, itemStack);
         if (action != null)
             guiActions.put(slot, action);
     }
@@ -71,5 +69,10 @@ public abstract class GUIMerchant implements GUI{
 
     public VillagerType getVillagerType() {
         return villagerType;
+    }
+
+    @Override
+    public void setMerchantInventory(MerchantInventory merchantInventory) {
+        this.merchantInventory = merchantInventory;
     }
 }

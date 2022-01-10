@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class Config extends AbstractConfig {
@@ -76,9 +77,18 @@ public final class Config extends AbstractConfig {
     }
 
     public static String VILLAGER_NAME = "<green><name></green>";
+    public static String CONFIRM_BUTTON = "<green>Confirm</green>";
+    public static String TRANSACTION_ITEM_NAME = "<green><item_name></green>";
+    public static List<String> TRANSACTION_ITEM_DESCRIPTION = List.of(
+            "<gold>Amount: <dark_aqua><amount></dark_aqua></gold>",
+            "<gold>Price: <dark_aqua><price></dark_aqua></gold>",
+            "<gold>Points: <dark_aqua><points></dark_aqua></gold>");
 
-    private static void loadIDKYET() {//TODO rename
-        VILLAGER_NAME = config.getString("idkyet.villager-name", VILLAGER_NAME); //TODO change path
+    private static void guiText() {
+        VILLAGER_NAME = config.getString("gui-text.villager-name", VILLAGER_NAME);
+        CONFIRM_BUTTON = config.getString("gui-text.confirm-button", CONFIRM_BUTTON);
+        TRANSACTION_ITEM_NAME = config.getString("gui-text.transaction-item-name", TRANSACTION_ITEM_NAME);
+        TRANSACTION_ITEM_DESCRIPTION = config.getStringList("gui-text.transaction-item-description", TRANSACTION_ITEM_DESCRIPTION);
     }
 
     public static String NOT_ENOUGH_MONEY = "<red>You only have $<money>, you need at least $<price> for this purchase.</red>";

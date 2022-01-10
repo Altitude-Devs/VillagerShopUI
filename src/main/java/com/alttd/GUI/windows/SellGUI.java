@@ -7,8 +7,10 @@ import com.alttd.config.WorthConfig;
 import com.alttd.events.SpawnShopEvent;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
+import com.alttd.objects.Purchase;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Utilities;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.minimessage.template.TemplateResolver;
@@ -19,9 +21,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +33,15 @@ import java.util.Objects;
 public class SellGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private static final ItemStack confirm;
+
+    static {
+        ItemStack itemStack = new ItemStack(Material.EMERALD_BLOCK);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.displayName(MiniMessage.miniMessage().deserialize(Config.CONFIRM_BUTTON));
+        itemStack.setItemMeta(itemMeta);
+        confirm = itemStack;
+    }
 
     public SellGUI(VillagerType villagerType, EconUser econUser, boolean bulk) {
         super(MiniMessage.miniMessage().deserialize(Config.SELL_WINDOW, TemplateResolver.resolving(
@@ -54,44 +67,73 @@ public class SellGUI extends GUIMerchant {
     private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price, boolean bulk) {
         PlayerInventory inventory = player.getInventory();
 
-        if (!inventory.containsAtLeast(new ItemStack(material), bulk ? 1 : amount)) {
-            player.sendMiniMessage(Config.NOT_ENOUGH_ITEMS, List.of(
-                    Template.template("type", material.name()),
-                    Template.template("amount", String.valueOf(bulk ? 1 : amount))));
-            return;
-        }
-
         if (bulk)
             amount = Arrays.stream(inventory.getContents())
                     .filter(Objects::nonNull)
                     .filter(itemStack -> itemStack.getType().equals(material))
                     .mapToInt(ItemStack::getAmount).sum();
-        Economy econ = VillagerUI.getInstance().getEconomy();
+
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
         int itemPts = (int) (Math.floor(price.getPrice(1) / WorthConfig.POINT_MOD) + 1);
         int transPts = (itemPts * amount) * -1;
         double cost = price.calculatePriceThing(oldPoints, transPts, false, itemPts);
 
-        econ.depositPlayer(player, cost);
-        econUser.addPoints(villagerType.getName(), transPts);
+        Purchase purchase = new Purchase(material, cost, itemPts, transPts, amount);
+        setItem(0, getSellItemHover(purchase), null);
+        setItem(1, confirm, player1 ->
+                sell2(player1, purchase, econUser, villagerType, oldPoints, price, bulk));
+        player.updateInventory();
+    }
 
-        removeItems(inventory, material, amount);
+    private void sell2(Player player, Purchase purchase, EconUser econUser, VillagerType villagerType, int oldPoints, Price price, boolean bulk) {
+        PlayerInventory inventory = player.getInventory();
+        if (!inventory.containsAtLeast(new ItemStack(purchase.material()), purchase.amount())) {
+            player.sendMiniMessage(Config.NOT_ENOUGH_ITEMS, List.of(
+                    Template.template("type", purchase.material().name()),
+                    Template.template("amount", String.valueOf(purchase.amount()))));
+            return;
+        }
+
+        Economy econ = VillagerUI.getInstance().getEconomy();
+        econ.depositPlayer(player, purchase.price());
+        econUser.addPoints(villagerType.getName(), purchase.totalPointCost());
+
+        removeItems(inventory, purchase.material(), purchase.amount());
 
         int newPoints = econUser.getPointsMap().get(villagerType.getName());
         player.sendMiniMessage(Config.SOLD_ITEM, List.of(
-                Template.template("amount", String.valueOf(amount)),
-                Template.template("item", StringUtils.capitalize(material.name()
+                Template.template("amount", String.valueOf(purchase.amount())),
+                Template.template("item", StringUtils.capitalize(purchase.material().name()
                         .toLowerCase().replaceAll("_", " "))),
-                Template.template("price", String.valueOf(cost)),
-                Template.template("points", String.valueOf(transPts)),
+                Template.template("price", String.valueOf(purchase.price())),
+                Template.template("points", String.valueOf(purchase.totalPointCost())),
                 Template.template("total_points", String.valueOf(newPoints)),
                 Template.template("villager_name", villagerType.getDisplayName())
         ));
 
         Bukkit.getServer().getPluginManager()
-                .callEvent(new SpawnShopEvent(player, amount, cost, material,
-                        oldPoints, newPoints, false));
+                .callEvent(new SpawnShopEvent(player, purchase, oldPoints, newPoints, false));
+        sell(villagerType, player, purchase.material(), bulk ? 1 : purchase.amount(), price, bulk);
+    }
+
+    private ItemStack getSellItemHover(Purchase purchase) {
+        ItemStack itemStack = new ItemStack(purchase.material());
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.displayName(miniMessage.deserialize(Config.TRANSACTION_ITEM_NAME, TemplateResolver.resolving(
+                Template.template("item_name", purchase.material().name())
+        )));
+        List<Component> lore = new ArrayList<>();
+        for (String entry : Config.TRANSACTION_ITEM_DESCRIPTION) {
+            lore.add(miniMessage.deserialize(entry, TemplateResolver.resolving(
+                    Template.template("amount", String.valueOf(purchase.amount())),
+                    Template.template("price", String.valueOf(purchase.price())),
+                    Template.template("points", String.valueOf(purchase.totalPointCost()))
+            )));
+        }
+        itemMeta.lore(lore);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 
     private void removeItems(Inventory inventory, Material material, int amount) {
