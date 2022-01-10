@@ -7,8 +7,10 @@ import com.alttd.config.WorthConfig;
 import com.alttd.events.SpawnShopEvent;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
+import com.alttd.objects.Purchase;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Utilities;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.minimessage.template.TemplateResolver;
@@ -20,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +35,7 @@ public class BuyGUI extends GUIMerchant {
     static {
         ItemStack itemStack = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.displayName(MiniMessage.miniMessage().deserialize("<green>Confirm</green>"));
+        itemMeta.displayName(MiniMessage.miniMessage().deserialize(Config.CONFIRM_BUTTON));
         itemStack.setItemMeta(itemMeta);
         confirm = itemStack;
     }
@@ -60,72 +63,93 @@ public class BuyGUI extends GUIMerchant {
     }
 
     private void buy(VillagerType villagerType, Player player, Material material, int amount, Price price) {
-        Economy econ = VillagerUI.getInstance().getEconomy();
-        double balance = econ.getBalance(player);
         int itemPts = (int) (Math.floor(price.getPrice(1) / WorthConfig.POINT_MOD) + 1);
         int transPts = itemPts * amount;
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
         double cost = price.calculatePriceThing(oldPoints, transPts, true, itemPts);
 
-        if (balance < cost) {
-            player.sendMiniMessage(Config.NOT_ENOUGH_MONEY, List.of(
-                    Template.template("money", String.valueOf(Utilities.round(balance, 2))),
-                    Template.template("price", String.valueOf(cost))
-            ));
-            return;
-        }
+        Purchase purchase = new Purchase(material, cost, itemPts, transPts, amount);
+
         ItemStack itemStack = new ItemStack(Material.CANDLE);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.displayName(miniMessage.deserialize(String.valueOf(cost)));
         itemStack.setItemMeta(itemMeta);
-        setItem(0, new ItemStack(material), null);
-        setItem(1, new ItemStack(Material.CANDLE), null);
-        setItem(2, confirm, player1 ->
-                buy2(player1, amount, cost, material, econUser, villagerType, transPts, oldPoints, price));
+        setItem(0, getBuyItemHover(purchase), null);
+        setItem(1, confirm, player1 ->
+                buy2(player1, purchase, econUser, villagerType, oldPoints, price));
         player.updateInventory();
     }
 
-    private void buy2(Player player, int amount, double cost, Material material, EconUser econUser, VillagerType villagerType, int transPts, int oldPoints, Price price) {
+    private void buy2(Player player, Purchase purchase, EconUser econUser, VillagerType villagerType, int oldPoints, Price price) {
         Economy econ = VillagerUI.getInstance().getEconomy();
-        var ref = new Object() {
-            int space = 0;
-        };
-        Arrays.stream(player.getInventory().getContents())
-                .filter(itemStack -> itemStack == null || itemStack.getType().equals(material))
-                .forEach(itemStack -> {
-                    if (itemStack == null)
-                        ref.space += material.getMaxStackSize();
-                    else
-                        ref.space += itemStack.getMaxStackSize() - itemStack.getAmount();
-                });
-        if (ref.space < amount) {
-            player.sendMiniMessage(Config.NOT_ENOUGH_SPACE, List.of(
-                    Template.template("space", String.valueOf(ref.space)),
-                    Template.template("amount", String.valueOf(amount))
+        double balance = econ.getBalance(player);
+
+        if (balance < purchase.price()) {
+            player.sendMiniMessage(Config.NOT_ENOUGH_MONEY, List.of(
+                    Template.template("money", String.valueOf(Utilities.round(balance, 2))),
+                    Template.template("price", String.valueOf(purchase.price()))
             ));
             return;
         }
 
-        econ.withdrawPlayer(player, cost);
-        econUser.addPoints(villagerType.getName(), transPts);
-        player.getInventory().addItem(new ItemStack(material, amount));
+        var ref = new Object() {
+            int space = 0;
+        };
+        Arrays.stream(player.getInventory().getContents())
+                .filter(itemStack -> itemStack == null || itemStack.getType().equals(purchase.material()))
+                .forEach(itemStack -> {
+                    if (itemStack == null)
+                        ref.space += purchase.material().getMaxStackSize();
+                    else
+                        ref.space += itemStack.getMaxStackSize() - itemStack.getAmount();
+                });
+        if (ref.space < purchase.amount()) {
+            player.sendMiniMessage(Config.NOT_ENOUGH_SPACE, List.of(
+                    Template.template("space", String.valueOf(ref.space)),
+                    Template.template("amount", String.valueOf(purchase.amount()))
+            ));
+            return;
+        }
+
+        econ.withdrawPlayer(player, purchase.price());
+        econUser.addPoints(villagerType.getName(), purchase.totalPointCost());
+        player.getInventory().addItem(new ItemStack(purchase.material(), purchase.amount()));
 
         int newPoints = econUser.getPointsMap().get(villagerType.getName());
         player.sendMiniMessage(Config.PURCHASED_ITEM, List.of(
-                Template.template("amount", String.valueOf(amount)),
-                Template.template("item", StringUtils.capitalize(material.name()
+                Template.template("amount", String.valueOf(purchase.amount())),
+                Template.template("item", StringUtils.capitalize(purchase.material().name()
                         .toLowerCase().replaceAll("_", " "))),
-                Template.template("price", "-" + cost),
-                Template.template("points", String.valueOf(transPts)),
+                Template.template("price", "-" + purchase.price()),
+                Template.template("points", String.valueOf(purchase.totalPointCost())),
                 Template.template("total_points", String.valueOf(newPoints)),
                 Template.template("villager_name", villagerType.getDisplayName())
         ));
 
         Bukkit.getServer().getPluginManager()
-                .callEvent(new SpawnShopEvent(player, amount, cost, material,
+                .callEvent(new SpawnShopEvent(player, purchase,
                         oldPoints, newPoints, true));
-        buy(villagerType, player, material, amount, price);
+        buy(villagerType, player, purchase.material(), purchase.amount(), price);
+    }
+
+    private ItemStack getBuyItemHover(Purchase purchase) {
+        ItemStack itemStack = new ItemStack(purchase.material());
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.displayName(miniMessage.deserialize(Config.TRANSACTION_ITEM_NAME, TemplateResolver.resolving(
+                Template.template("item_name", purchase.material().name())
+        )));
+        List<Component> lore = new ArrayList<>();
+        for (String entry : Config.TRANSACTION_ITEM_DESCRIPTION) {
+            lore.add(miniMessage.deserialize(entry, TemplateResolver.resolving(
+                    Template.template("amount", String.valueOf(purchase.amount())),
+                    Template.template("price", String.valueOf(purchase.price())),
+                    Template.template("points", String.valueOf(purchase.totalPointCost()))
+            )));
+        }
+        itemMeta.lore(lore);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 
     private ItemStack getPriceItem(double price) {

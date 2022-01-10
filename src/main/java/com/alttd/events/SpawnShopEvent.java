@@ -1,5 +1,6 @@
 package com.alttd.events;
 
+import com.alttd.objects.Purchase;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -16,12 +17,11 @@ public final class SpawnShopEvent extends Event {
     private final boolean buy;
     private static final HandlerList handlers = new HandlerList();
 
-    public SpawnShopEvent(Player player, int amount, double price, Material item,
-                          int pointsBefore, int pointsAfter, boolean buy) {
+    public SpawnShopEvent(Player player, Purchase purchase, int pointsBefore, int pointsAfter, boolean buy) {
         this.player = player;
-        this.amount = amount;
-        this.price = price;
-        this.item = item;
+        this.amount = purchase.amount();
+        this.price = purchase.price();
+        this.item = purchase.material();
         this.pointsBefore = pointsBefore;
         this.pointsAfter = pointsAfter;
         this.buy = buy;

@@ -104,6 +104,11 @@ abstract class AbstractConfig {
         return yaml.getList(path, yaml.getList(path));
     }
 
+    List<String> getStringList(String path, List<String> def) {
+        yaml.addDefault(path, def);
+        return yaml.getStringList(path);
+    }
+
     @NonNull
     <T> Map<String, T> getMap(final @NonNull String path, final @Nullable Map<String, T> def) {
         final ImmutableMap.Builder<String, T> builder = ImmutableMap.builder();
