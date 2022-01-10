@@ -7,12 +7,12 @@ import com.alttd.config.VillagerConfig;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -56,5 +56,17 @@ public class VillagerEvents implements Listener {
 
         LoadedVillagers.removeLoadedVillager(uuid);
         VillagerConfig.removeVillager(uuid);
+    }
+
+    @EventHandler
+    public void onVillagerPotioned(EntityPotionEffectEvent event) {
+        if (!(event.getEntity() instanceof Villager villager))
+            return;
+
+        VillagerType loadedVillager = LoadedVillagers.getLoadedVillager(villager.getUniqueId());
+        if (loadedVillager == null)
+            return;
+
+        event.setCancelled(true);
     }
 }
