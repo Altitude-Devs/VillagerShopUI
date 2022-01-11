@@ -1,5 +1,6 @@
 package com.alttd.objects;
 
+import com.alttd.config.WorthConfig;
 import com.alttd.util.Utilities;
 
 public final class Price {
@@ -12,7 +13,7 @@ public final class Price {
 
     public Price(double price) {
         this.price = price;
-        this.points = (int) price;
+        this.points = (int) (Math.floor(price / WorthConfig.POINT_MOD) + 1);
     }
 
     public static Price addPrice(Price one, Price two) {

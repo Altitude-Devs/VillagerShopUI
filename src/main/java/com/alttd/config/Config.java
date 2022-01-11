@@ -56,6 +56,7 @@ public final class Config extends AbstractConfig {
 
     public static String HELP_MESSAGE_WRAPPER = "<gold>VillagerShopUI help:\n<commands></gold>";
     public static String HELP_MESSAGE = "<green>Show this menu: <gold>/villagerui help</gold></green>";
+    public static String POINTS_MESSAGE = "<green>Show points: <gold>/villagerui points [villagerType]</green>";
     public static String RELOAD_MESSAGE = "<green>Reload configs: <gold>/villagerui reload</gold></green>";
     public static String CREATE_VILLAGER_MESSAGE = "<green>Create a new trading villager: <gold>/villagerui createvillager <type> <biome> <x> <y> <z> <yaw> <pitch> <world></gold></green>";
     public static String REMOVE_VILLAGER_MESSAGE = "<green>Removes all existing trading villagers in a 2 block radius: <gold>/villagerui removevillager</gold></green>";
@@ -63,6 +64,7 @@ public final class Config extends AbstractConfig {
     private static void loadHelp() {
         HELP_MESSAGE_WRAPPER = config.getString("help.help-wrapper", HELP_MESSAGE_WRAPPER);
         HELP_MESSAGE = config.getString("help.help", HELP_MESSAGE);
+        POINTS_MESSAGE = config.getString("help.points", POINTS_MESSAGE);
         RELOAD_MESSAGE = config.getString("help.reload", RELOAD_MESSAGE);
         CREATE_VILLAGER_MESSAGE = config.getString("help.create-villager", CREATE_VILLAGER_MESSAGE);
         REMOVE_VILLAGER_MESSAGE = config.getString("help.remove-villager", REMOVE_VILLAGER_MESSAGE);
@@ -99,6 +101,14 @@ public final class Config extends AbstractConfig {
     public static String SOLD_ITEM = "<green>You sold <amount> <item> for <price> and got <points> points for a total of " +
             "<total_points> for <villager_name>!</green>";
     public static String REMOVED_VILLAGER = "<green>Removed villager with uuid <uuid></green>";
+    public static String POINTS_HEADER = "<gold>Villager points for <player>: ";
+    public static String POINTS_CONTENT = "<gold><villager_type>: <dark_aqua><points></dark_aqua></gold>";
+    public static String BUY_ITEM_MESSAGE = "<green><material> can be bought at spawn at the <villager_type> villager for $<price> and <points> points per item " +
+            "at your current amount of points (<current_points>).</green>";
+    public static String NO_BUY_AT_SPAWN = "<red><material> can not be bought at spawn, try a player shop!</red>";
+    public static String SELL_ITEM_MESSAGE = "<green><material> can be sold to spawn at the <villager_type> villager for $<price> and <points> points per item " +
+            "at your current amount of points (<current_points>).</green>";
+    public static String NO_SELL_AT_SPAWN = "<red><material> can not be sold to spawn, try a player shop!</red>";
 
     private static void loadMessages() {
         NOT_ENOUGH_MONEY = config.getString("messages.not-enough-money", NOT_ENOUGH_MONEY);
@@ -107,6 +117,12 @@ public final class Config extends AbstractConfig {
         PURCHASED_ITEM = config.getString("messages.purchased-item", PURCHASED_ITEM);
         SOLD_ITEM = config.getString("messages.sold-item", SOLD_ITEM);
         REMOVED_VILLAGER = config.getString("messages.removed-villager", REMOVED_VILLAGER);
+        POINTS_HEADER = config.getString("messages.points-header", POINTS_HEADER);
+        POINTS_CONTENT = config.getString("messages.points-content", POINTS_CONTENT);
+        BUY_ITEM_MESSAGE = config.getString("messages.buy-item-message", BUY_ITEM_MESSAGE);
+        NO_BUY_AT_SPAWN = config.getString("messages.no-buy-at-spawn", NO_BUY_AT_SPAWN);
+        SELL_ITEM_MESSAGE = config.getString("messages.sell-item-message", SELL_ITEM_MESSAGE);
+        NO_SELL_AT_SPAWN = config.getString("messages.no-sell-at-spawn", NO_SELL_AT_SPAWN);
     }
 
     public static boolean DEBUG = false;

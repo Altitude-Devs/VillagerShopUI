@@ -74,7 +74,7 @@ public class SellGUI extends GUIMerchant {
                     .mapToInt(ItemStack::getAmount).sum();
 
         EconUser econUser = EconUser.getUser(player.getUniqueId());
-        int oldPoints = Objects.requireNonNullElse(econUser.getPointsMap().get(villagerType.getName()), 0);
+        int oldPoints = econUser.getPointsMap().getOrDefault(villagerType.getName(), 0);
         int itemPts = (int) (Math.floor(price.getPrice(1) / WorthConfig.POINT_MOD) + 1);
         int transPts = (itemPts * amount) * -1;
         double cost = price.calculatePriceThing(oldPoints, transPts, false, itemPts);

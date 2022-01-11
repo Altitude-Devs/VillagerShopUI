@@ -1,10 +1,7 @@
 package com.alttd.commands;
 
 import com.alttd.VillagerUI;
-import com.alttd.commands.subcommands.CommandCreateVillager;
-import com.alttd.commands.subcommands.CommandHelp;
-import com.alttd.commands.subcommands.CommandReload;
-import com.alttd.commands.subcommands.CommandRemoveVillager;
+import com.alttd.commands.subcommands.*;
 import com.alttd.config.Config;
 import com.alttd.util.Logger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -37,6 +34,9 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
         subCommands = Arrays.asList(
                 new CommandHelp(this),
+                new CommandPoints(),
+                new CommandBuy(),
+                new CommandSell(),
                 new CommandCreateVillager(),
                 new CommandReload(),
                 new CommandRemoveVillager());
@@ -77,7 +77,9 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         } else {
             SubCommand subCommand = getSubCommand(args[0]);
             if (subCommand != null && commandSender.hasPermission(subCommand.getPermission()))
-                res.addAll(subCommand.getTabComplete(commandSender, args));
+                res.addAll(subCommand.getTabComplete(commandSender, args).stream()
+                        .filter(str -> str.toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
+                        .collect(Collectors.toList()));
         }
         return res;
     }
