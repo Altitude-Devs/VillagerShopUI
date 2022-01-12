@@ -56,6 +56,7 @@ public class CommandCreateVillager extends SubCommand {
         villager.setVillagerType(type);
         villager.setProfession(villagerType.getProfession());
         villager.setRemoveWhenFarAway(false);
+        villager.setCollidable(false);
         villager.customName(getMiniMessage().deserialize(Config.VILLAGER_NAME, TemplateResolver.resolving(
                 Template.template("name", villagerType.getDisplayName())))
         );
