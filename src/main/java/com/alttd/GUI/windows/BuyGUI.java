@@ -126,7 +126,7 @@ public class BuyGUI extends GUIMerchant {
                 Template.template("amount", String.valueOf(purchase.amount())),
                 Template.template("item", StringUtils.capitalize(purchase.material().name()
                         .toLowerCase().replaceAll("_", " "))),
-                Template.template("price", "-" + String.format("%,.2f", purchase.price())),
+                Template.template("price", String.format("%,.2f", purchase.price())),
                 Template.template("points", String.valueOf(purchase.totalPointCost())),
                 Template.template("total_points", String.valueOf(newPoints)),
                 Template.template("villager_name", villagerType.getDisplayName())
