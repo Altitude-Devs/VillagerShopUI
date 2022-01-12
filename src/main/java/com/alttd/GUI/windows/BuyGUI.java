@@ -22,15 +22,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class BuyGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
     private static final ItemStack confirm;
+    private long lastClicked = 0;
 
     static {
         ItemStack itemStack = new ItemStack(Material.EMERALD_BLOCK);
@@ -82,6 +80,13 @@ public class BuyGUI extends GUIMerchant {
     }
 
     private void buy2(Player player, Purchase purchase, EconUser econUser, VillagerType villagerType, int oldPoints, Price price) {
+        long newTime = new Date().getTime();
+        if ((newTime - 120) > lastClicked)
+            lastClicked = newTime;
+        else {
+            player.sendMiniMessage(Config.CLICKING_TOO_FAST, null);
+            return;
+        }
         Economy econ = VillagerUI.getInstance().getEconomy();
         double balance = econ.getBalance(player);
 

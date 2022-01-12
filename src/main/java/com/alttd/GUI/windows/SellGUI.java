@@ -21,19 +21,17 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SellGUI extends GUIMerchant {
 
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
     private static final ItemStack confirm;
+
+    private long lastClicked = 0;
 
     static {
         ItemStack itemStack = new ItemStack(Material.EMERALD_BLOCK);
@@ -87,6 +85,13 @@ public class SellGUI extends GUIMerchant {
     }
 
     private void sell2(Player player, Purchase purchase, EconUser econUser, VillagerType villagerType, int oldPoints, Price price, boolean bulk) {
+        long newTime = new Date().getTime();
+        if ((newTime - 120) > lastClicked)
+            lastClicked = newTime;
+        else {
+            player.sendMiniMessage(Config.CLICKING_TOO_FAST, null);
+            return;
+        }
         PlayerInventory inventory = player.getInventory();
         if (!inventory.containsAtLeast(new ItemStack(purchase.material()), purchase.amount())) {
             player.sendMiniMessage(Config.NOT_ENOUGH_ITEMS, List.of(
