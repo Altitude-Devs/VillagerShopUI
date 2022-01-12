@@ -80,6 +80,6 @@ public class CommandBuy extends SubCommand {
 
     @Override
     public String getHelpMessage() {
-        return null;
+        return Config.BUY_MESSAGE;
     }
 }

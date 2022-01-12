@@ -80,6 +80,6 @@ public class CommandSell extends SubCommand {
 
     @Override
     public String getHelpMessage() {
-        return null;
+        return Config.SELL_MESSAGE;
     }
 }

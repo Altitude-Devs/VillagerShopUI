@@ -76,10 +76,12 @@ public final class Config extends AbstractConfig {
 
     public static String NO_PERMISSION = "<red>You do not have permission to do that.</red>";
     public static String NO_CONSOLE = "<red>You cannot use this command from console.</red>";
+    public static String CLICKING_TOO_FAST = "<red>You're clicking too fast.</red>";
 
     private static void loadGeneric() {
         NO_PERMISSION = config.getString("generic.no-permission", NO_PERMISSION);
         NO_CONSOLE = config.getString("generic.no-console", NO_CONSOLE);
+        CLICKING_TOO_FAST = config.getString("generic.clicking-too-fast", CLICKING_TOO_FAST);
     }
 
     public static String VILLAGER_NAME = "<green><name></green>";
