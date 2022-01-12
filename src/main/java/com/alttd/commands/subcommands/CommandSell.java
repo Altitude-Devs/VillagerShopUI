@@ -54,11 +54,11 @@ public class CommandSell extends SubCommand {
         }
         EconUser user = EconUser.getUser(player.getUniqueId());
         Integer curPoints = user.getPointsMap().getOrDefault(villagerType.getName(), 0);
-        double cost = price.calculatePriceThing(curPoints, price.getPoints(), true, price.getPoints());
+        double cost = price.calculatePriceThing(curPoints, price.getPoints(), false, price.getPoints());
         player.sendMiniMessage(Config.SELL_ITEM_MESSAGE, List.of(
                 Template.template("material", item.name()),
                 Template.template("price", String.valueOf(cost)),
-                Template.template("points", String.valueOf(-price.getPoints())),
+                Template.template("points", String.valueOf(price.getPoints())),
                 Template.template("current_points", String.valueOf(curPoints)),
                 Template.template("villager_type", villagerType.getDisplayName())
         ));
