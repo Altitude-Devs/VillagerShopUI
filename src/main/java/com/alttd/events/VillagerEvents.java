@@ -16,7 +16,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
