@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class VillagerType {
     private static final Set<VillagerType> villagerTypes = new HashSet<>();
@@ -30,7 +31,7 @@ public class VillagerType {
     private final Set<ItemStack> selling;
     private final Villager.Profession profession;
 
-    public VillagerType(String name, String displayName, Set<ItemStack> buying, Set<ItemStack> selling, String profession) {
+    public VillagerType(String name, String displayName, TreeSet<ItemStack> buying, TreeSet<ItemStack> selling, String profession) {
         this.name = name;
         this.displayName = displayName;
         this.buying = buying;

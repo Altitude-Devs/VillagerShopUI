@@ -1,5 +1,6 @@
 package com.alttd.config;
 
+import com.alttd.objects.ItemStackComparator;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Logger;
 import org.bukkit.Material;
@@ -7,9 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class Config extends AbstractConfig {
 
@@ -166,8 +165,8 @@ public final class Config extends AbstractConfig {
         });
     }
 
-    private static HashSet<ItemStack> loadProducts(ConfigurationSection productsSection) {
-        HashSet<ItemStack> products = new HashSet<>();
+    private static TreeSet<ItemStack> loadProducts(ConfigurationSection productsSection) {
+        TreeSet<ItemStack> products = new TreeSet<>(new ItemStackComparator());
         if (productsSection == null)
             return products;
 
