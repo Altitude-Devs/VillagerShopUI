@@ -108,7 +108,9 @@ public final class Config extends AbstractConfig {
             "<total_points> for <villager_name>!</green>";
     public static String REMOVED_VILLAGER = "<green>Removed villager with uuid <uuid></green>";
     public static String POINTS_HEADER = "<gold>Villager points for <player>: ";
-    public static String POINTS_CONTENT = "<gold><villager_type>: <dark_aqua><points></dark_aqua></gold>";
+    public static String POINTS_CONTENT = "<gold><villager_type>: points:<dark_aqua><points></dark_aqua> " +
+            "buy:<dark_aqua><buy_multiplier>x</dark_aqua> " +
+            "sell:<dark_aqua><sell_multiplier>x</dark_aqua></gold>";
     public static String BUY_ITEM_MESSAGE = "<green><material> can be bought at spawn at the <villager_type> villager for $<price> and <points> points per item " +
             "at your current amount of points (<current_points>).</green>";
     public static String NO_BUY_AT_SPAWN = "<red><material> can not be bought at spawn, try a player shop!</red>";

@@ -7,9 +7,9 @@ public final class Price {
     private final double price;
     private final int points;
 
-    private static final double[] xMult = {Integer.MIN_VALUE, -4000, -2000, -500, 500, 2000, 4000, Integer.MAX_VALUE};
-    private static final double[] yMultBuy = {0.6, 0.75, 0.9, 1, 1.5, 2.5, 5};
-    private static final double[] yMultSell = {0.2, 0.4, 0.7, 1, 1.25, 1.75, 2.5};
+    private static final double[] xMult = {Integer.MIN_VALUE, -6000, -4000, -2000, -500, 500, 2000, 4000, 6000, Integer.MAX_VALUE};
+    private static final double[] yMultBuy = {0.5, 0.6, 0.75, 0.9, 1, 1.5, 2.5, 5, 10};
+    private static final double[] yMultSell = {0.1, 0.2, 0.4, 0.7, 1, 1.25, 1.75, 2.5, 3};
 
     public Price(double price) {
         this.price = price;
@@ -18,6 +18,14 @@ public final class Price {
 
     public static Price addPrice(Price one, Price two) {
         return (new Price(Utilities.round(one.getPrice(1) + two.getPrice(1), 2)));
+    }
+
+    public static double getCurrentMultiplier(int points, boolean buy) {
+        for (int i = 1; i < xMult.length; i++) {
+            if (points <= xMult[i])
+                return buy ? yMultBuy[i - 1] : yMultSell[i - 1];
+        }
+        return 0;
     }
 
     public double getPrice(int multiplier) {

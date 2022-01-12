@@ -3,6 +3,7 @@ package com.alttd.commands.subcommands;
 import com.alttd.commands.SubCommand;
 import com.alttd.config.Config;
 import com.alttd.objects.EconUser;
+import com.alttd.objects.Price;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Logger;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -40,10 +41,13 @@ public class CommandPoints extends SubCommand {
                     Logger.warning("Player % has unused villager type % in their point list.", player.getName(), key);
                     return;
                 }
+                int currentPoints = pointsMap.getOrDefault(key, 0);
                 ref.message = ref.message.append(miniMessage.deserialize("\n", TemplateResolver.resolving()));
                 ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TemplateResolver.resolving(
-                            Template.template("villager_type", VillagerType.getVillagerType(key).getDisplayName()),
-                            Template.template("points", String.valueOf(pointsMap.getOrDefault(key, 0)))
+                        Template.template("villager_type", VillagerType.getVillagerType(key).getDisplayName()),
+                        Template.template("points", String.valueOf(currentPoints)),
+                        Template.template("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
+                        Template.template("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true)))
                     )));
             });
         } else if (args.length == 2){
