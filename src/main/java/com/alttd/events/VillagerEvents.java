@@ -11,9 +11,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
@@ -60,6 +63,30 @@ public class VillagerEvents implements Listener {
 
     @EventHandler
     public void onVillagerPotioned(EntityPotionEffectEvent event) {
+        if (!(event.getEntity() instanceof Villager villager))
+            return;
+
+        VillagerType loadedVillager = LoadedVillagers.getLoadedVillager(villager.getUniqueId());
+        if (loadedVillager == null)
+            return;
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onVillagerEntityDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Villager villager))
+            return;
+
+        VillagerType loadedVillager = LoadedVillagers.getLoadedVillager(villager.getUniqueId());
+        if (loadedVillager == null)
+            return;
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onVillagerBlockDamage(EntityDamageByBlockEvent event) {
         if (!(event.getEntity() instanceof Villager villager))
             return;
 
