@@ -51,14 +51,19 @@ public class CommandPoints extends SubCommand {
                     )));
             });
         } else if (args.length == 2){
+            VillagerType villagerType = VillagerType.getVillagerType(args[1].toLowerCase());
             Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
-            if (!pointsMap.containsKey(args[1])) {
-                player.sendMessage(ref.message);
+            if (villagerType == null) {
+                player.sendMiniMessage(Config.NOT_A_VILLAGER, List.of(Template.template("villager_type", args[1])));
                 return true;
             }
+            int currentPoints = pointsMap.getOrDefault(villagerType.getName(), 0);
             ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TemplateResolver.resolving(
-                    Template.template("villager_type", VillagerType.getVillagerType(args[1]).getDisplayName()),
-                    Template.template("points", String.valueOf(pointsMap.get(args[1]))))));
+                    Template.template("villager_type", villagerType.getDisplayName()),
+                    Template.template("points", String.valueOf(currentPoints)),
+                    Template.template("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
+                    Template.template("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true)))
+                )));
         } else
             player.sendMiniMessage(getHelpMessage(), null);
 
