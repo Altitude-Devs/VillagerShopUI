@@ -7,10 +7,8 @@ import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.config.WorthConfig;
 import com.alttd.database.Queries;
-import com.alttd.events.LoginEvent;
-import com.alttd.events.LogoutEvent;
-import com.alttd.events.VehicleEvent;
-import com.alttd.events.VillagerEvents;
+import com.alttd.events.*;
+import com.alttd.logging.LogInOut;
 import com.alttd.objects.EconUser;
 import com.alttd.util.Logger;
 import net.milkbowl.vault.economy.Economy;
@@ -23,6 +21,7 @@ public class VillagerUI extends JavaPlugin {
 
     public static VillagerUI instance;
     private Economy economy = null;
+    private LogInOut logInOut;
 
     public static VillagerUI getInstance() {
         return instance;
@@ -35,6 +34,7 @@ public class VillagerUI extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        logInOut = new LogInOut();
         registerEvents();
         new CommandManager();
         Config.reload();
@@ -56,6 +56,7 @@ public class VillagerUI extends JavaPlugin {
                 Logger.info("Syncing %", econUser.getUuid().toString());
             Queries.updateUserPoints(econUser.getUuid(), econUser.getPointsMap());
         });
+        logInOut.run();
     }
 
     private void scheduleTasks() {
@@ -74,6 +75,7 @@ public class VillagerUI extends JavaPlugin {
                 });
             }
         }.runTaskTimerAsynchronously(getInstance(), 0L, 10 * 60 * 20L);
+        logInOut.runTaskTimerAsynchronously(this, 20 * 60 * 5, 20 * 60 * 10);
     }
 
     private void registerEvents() {
@@ -82,6 +84,7 @@ public class VillagerUI extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new LogoutEvent(), this);
         getServer().getPluginManager().registerEvents(new LoginEvent(), this);
         getServer().getPluginManager().registerEvents(new VehicleEvent(), this);
+        getServer().getPluginManager().registerEvents(new SpawnShopListener(logInOut), this);
     }
 
     public Economy getEconomy() {

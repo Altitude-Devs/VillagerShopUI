@@ -93,7 +93,11 @@ public class SellGUI extends GUIMerchant {
             return;
         }
         PlayerInventory inventory = player.getInventory();
-        if (!inventory.containsAtLeast(new ItemStack(purchase.material()), purchase.amount())) {
+        if (Arrays.stream(inventory.getContents())
+                .filter(Objects::nonNull)
+                .filter(itemStack -> itemStack.getType().equals(purchase.material()))
+                .mapToInt(ItemStack::getAmount).sum()
+                < purchase.amount()) {
             player.sendMiniMessage(Config.NOT_ENOUGH_ITEMS, List.of(
                     Template.template("type", purchase.material().name()),
                     Template.template("amount", String.valueOf(purchase.amount()))));
