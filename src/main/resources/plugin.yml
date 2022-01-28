@@ -3,6 +3,7 @@ version: ${project.version}
 main: com.alttd.VillagerUI
 api-version: 1.17
 depend: [Vault]
+author: Teriuihi
 commands:
   villagerui:
     permission: villagerui.use
