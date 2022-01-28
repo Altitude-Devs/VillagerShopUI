@@ -3,6 +3,7 @@ package com.alttd.logging;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.util.Logger;
+import com.alttd.util.Utilities;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -16,15 +17,18 @@ import java.util.Scanner;
 
 public class LogInOut extends BukkitRunnable {
 
-    private HashMap<String, Double> map;
+    private final HashMap<String, Double> map;
     private int day;
     private File file;
 
     public LogInOut() {
+        createLogsDir();
         day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
         file = new File(getPath());
         if (file.exists())
             map = loadFile(file);
+        else
+            map = new HashMap<>();
     }
 
     public void log(String material, double cost) {
@@ -58,10 +62,6 @@ public class LogInOut extends BukkitRunnable {
         if (this.isCancelled())
             return;
         int new_day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-        if (!file.canRead() || !file.canWrite()) {
-            Logger.warning("Unable to log money used due to incorrect file permissions");
-            return;
-        }
         if (!file.exists()) {
             boolean success = false;
             try {
@@ -75,12 +75,13 @@ public class LogInOut extends BukkitRunnable {
             }
         }
         try {
-            FileWriter fileWriter = new FileWriter(file.getPath(), false);
+            FileWriter fileWriter = new FileWriter(file, false);
             String text = getText();
             if (text != null)
                 fileWriter.write(text);
             else if (Config.DEBUG)
                 Logger.info("Didn't write to used money log as map was empty");
+            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -94,8 +95,14 @@ public class LogInOut extends BukkitRunnable {
     private String getText() {
         StringBuilder stringBuilder = new StringBuilder();
         for (String key : map.keySet())
-            stringBuilder.append(key).append(map.get(key)).append("\n");
+            stringBuilder.append(key).append(": ").append(Utilities.round(map.get(key), 2)).append("\n");
         return stringBuilder.length() > 2 ? stringBuilder.substring(0, stringBuilder.length() - 1) : null;
+    }
+
+    private void createLogsDir() {
+        File file = new File(VillagerUI.getInstance().getDataFolder() + File.separator + "logs");
+        if (!file.exists()) if (!file.mkdir())
+            Logger.warning("Unable to create logs folder");
     }
 
     private String getPath() {
