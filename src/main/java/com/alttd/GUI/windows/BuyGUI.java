@@ -61,7 +61,7 @@ public class BuyGUI extends GUIMerchant {
     }
 
     private void buy(VillagerType villagerType, Player player, Material material, int amount, Price price) {
-        int itemPts = (int) (Math.floor(price.getPrice(1) / WorthConfig.POINT_MOD) + 1);
+        int itemPts = price.getPoints();
         int transPts = itemPts * amount;
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = econUser.getPointsMap().getOrDefault(villagerType.getName(), 0);

@@ -2,22 +2,29 @@ package com.alttd.objects;
 
 import com.alttd.config.WorthConfig;
 import com.alttd.util.Utilities;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public final class Price {
     private final double price;
     private final int points;
 
-    private static final double[] xMult = {Integer.MIN_VALUE, -6000, -4000, -2000, -500, 500, 2000, 4000, 6000, Integer.MAX_VALUE};
-    private static final double[] yMultBuy = {0.5, 0.67, 0.8, 0.9, 1, 1.5, 2.5, 5, 10};
-    private static final double[] yMultSell = {0.1, 0.2, 0.4, 0.67, 1, 1.1, 1.25, 1.5, 2};
+    private static final double[] xMult = {Integer.MIN_VALUE, -10000, -6000, -4000, -2000, -500, 500, 2000, 4000, 6000, 10000, Integer.MAX_VALUE};
+    private static final double[] yMultBuy = {0.5, 0.5, 0.67, 0.8, 0.9, 1, 1.5, 2.5, 5, 10, 100};
+    private static final double[] yMultSell = {0.01, 0.1, 0.2, 0.4, 0.67, 1, 1.1, 1.25, 1.5, 2, 2};
 
-    public Price(double price) {
+    public Price(double price, Material material) {
         this.price = price;
-        this.points = (int) (Math.floor(price / WorthConfig.POINT_MOD) + 1);
+        switch (material) {
+            case NETHER_STAR -> {
+                this.points = (int) (this.price / 2);
+            }
+            default -> this.points = (int) (Math.floor(price / WorthConfig.POINT_MOD) + 1);
+        }
     }
 
-    public static Price addPrice(Price one, Price two) {
-        return (new Price(Utilities.round(one.getPrice(1) + two.getPrice(1), 2)));
+    public static Price addPrice(Price one, Price two, Material material) {
+        return (new Price(Utilities.round(one.getPrice(1) + two.getPrice(1), 2), material));
     }
 
     public static double getCurrentMultiplier(int points, boolean buy) {

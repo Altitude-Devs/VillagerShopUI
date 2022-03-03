@@ -133,7 +133,7 @@ public class Utilities {
             if (price == null)
                 price = tmp;
             else
-                price = Price.addPrice(price, tmp);
+                price = Price.addPrice(price, tmp, item.getType());
         }
         return (price);
     }

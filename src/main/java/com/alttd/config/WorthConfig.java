@@ -49,7 +49,8 @@ public class WorthConfig extends AbstractConfig {
                 Logger.severe("Null key in worth.yml?");
                 continue;
             }
-            map.put(Material.getMaterial(key), new Price(Utilities.round(worth.getDouble(key), 2)));
+            Material material = Material.getMaterial(key);
+            map.put(material, new Price(Utilities.round(worth.getDouble(key), 2), material));
         }
     }
 
