@@ -1,19 +1,17 @@
 package com.alttd.commands.subcommands;
 
-import com.alttd.VillagerUI;
 import com.alttd.commands.SubCommand;
 import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Utilities;
-import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -57,8 +55,8 @@ public class CommandCreateVillager extends SubCommand {
         villager.setProfession(villagerType.getProfession());
         villager.setRemoveWhenFarAway(false);
         villager.setCollidable(false);
-        villager.customName(getMiniMessage().deserialize(Config.VILLAGER_NAME, TemplateResolver.resolving(
-                Template.template("name", villagerType.getDisplayName())))
+        villager.customName(getMiniMessage().deserialize(Config.VILLAGER_NAME, TagResolver.resolver(
+                Placeholder.unparsed("name", villagerType.getDisplayName())))
         );
         villager.setCustomNameVisible(true);
         villager.setAI(false);

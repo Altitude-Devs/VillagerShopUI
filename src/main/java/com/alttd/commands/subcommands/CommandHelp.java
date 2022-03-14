@@ -3,8 +3,6 @@ package com.alttd.commands.subcommands;
 import com.alttd.commands.CommandManager;
 import com.alttd.commands.SubCommand;
 import com.alttd.config.Config;
-import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;

@@ -8,7 +8,8 @@ import com.alttd.objects.Price;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Logger;
 import com.alttd.util.Utilities;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -43,7 +44,7 @@ public class CommandSell extends SubCommand {
                         .anyMatch(material -> material.equals(item)))
                 .findFirst();
         if (optionalVillagerType.isEmpty()) {
-            player.sendMiniMessage(Config.NO_SELL_AT_SPAWN, List.of(Template.template("material", item.name())));
+            player.sendMiniMessage(Config.NO_SELL_AT_SPAWN, TagResolver.resolver(Placeholder.unparsed("material", item.name())));
             return true;
         }
         VillagerType villagerType = optionalVillagerType.get();
@@ -55,12 +56,12 @@ public class CommandSell extends SubCommand {
         EconUser user = EconUser.getUser(player.getUniqueId());
         Integer curPoints = user.getPointsMap().getOrDefault(villagerType.getName(), 0);
         double cost = price.calculatePriceThing(curPoints, price.getPoints(), false, price.getPoints());
-        player.sendMiniMessage(Config.SELL_ITEM_MESSAGE, List.of(
-                Template.template("material", item.name()),
-                Template.template("price", String.valueOf(cost)),
-                Template.template("points", String.valueOf(price.getPoints())),
-                Template.template("current_points", String.valueOf(curPoints)),
-                Template.template("villager_type", villagerType.getDisplayName())
+        player.sendMiniMessage(Config.SELL_ITEM_MESSAGE, TagResolver.resolver(
+                Placeholder.unparsed("material", item.name()),
+                Placeholder.unparsed("price", String.valueOf(cost)),
+                Placeholder.unparsed("points", String.valueOf(price.getPoints())),
+                Placeholder.unparsed("current_points", String.valueOf(curPoints)),
+                Placeholder.unparsed("villager_type", villagerType.getDisplayName())
         ));
         return true;
     }
