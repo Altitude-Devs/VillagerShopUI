@@ -47,7 +47,7 @@ public class CommandPoints extends SubCommand {
                         Placeholder.unparsed("villager_type", VillagerType.getVillagerType(key).getDisplayName()),
                         Placeholder.unparsed("points", String.valueOf(currentPoints)),
                         Placeholder.unparsed("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
-                        Placeholder.unparsed("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true)))
+                        Placeholder.unparsed("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, false)))
                     )));
             });
         } else if (args.length == 2){
@@ -62,7 +62,7 @@ public class CommandPoints extends SubCommand {
                     Placeholder.unparsed("villager_type", villagerType.getDisplayName()),
                     Placeholder.unparsed("points", String.valueOf(currentPoints)),
                     Placeholder.unparsed("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
-                    Placeholder.unparsed("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true)))
+                    Placeholder.unparsed("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, false)))
                 )));
         } else
             player.sendMiniMessage(getHelpMessage(), null);
