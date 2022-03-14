@@ -47,7 +47,7 @@ public class CommandPoints extends SubCommand {
                         Template.template("villager_type", VillagerType.getVillagerType(key).getDisplayName()),
                         Template.template("points", String.valueOf(currentPoints)),
                         Template.template("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
-                        Template.template("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true)))
+                        Template.template("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, false)))
                     )));
             });
         } else if (args.length == 2){
