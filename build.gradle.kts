@@ -61,7 +61,7 @@ tasks {
 }
 
 dependencies {
-    compileOnly("com.alttd:Galaxy-API:1.18.1-R0.1-SNAPSHOT")
+    compileOnly("com.alttd:Galaxy-API:1.18.2-R0.1-SNAPSHOT")
     compileOnly("com.github.milkbowl:VaultAPI:1.7") {
         exclude("org.bukkit","bukkit")
     }
