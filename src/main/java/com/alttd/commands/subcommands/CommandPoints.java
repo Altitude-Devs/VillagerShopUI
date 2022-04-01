@@ -42,6 +42,7 @@ public class CommandPoints extends SubCommand {
                     return;
                 }
                 int currentPoints = pointsMap.getOrDefault(key, 0);
+                if(currentPoints == 0) return;
                 ref.message = ref.message.append(miniMessage.deserialize("\n", TagResolver.resolver()));
                 ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TagResolver.resolver(
                         Placeholder.unparsed("villager_type", VillagerType.getVillagerType(key).getDisplayName()),
