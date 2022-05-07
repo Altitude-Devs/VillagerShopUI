@@ -5,6 +5,7 @@ import com.alttd.commands.subcommands.*;
 import com.alttd.config.Config;
 import com.alttd.util.Logger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.command.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

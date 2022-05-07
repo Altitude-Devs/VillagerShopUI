@@ -12,8 +12,8 @@ import com.alttd.objects.VillagerType;
 import com.alttd.util.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -42,9 +42,9 @@ public class SellGUI extends GUIMerchant {
     }
 
     public SellGUI(VillagerType villagerType, EconUser econUser, boolean bulk) {
-        super(MiniMessage.miniMessage().deserialize(Config.SELL_WINDOW, TagResolver.resolver(
-                Placeholder.unparsed("trader", villagerType.getDisplayName()),
-                Placeholder.unparsed("points", String.valueOf(Objects
+        super(MiniMessage.miniMessage().deserialize(Config.SELL_WINDOW, TemplateResolver.resolving(
+                Template.template("trader", villagerType.getDisplayName()),
+                Template.template("points", String.valueOf(Objects
                         .requireNonNullElse(econUser.getPointsMap().get(villagerType.getName())
                                 , 0))))), villagerType);
         for (ItemStack is : villagerType.getSelling()) {
@@ -100,9 +100,9 @@ public class SellGUI extends GUIMerchant {
                 .filter(itemStack -> itemStack.getType().equals(purchase.material()))
                 .mapToInt(ItemStack::getAmount).sum()
                 < purchase.amount()) {
-            player.sendMiniMessage(Config.NOT_ENOUGH_ITEMS, TagResolver.resolver(
-                    Placeholder.unparsed("type", purchase.material().name()),
-                    Placeholder.unparsed("amount", String.valueOf(purchase.amount()))));
+            player.sendMiniMessage(Config.NOT_ENOUGH_ITEMS, List.of(
+                    Template.template("type", purchase.material().name()),
+                    Template.template("amount", String.valueOf(purchase.amount()))));
             return;
         }
 
@@ -113,14 +113,14 @@ public class SellGUI extends GUIMerchant {
         removeItems(inventory, purchase.material(), purchase.amount());
 
         int newPoints = econUser.getPointsMap().get(villagerType.getName());
-        player.sendMiniMessage(Config.SOLD_ITEM, TagResolver.resolver(
-                Placeholder.unparsed("amount", String.valueOf(purchase.amount())),
-                Placeholder.unparsed("item", StringUtils.capitalize(purchase.material().name()
+        player.sendMiniMessage(Config.SOLD_ITEM, List.of(
+                Template.template("amount", String.valueOf(purchase.amount())),
+                Template.template("item", StringUtils.capitalize(purchase.material().name()
                         .toLowerCase().replaceAll("_", " "))),
-                Placeholder.unparsed("price", String.format("%,.2f", purchase.price())),
-                Placeholder.unparsed("points", String.valueOf(-purchase.totalPointCost())),
-                Placeholder.unparsed("total_points", String.valueOf(newPoints)),
-                Placeholder.unparsed("villager_name", villagerType.getDisplayName())
+                Template.template("price", String.format("%,.2f", purchase.price())),
+                Template.template("points", String.valueOf(-purchase.totalPointCost())),
+                Template.template("total_points", String.valueOf(newPoints)),
+                Template.template("villager_name", villagerType.getDisplayName())
         ));
 
         Bukkit.getServer().getPluginManager()
@@ -131,15 +131,15 @@ public class SellGUI extends GUIMerchant {
     private ItemStack getSellItemHover(Purchase purchase) {
         ItemStack itemStack = new ItemStack(purchase.material());
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.displayName(miniMessage.deserialize(Config.TRANSACTION_ITEM_NAME, TagResolver.resolver(
-                Placeholder.unparsed("item_name", purchase.material().name())
+        itemMeta.displayName(miniMessage.deserialize(Config.TRANSACTION_ITEM_NAME, TemplateResolver.resolving(
+                Template.template("item_name", purchase.material().name())
         )));
         List<Component> lore = new ArrayList<>();
         for (String entry : Config.TRANSACTION_ITEM_DESCRIPTION) {
-            lore.add(miniMessage.deserialize(entry, TagResolver.resolver(
-                    Placeholder.unparsed("amount", String.valueOf(purchase.amount())),
-                    Placeholder.unparsed("price", String.format("%,.2f", purchase.price())),
-                    Placeholder.unparsed("points", String.valueOf(purchase.totalPointCost()))
+            lore.add(miniMessage.deserialize(entry, TemplateResolver.resolving(
+                    Template.template("amount", String.valueOf(purchase.amount())),
+                    Template.template("price", String.format("%,.2f", purchase.price())),
+                    Template.template("points", String.valueOf(purchase.totalPointCost()))
             )));
         }
         itemMeta.lore(lore);
