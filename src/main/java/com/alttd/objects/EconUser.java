@@ -5,12 +5,13 @@ import com.alttd.config.Config;
 import com.alttd.database.Queries;
 import com.alttd.util.Logger;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class EconUser {
 
@@ -96,11 +97,20 @@ public class EconUser {
         });
     }
 
+    private static HashMap<UUID, Long> tempFix = new HashMap<>();
+
     public static EconUser getUser(UUID uuid) {
         EconUser user = users.get(uuid);
         if (user == null) {
+            if (new Date(tempFix.getOrDefault(uuid, 0L)).after(new Date(new Date().getTime() - TimeUnit.SECONDS.toMillis(15))))
+            {
+                Objects.requireNonNull(Bukkit.getServer().getPlayer(uuid)).sendMiniMessage("<red>Syncing econ data, please wait up to 15 seconds</red>", null);
+                return (null);
+            }
             user = Queries.getEconUser(uuid);
             EconUser.users.put(uuid, user);
+            int minutes = Queries.getMinutesSinceUpdated(uuid);
+            users.get(uuid).removePoints(minutes * 2);
         }
         return (user);
     }

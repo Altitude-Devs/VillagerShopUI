@@ -64,6 +64,8 @@ public class BuyGUI extends GUIMerchant {
         int itemPts = price.getPoints();
         int transPts = itemPts * amount;
         EconUser econUser = EconUser.getUser(player.getUniqueId());
+        if (econUser == null)
+            return;
         int oldPoints = econUser.getPointsMap().getOrDefault(villagerType.getName(), 0);
         double cost = price.calculatePriceThing(oldPoints, transPts, true, itemPts);
 

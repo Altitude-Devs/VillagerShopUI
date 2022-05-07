@@ -17,8 +17,12 @@ public class LogoutEvent implements Listener {
 
         if (Config.DEBUG)
             Logger.info("Syncing %", event.getPlayer().getName());
-        EconUser.getUser(uuid).syncPoints();
-        EconUser.removeUser(uuid);
+        EconUser user = EconUser.getUser(uuid);
+        if (user != null)
+        {
+            user.syncPoints();
+            EconUser.removeUser(uuid);
+        }
         GUI.GUIByUUID.remove(uuid);
     }
 }

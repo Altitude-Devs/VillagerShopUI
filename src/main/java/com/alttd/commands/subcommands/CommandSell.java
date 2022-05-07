@@ -54,6 +54,8 @@ public class CommandSell extends SubCommand {
             return true;
         }
         EconUser user = EconUser.getUser(player.getUniqueId());
+        if (user == null)
+            return true;
         Integer curPoints = user.getPointsMap().getOrDefault(villagerType.getName(), 0);
         double cost = price.calculatePriceThing(curPoints, price.getPoints(), false, price.getPoints());
         player.sendMiniMessage(Config.SELL_ITEM_MESSAGE, TagResolver.resolver(

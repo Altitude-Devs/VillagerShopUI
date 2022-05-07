@@ -39,7 +39,10 @@ public class VillagerEvents implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                OpenGUI openGUI = new OpenGUI(loadedVillager, EconUser.getUser(event.getPlayer().getUniqueId()));
+                EconUser user = EconUser.getUser(event.getPlayer().getUniqueId());
+                if (user == null)
+                    return;
+                OpenGUI openGUI = new OpenGUI(loadedVillager, user);
                 new BukkitRunnable() {
                     @Override
                     public void run() {

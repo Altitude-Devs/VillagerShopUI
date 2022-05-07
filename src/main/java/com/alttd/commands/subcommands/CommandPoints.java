@@ -29,6 +29,8 @@ public class CommandPoints extends SubCommand {
             return true;
         }
         EconUser user = EconUser.getUser(player.getUniqueId());
+        if (user == null)
+            return true;
         var ref = new Object() {
             Component message = miniMessage.deserialize(Config.POINTS_HEADER, TemplateResolver.resolving(
                     Template.template("player", player.getName())));
