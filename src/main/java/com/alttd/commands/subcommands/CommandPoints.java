@@ -52,19 +52,33 @@ public class CommandPoints extends SubCommand {
                     )));
             });
         } else if (args.length == 2){
-            VillagerType villagerType = VillagerType.getVillagerType(args[1].toLowerCase());
-            Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
-            if (villagerType == null) {
-                player.sendMiniMessage(Config.NOT_A_VILLAGER, TagResolver.resolver(Placeholder.unparsed("villager_type", args[1])));
-                return true;
-            }
-            int currentPoints = pointsMap.getOrDefault(villagerType.getName(), 0);
-            ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TagResolver.resolver(
-                    Placeholder.unparsed("villager_type", villagerType.getDisplayName()),
-                    Placeholder.unparsed("points", String.valueOf(currentPoints)),
-                    Placeholder.unparsed("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
-                    Placeholder.unparsed("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, false)))
+
+            if(args[1].equals("all")){
+                for(VillagerType villagerType : VillagerType.getVillagerTypes()){
+                    Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
+                    int currentPoints = pointsMap.getOrDefault(villagerType.getName(), 0);
+                    ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TagResolver.resolver(
+                            Placeholder.unparsed("villager_type", villagerType.getDisplayName()),
+                            Placeholder.unparsed("points", String.valueOf(currentPoints)),
+                            Placeholder.unparsed("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
+                            Placeholder.unparsed("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, false)))
+                    )));
+                }
+            } else {
+                VillagerType villagerType = VillagerType.getVillagerType(args[1].toLowerCase());
+                Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
+                if (villagerType == null) {
+                    player.sendMiniMessage(Config.NOT_A_VILLAGER, TagResolver.resolver(Placeholder.unparsed("villager_type", args[1])));
+                    return true;
+                }
+                int currentPoints = pointsMap.getOrDefault(villagerType.getName(), 0);
+                ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TagResolver.resolver(
+                        Placeholder.unparsed("villager_type", villagerType.getDisplayName()),
+                        Placeholder.unparsed("points", String.valueOf(currentPoints)),
+                        Placeholder.unparsed("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
+                        Placeholder.unparsed("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, false)))
                 )));
+            }
         } else
             player.sendMiniMessage(getHelpMessage(), null);
 
@@ -84,6 +98,7 @@ public class CommandPoints extends SubCommand {
             res.addAll(VillagerType.getVillagerTypes().stream()
                     .map(VillagerType::getName)
                     .collect(Collectors.toList()));
+        res.add("all");
         return res;
     }
 
