@@ -99,8 +99,13 @@ public class EconUser {
 
     private static HashMap<UUID, Long> tempFix = new HashMap<>();
 
+    public static void dumbfix(UUID uuid)
+    {
+        tempFix.put(uuid, new Date().getTime());
+    }
+
     public static EconUser getUser(UUID uuid) {
-        EconUser user = users.get(uuid);
+        EconUser user = users.getOrDefault(uuid, null);
         if (user == null) {
             if (new Date(tempFix.getOrDefault(uuid, 0L)).after(new Date(new Date().getTime() - TimeUnit.SECONDS.toMillis(15))))
             {

@@ -17,18 +17,19 @@ public class LoginEvent implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                UUID uuid = player.getUniqueId();
-                EconUser user = EconUser.getUser(uuid);
-                int minutes = Queries.getMinutesSinceUpdated(uuid);
-
-                user.removePoints(minutes * 2);
-                if (Config.DEBUG)
-                    Logger.info("Loaded EconUser for % and removed % points",
-                            player.getName(), String.valueOf(minutes * 2));
-            }
-        }.runTask(VillagerUI.getInstance());
+        EconUser.dumbfix(player.getUniqueId());
+//        new BukkitRunnable() {
+//            @Override
+//            public void run() {
+//                UUID uuid = player.getUniqueId();
+//                EconUser user = EconUser.getUser(uuid);
+//                int minutes = Queries.getMinutesSinceUpdated(uuid);
+//
+//                user.removePoints(minutes * 2);
+//                if (Config.DEBUG)
+//                    Logger.info("Loaded EconUser for % and removed % points",
+//                            player.getName(), String.valueOf(minutes * 2));
+//            }
+//        }.runTask(VillagerUI.getInstance());
     }
 }
