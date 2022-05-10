@@ -118,6 +118,7 @@ public final class Config extends AbstractConfig {
     public static String NO_SELL_AT_SPAWN = "<red><material> can not be sold to spawn, try a player shop!</red>";
     public static String NOT_A_VILLAGER = "<red><villager_type> is not a valid villager type.</red>";
     public static String LOADING_ECON_DATA = "<red>Loading your economy data, please wait...</red>";
+    public static String NO_VILLAGER_POINTS = "<red>You don't have any villager points.</red>";
 
     private static void loadMessages() {
         NOT_ENOUGH_MONEY = config.getString("messages.not-enough-money", NOT_ENOUGH_MONEY);
@@ -134,6 +135,7 @@ public final class Config extends AbstractConfig {
         NO_SELL_AT_SPAWN = config.getString("messages.no-sell-at-spawn", NO_SELL_AT_SPAWN);
         NOT_A_VILLAGER = config.getString("messages.not-a-villager", NOT_A_VILLAGER);
         LOADING_ECON_DATA = config.getString("messages.loading-econ-data", LOADING_ECON_DATA);
+        NO_VILLAGER_POINTS = config.getString("messages.no-villager-points", NO_VILLAGER_POINTS);
     }
 
     public static boolean DEBUG = false;

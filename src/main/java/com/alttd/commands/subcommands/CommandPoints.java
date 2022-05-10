@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class CommandPoints extends SubCommand {
@@ -38,6 +39,9 @@ public class CommandPoints extends SubCommand {
                     Placeholder.unparsed("player", player.getName())));
         };
         if (args.length == 1) {
+
+            AtomicBoolean allPointsAreZero = new AtomicBoolean(true);
+
             Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
             pointsMap.keySet().forEach(key -> {
                 VillagerType villagerType = VillagerType.getVillagerType(key);
@@ -46,21 +50,26 @@ public class CommandPoints extends SubCommand {
                     return;
                 }
                 int currentPoints = pointsMap.getOrDefault(key, 0);
-                if(currentPoints == 0) return;
+                if (currentPoints == 0) return;
+                allPointsAreZero.set(false);
                 ref.message = ref.message.append(miniMessage.deserialize("\n", TagResolver.resolver()));
                 ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TagResolver.resolver(
                         Placeholder.unparsed("villager_type", VillagerType.getVillagerType(key).getDisplayName()),
                         Placeholder.unparsed("points", String.valueOf(currentPoints)),
                         Placeholder.unparsed("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
-                        Placeholder.unparsed("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, false)))
-                    )));
+                        Placeholder.unparsed("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, false))))));
             });
-        } else if (args.length == 2){
+            if (allPointsAreZero.get()) {
+                ref.message = miniMessage.deserialize(Config.NO_VILLAGER_POINTS);
+            }
+        } else if (args.length == 2) {
 
-            if(args[1].equals("all")){
-                for(VillagerType villagerType : VillagerType.getVillagerTypes()){
+            if (args[1].equals("all")) {
+                for (VillagerType villagerType : VillagerType.getVillagerTypes()) {
+
                     Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
                     int currentPoints = pointsMap.getOrDefault(villagerType.getName(), 0);
+                    ref.message = ref.message.append(miniMessage.deserialize("\n", TagResolver.resolver()));
                     ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TagResolver.resolver(
                             Placeholder.unparsed("villager_type", villagerType.getDisplayName()),
                             Placeholder.unparsed("points", String.valueOf(currentPoints)),
