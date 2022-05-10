@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class CommandPoints extends SubCommand {
@@ -36,6 +37,9 @@ public class CommandPoints extends SubCommand {
                     Template.template("player", player.getName())));
         };
         if (args.length == 1) {
+
+            AtomicBoolean allPointsAreZero = new AtomicBoolean(true);
+
             Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
             pointsMap.keySet().forEach(key -> {
                 VillagerType villagerType = VillagerType.getVillagerType(key);
@@ -44,7 +48,8 @@ public class CommandPoints extends SubCommand {
                     return;
                 }
                 int currentPoints = pointsMap.getOrDefault(key, 0);
-                if(currentPoints == 0) return;
+                if (currentPoints == 0) return;
+                allPointsAreZero.set(false);
                 ref.message = ref.message.append(miniMessage.deserialize("\n", TemplateResolver.resolving()));
                 ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TemplateResolver.resolving(
                         Template.template("villager_type", VillagerType.getVillagerType(key).getDisplayName()),
@@ -52,20 +57,42 @@ public class CommandPoints extends SubCommand {
                         Template.template("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
                         Template.template("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))))));
             });
-        } else if (args.length == 2){
-            VillagerType villagerType = VillagerType.getVillagerType(args[1].toLowerCase());
-            Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
-            if (villagerType == null) {
-                player.sendMiniMessage(Config.NOT_A_VILLAGER, List.of(Template.template("villager_type", args[1])));
-                return true;
+            if (allPointsAreZero.get()) {
+                ref.message = miniMessage.deserialize(Config.NO_VILLAGER_POINTS);
             }
-            int currentPoints = pointsMap.getOrDefault(villagerType.getName(), 0);
-            ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TemplateResolver.resolving(
-                    Template.template("villager_type", villagerType.getDisplayName()),
-                    Template.template("points", String.valueOf(currentPoints)),
-                    Template.template("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
-                    Template.template("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true)))
+        } else if (args.length == 2) {
+
+            if (args[1].equals("all")) {
+                for (VillagerType villagerType : VillagerType.getVillagerTypes()) {
+
+                    Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
+                    int currentPoints = pointsMap.getOrDefault(villagerType.getName(), 0);
+                    ref.message = ref.message.append(miniMessage.deserialize("\n", TemplateResolver.resolving()));
+                    ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TemplateResolver.resolving(
+                            Template.template("villager_type", villagerType.getDisplayName()),
+                            Template.template("points", String.valueOf(currentPoints)),
+                            Template.template("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
+                            Template.template("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true)))
+                    )));
+
+                }
+            } else {
+
+                VillagerType villagerType = VillagerType.getVillagerType(args[1].toLowerCase());
+                Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
+                if (villagerType == null) {
+                    player.sendMiniMessage(Config.NOT_A_VILLAGER, List.of(Template.template("villager_type", args[1])));
+                    return true;
+                }
+                int currentPoints = pointsMap.getOrDefault(villagerType.getName(), 0);
+                ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TemplateResolver.resolving(
+                        Template.template("villager_type", villagerType.getDisplayName()),
+                        Template.template("points", String.valueOf(currentPoints)),
+                        Template.template("buy_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true))),
+                        Template.template("sell_multiplier", String.valueOf(Price.getCurrentMultiplier(currentPoints, true)))
                 )));
+
+            }
         } else
             player.sendMiniMessage(getHelpMessage(), null);
 
@@ -85,6 +112,7 @@ public class CommandPoints extends SubCommand {
             res.addAll(VillagerType.getVillagerTypes().stream()
                     .map(VillagerType::getName)
                     .collect(Collectors.toList()));
+        res.add("all");
         return res;
     }
 

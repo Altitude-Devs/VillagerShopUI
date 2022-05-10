@@ -117,6 +117,7 @@ public final class Config extends AbstractConfig {
             "at your current amount of points (<current_points>).</green>";
     public static String NO_SELL_AT_SPAWN = "<red><material> can not be sold to spawn, try a player shop!</red>";
     public static String NOT_A_VILLAGER = "<red><villager_type> is not a valid villager type.</red>";
+    public static String NO_VILLAGER_POINTS = "<red>You don't have any villager points.</red>";
 
     private static void loadMessages() {
         NOT_ENOUGH_MONEY = config.getString("messages.not-enough-money", NOT_ENOUGH_MONEY);
