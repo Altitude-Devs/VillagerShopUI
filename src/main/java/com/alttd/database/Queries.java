@@ -74,7 +74,7 @@ public class Queries {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return (null);
+        return (new EconUser(uuid, new Object2ObjectArrayMap<>()));
     }
 
     /**

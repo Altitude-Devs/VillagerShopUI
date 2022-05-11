@@ -7,7 +7,10 @@ import com.alttd.config.VillagerConfig;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
+import com.alttd.util.Utilities;
+import jdk.jshell.execution.Util;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,19 +34,25 @@ public class VillagerEvents implements Listener {
         if (loadedVillager == null)
             return;
 
+        Player player = event.getPlayer();
         event.setCancelled(true);
-        if (!event.getPlayer().hasPermission(loadedVillager.getPermission())) {
-            event.getPlayer().sendMiniMessage(Config.NO_PERMISSION, null); //TODO more specific message?
+        if (!player.hasPermission(loadedVillager.getPermission())) {
+            player.sendMiniMessage(Config.NO_PERMISSION, null); //TODO more specific message?
+            return;
+        }
+        EconUser user = EconUser.getUser(player.getUniqueId());
+        if (user == null) {
+            Utilities.econSyncingMessage(player);
             return;
         }
         new BukkitRunnable() {
             @Override
             public void run() {
-                OpenGUI openGUI = new OpenGUI(loadedVillager, EconUser.getUser(event.getPlayer().getUniqueId()));
+                OpenGUI openGUI = new OpenGUI(loadedVillager, user);
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        openGUI.open(event.getPlayer());
+                        openGUI.open(player);
                     }
                 }.runTask(VillagerUI.getInstance());
             }

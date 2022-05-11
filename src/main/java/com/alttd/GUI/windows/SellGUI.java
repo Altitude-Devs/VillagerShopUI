@@ -63,15 +63,19 @@ public class SellGUI extends GUIMerchant {
     }
 
     private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price, boolean bulk) {
-        PlayerInventory inventory = player.getInventory();
+        EconUser econUser = EconUser.getUser(player.getUniqueId());
+        if (econUser == null) {
+            Utilities.econSyncingMessage(player);
+            return;
+        }
 
+        PlayerInventory inventory = player.getInventory();
         if (bulk)
             amount = Arrays.stream(inventory.getContents())
                     .filter(Objects::nonNull)
                     .filter(itemStack -> itemStack.getType().equals(material))
                     .mapToInt(ItemStack::getAmount).sum();
 
-        EconUser econUser = EconUser.getUser(player.getUniqueId());
         int oldPoints = econUser.getPointsMap().getOrDefault(villagerType.getName(), 0);
         int itemPts = price.getPoints();
         int transPts = (itemPts * amount) * -1;

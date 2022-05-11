@@ -17,6 +17,7 @@ public class LoginEvent implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
+        //TODO lock user
         new BukkitRunnable() {
             @Override
             public void run() {

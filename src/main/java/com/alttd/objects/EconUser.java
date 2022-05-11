@@ -4,13 +4,16 @@ import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.database.Queries;
 import com.alttd.util.Logger;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.io.ByteArrayOutputStream;
+import java.util.*;
 
 public class EconUser {
 
@@ -96,13 +99,46 @@ public class EconUser {
         });
     }
 
+    //Can return null
     public static EconUser getUser(UUID uuid) {
-        EconUser user = users.get(uuid);
-        if (user == null) {
-            user = Queries.getEconUser(uuid);
-            EconUser.users.put(uuid, user);
-        }
-        return (user);
+        return (users.get(uuid));
+    }
+
+    private static HashSet<UUID> queriedUsers = new HashSet<>();
+    public static void tryLoadUser(UUID uuid) {
+        if (queriedUsers.contains(uuid) && !users.containsKey(uuid))
+            return;
+        queriedUsers.add(uuid);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                out.writeUTF("try-lock");
+                out.writeUTF(uuid.toString());
+                Bukkit.getServer().sendPluginMessage(VillagerUI.getInstance(),
+                        "VillagerUI:player-data",
+                        out.toByteArray());
+            }
+        }.runTaskAsynchronously(VillagerUI.getInstance());
+    }
+
+    //Might need to be locked down better?
+    public static void loadUser(UUID uuid) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                EconUser user = Queries.getEconUser(uuid);
+
+                int minutes = Queries.getMinutesSinceUpdated(uuid);
+                user.removePoints(minutes * 2);
+                if (Config.DEBUG)
+                    Logger.info("Loaded EconUser for % and removed % points",
+                            uuid.toString(), String.valueOf(minutes * 2));
+
+                EconUser.users.put(uuid, user);
+                queriedUsers.remove(uuid);
+            }
+        }.runTaskAsynchronously(VillagerUI.getInstance());
     }
 
     public static void removeUser(UUID uuid) {

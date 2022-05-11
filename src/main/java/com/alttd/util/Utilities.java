@@ -4,6 +4,7 @@ import com.alttd.objects.Price;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.*;
 
 import java.util.List;
@@ -136,5 +137,10 @@ public class Utilities {
                 price = Price.addPrice(price, tmp, item.getType());
         }
         return (price);
+    }
+
+    public static void econSyncingMessage(Player player)
+    {
+        player.sendMiniMessage("<red>Syncing econ data...</red>", null);
     }
 }
