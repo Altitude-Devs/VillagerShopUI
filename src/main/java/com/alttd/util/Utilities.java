@@ -138,9 +138,4 @@ public class Utilities {
         }
         return (price);
     }
-
-    public static void econSyncingMessage(Player player)
-    {
-        player.sendMiniMessage("<red>Syncing econ data...</red>", null);
-    }
 }

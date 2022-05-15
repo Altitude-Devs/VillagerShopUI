@@ -29,9 +29,13 @@ public class CommandPoints extends SubCommand {
             return true;
         }
         EconUser user = EconUser.getUser(player.getUniqueId());
+        if (user == null) {
+            player.sendMiniMessage(Config.LOADING_ECON_DATA, null);
+            return true;
+        }
         var ref = new Object() {
-            Component message = miniMessage.deserialize(Config.POINTS_HEADER, TemplateResolver.resolving(
-                    Template.template("player", player.getName())));
+            Component message = miniMessage.deserialize(Config.POINTS_HEADER, TagResolver.resolver(
+                    Placeholder.unparsed("player", player.getName())));
         };
         if (args.length == 1) {
             Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();

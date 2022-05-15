@@ -37,6 +37,11 @@ public class CommandBuy extends SubCommand {
             player.sendMiniMessage(getHelpMessage(), null);
             return true;
         }
+        EconUser user = EconUser.getUser(player.getUniqueId());
+        if (user == null) {
+            player.sendMiniMessage(Config.LOADING_ECON_DATA, null);
+            return true;
+        }
         Material item = Material.valueOf(args[1].toUpperCase());
         Optional<VillagerType> optionalVillagerType = VillagerType.getVillagerTypes().stream()
                 .filter(villagerType -> villagerType.getBuying().stream()
@@ -53,7 +58,6 @@ public class CommandBuy extends SubCommand {
             Logger.warning("Price was null despite being impossible to be null");
             return true;
         }
-        EconUser user = EconUser.getUser(player.getUniqueId());
         Integer curPoints = user.getPointsMap().getOrDefault(villagerType.getName(), 0);
         double cost = price.calculatePriceThing(curPoints, price.getPoints(), true, price.getPoints());
         player.sendMiniMessage(Config.BUY_ITEM_MESSAGE, TagResolver.resolver(

@@ -44,8 +44,13 @@ public class VillagerUI extends JavaPlugin {
             return;
         Database.getDatabase().init();
         scheduleTasks();
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "VillagerUI:player-data");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "VillagerUI:player-data", new PluginMessageListener());
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "villagerui:player-data");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "villagerui:player-data", new PluginMessageListener());
+        if (Config.DEBUG) {
+            Logger.info("Incoming: %\nOutgoing: %",
+                    getServer().getMessenger().getIncomingChannels().toString(),
+                    getServer().getMessenger().getOutgoingChannels().toString());
+        }
         Logger.info("--------------------------------------------------");
         Logger.info("Villager UI started");
         Logger.info("--------------------------------------------------");

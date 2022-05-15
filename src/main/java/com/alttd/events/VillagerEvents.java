@@ -42,7 +42,7 @@ public class VillagerEvents implements Listener {
         }
         EconUser user = EconUser.getUser(player.getUniqueId());
         if (user == null) {
-            Utilities.econSyncingMessage(player);
+            player.sendMiniMessage(Config.LOADING_ECON_DATA, null);
             return;
         }
         new BukkitRunnable() {

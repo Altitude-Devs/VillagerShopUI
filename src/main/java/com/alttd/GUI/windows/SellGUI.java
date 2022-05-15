@@ -65,7 +65,7 @@ public class SellGUI extends GUIMerchant {
     private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price, boolean bulk) {
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         if (econUser == null) {
-            Utilities.econSyncingMessage(player);
+            player.sendMiniMessage(Config.LOADING_ECON_DATA, null);
             return;
         }
 

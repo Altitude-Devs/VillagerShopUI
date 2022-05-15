@@ -30,6 +30,14 @@ public class EconUser {
             Logger.info("Created EconUser for: %", uuid.toString());
     }
 
+    public static void addUser(UUID uuid, EconUser user) {
+        users.put(uuid, user);
+    }
+
+    public static void removeQueriedUser(UUID uuid) {
+        queriedUsers.remove(uuid);
+    }
+
     public UUID getUuid() {
         return uuid;
     }
@@ -116,27 +124,8 @@ public class EconUser {
                 out.writeUTF("try-lock");
                 out.writeUTF(uuid.toString());
                 Bukkit.getServer().sendPluginMessage(VillagerUI.getInstance(),
-                        "VillagerUI:player-data",
+                        "villagerui:player-data",
                         out.toByteArray());
-            }
-        }.runTaskAsynchronously(VillagerUI.getInstance());
-    }
-
-    //Might need to be locked down better?
-    public static void loadUser(UUID uuid) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                EconUser user = Queries.getEconUser(uuid);
-
-                int minutes = Queries.getMinutesSinceUpdated(uuid);
-                user.removePoints(minutes * 2);
-                if (Config.DEBUG)
-                    Logger.info("Loaded EconUser for % and removed % points",
-                            uuid.toString(), String.valueOf(minutes * 2));
-
-                EconUser.users.put(uuid, user);
-                queriedUsers.remove(uuid);
             }
         }.runTaskAsynchronously(VillagerUI.getInstance());
     }
