@@ -23,16 +23,16 @@ public class LogoutEvent implements Listener {
         if (Config.DEBUG)
             Logger.info("Syncing %", event.getPlayer().getName());
         GUI.GUIByUUID.remove(uuid);
+        EconUser user = EconUser.getUser(uuid);
+        if (user != null) {
+            user.syncPoints();
+            EconUser.removeUser(uuid);
+        }
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("try-unlock");
         out.writeUTF(uuid.toString());
         Bukkit.getServer().sendPluginMessage(VillagerUI.getInstance(),
                 "villagerui:player-data",
                 out.toByteArray());
-        EconUser user = EconUser.getUser(uuid);
-        if (user == null)
-            return;
-        user.syncPoints();
-        EconUser.removeUser(uuid);
     }
 }
