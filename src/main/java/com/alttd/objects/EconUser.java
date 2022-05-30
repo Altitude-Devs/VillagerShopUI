@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.ByteArrayOutputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EconUser {
 
@@ -52,6 +53,11 @@ public class EconUser {
     }
 
     public void syncPoints() {
+        if (Config.DEBUG)
+            Logger.info("Saving points EconUser % currently at % points",
+                    uuid.toString(), getPointsMap().object2ObjectEntrySet().stream()
+                            .map(entry -> entry.getKey() + " - " + entry.getValue().toString())
+                            .collect(Collectors.joining()));
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -82,8 +88,13 @@ public class EconUser {
     }
 
     private void setPoints(String villagerType, int points) {
-        if (pointsMap.get(villagerType) < 0)
+        if (pointsMap.getOrDefault(villagerType, 0) < 0)
             points *= -1;
+        if (Config.DEBUG) {
+            Logger.info("Set villagerType: % to % (was %) for &",
+                    villagerType, String.valueOf(points),
+                    String.valueOf(pointsMap.getOrDefault(villagerType, 0)), uuid.toString());
+        }
         pointsMap.put(villagerType, points);
     }
 
@@ -127,6 +138,8 @@ public class EconUser {
     }
 
     public static void removeUser(UUID uuid) {
+        if (Config.DEBUG)
+            Logger.info("Unloading EconUser %", uuid.toString());
         users.remove(uuid);
     }
 

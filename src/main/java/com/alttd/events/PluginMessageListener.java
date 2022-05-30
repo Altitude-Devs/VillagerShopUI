@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class PluginMessageListener implements org.bukkit.plugin.messaging.PluginMessageListener {
 
@@ -58,12 +59,13 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
             @Override
             public void run() {
                 EconUser user = Queries.getEconUser(uuid);
-
+                if (Config.DEBUG)
+                    Logger.info("Loaded EconUser % with % points",
+                            uuid.toString(), user.getPointsMap().object2ObjectEntrySet().stream()
+                                    .map(entry -> entry.getKey() + " - " + entry.getValue().toString())
+                                    .collect(Collectors.joining()));
                 int minutes = Queries.getMinutesSinceUpdated(uuid);
                 user.removePoints(minutes * 2);
-                if (Config.DEBUG)
-                    Logger.info("Loaded EconUser for % and removed % points",
-                            uuid.toString(), String.valueOf(minutes * 2));
 
                 EconUser.removeQueriedUser(uuid);
             }
