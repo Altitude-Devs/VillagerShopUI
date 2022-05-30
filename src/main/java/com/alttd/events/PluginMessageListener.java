@@ -60,10 +60,10 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
             public void run() {
                 EconUser user = Queries.getEconUser(uuid);
                 if (Config.DEBUG)
-                    Logger.info("Loaded EconUser % with % points",
+                    Logger.info("Loaded EconUser % with the following points:\n%",
                             uuid.toString(), user.getPointsMap().object2ObjectEntrySet().stream()
                                     .map(entry -> entry.getKey() + " - " + entry.getValue().toString())
-                                    .collect(Collectors.joining()));
+                                    .collect(Collectors.joining("\n")));
                 int minutes = Queries.getMinutesSinceUpdated(uuid);
                 user.removePoints(minutes * 2);
 

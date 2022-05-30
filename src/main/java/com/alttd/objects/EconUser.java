@@ -54,10 +54,10 @@ public class EconUser {
 
     public void syncPoints() {
         if (Config.DEBUG)
-            Logger.info("Saving points EconUser % currently at % points",
+            Logger.info("Saving points EconUser % currently has the following points:\n%",
                     uuid.toString(), getPointsMap().object2ObjectEntrySet().stream()
                             .map(entry -> entry.getKey() + " - " + entry.getValue().toString())
-                            .collect(Collectors.joining()));
+                            .collect(Collectors.joining("\n")));
         new BukkitRunnable() {
             @Override
             public void run() {
