@@ -30,10 +30,6 @@ public class EconUser {
             Logger.info("Created EconUser for: %", uuid.toString());
     }
 
-    public static void addUser(UUID uuid, EconUser user) {
-        users.put(uuid, user);
-    }
-
     public static void removeQueriedUser(UUID uuid) {
         queriedUsers.remove(uuid);
     }
@@ -114,7 +110,7 @@ public class EconUser {
 
     private static HashSet<UUID> queriedUsers = new HashSet<>();
     public static void tryLoadUser(UUID uuid) {
-        if (queriedUsers.contains(uuid) && !users.containsKey(uuid))
+        if (queriedUsers.contains(uuid) || users.containsKey(uuid))
             return;
         queriedUsers.add(uuid);
         new BukkitRunnable() {

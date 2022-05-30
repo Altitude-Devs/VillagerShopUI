@@ -65,7 +65,6 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                     Logger.info("Loaded EconUser for % and removed % points",
                             uuid.toString(), String.valueOf(minutes * 2));
 
-                EconUser.addUser(uuid, user);
                 EconUser.removeQueriedUser(uuid);
             }
         }.runTaskAsynchronously(VillagerUI.getInstance());
