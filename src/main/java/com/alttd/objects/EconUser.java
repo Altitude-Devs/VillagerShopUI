@@ -138,6 +138,7 @@ public class EconUser {
     }
 
     public static void removeUser(UUID uuid) {
+        queriedUsers.remove(uuid);
         if (Config.DEBUG)
             Logger.info("Unloading EconUser %", uuid.toString());
         users.remove(uuid);
