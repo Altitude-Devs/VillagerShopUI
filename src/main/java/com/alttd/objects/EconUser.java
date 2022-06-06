@@ -58,12 +58,8 @@ public class EconUser {
                     uuid.toString(), getPointsMap().object2ObjectEntrySet().stream()
                             .map(entry -> entry.getKey() + " - " + entry.getValue().toString())
                             .collect(Collectors.joining("\n")));
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Queries.updateUserPoints(uuid, pointsMap);
-            }
-        }.runTaskAsynchronously(VillagerUI.getInstance());
+
+        Queries.updateUserPoints(uuid, pointsMap);
     }
 
     private void removePoints(String villagerType, int points, int remove)
