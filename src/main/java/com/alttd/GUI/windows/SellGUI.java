@@ -15,7 +15,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.milkbowl.vault.economy.Economy;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -117,7 +116,7 @@ public class SellGUI extends GUIMerchant {
         int newPoints = econUser.getPointsMap().get(villagerType.getName());
         player.sendMiniMessage(Config.SOLD_ITEM, TagResolver.resolver(
                 Placeholder.unparsed("amount", String.valueOf(purchase.amount())),
-                Placeholder.unparsed("item", StringUtils.capitalize(purchase.material().name()
+                Placeholder.unparsed("item", Utilities.capitalize(purchase.material().name()
                         .toLowerCase().replaceAll("_", " "))),
                 Placeholder.unparsed("price", String.format("%,.2f", purchase.price())),
                 Placeholder.unparsed("points", String.valueOf(-purchase.totalPointCost())),
