@@ -6,7 +6,7 @@ import com.alttd.database.Queries;
 import com.alttd.util.Logger;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 
 public class EconUser {
 
-    private static Object2ObjectArrayMap<UUID, EconUser> users = new Object2ObjectArrayMap<>();
+    private static Object2ObjectOpenHashMap<UUID, EconUser> users = new Object2ObjectOpenHashMap<>();
     private final static Queue<EconUser> addQueue = new LinkedBlockingQueue<>();
     private final static Queue<EconUser> removeQueue = new LinkedBlockingQueue<>();
 
     private final UUID uuid;
-    private final Object2ObjectArrayMap<String, Integer> pointsMap;
+    private final Object2ObjectOpenHashMap<String, Integer> pointsMap;
 
-    public EconUser(UUID uuid, Object2ObjectArrayMap<String, Integer> points) {
+    public EconUser(UUID uuid, Object2ObjectOpenHashMap<String, Integer> points) {
         this.uuid = uuid;
         this.pointsMap = points;
         addQueue.offer(this);
@@ -41,7 +41,7 @@ public class EconUser {
         return uuid;
     }
 
-    public Object2ObjectArrayMap<String, Integer> getPointsMap() {
+    public Object2ObjectOpenHashMap<String, Integer> getPointsMap() {
         return pointsMap;
     }
 
@@ -149,17 +149,17 @@ public class EconUser {
     private static void updateUsers() {
         if (addQueue.isEmpty() && removeQueue.isEmpty())
             return;
-        Object2ObjectArrayMap<UUID, EconUser> tmp = new Object2ObjectArrayMap<>(users);
-        while (!addQueue.isEmpty()) {
+        Object2ObjectOpenHashMap<UUID, EconUser> tmp = new Object2ObjectOpenHashMap<>(users);
+        while (true) {
             EconUser user = addQueue.poll();
             if (user == null)
-                continue;
+                break;
             tmp.put(user.getUuid(), user);
         }
-        while (!removeQueue.isEmpty()) {
+        while (true) {
             EconUser user = addQueue.poll();
             if (user == null)
-                continue;
+                break;
             tmp.remove(user.getUuid());
         }
         users = tmp;
