@@ -150,16 +150,16 @@ public class EconUser {
         if (addQueue.isEmpty() && removeQueue.isEmpty())
             return;
         Object2ObjectOpenHashMap<UUID, EconUser> tmp = new Object2ObjectOpenHashMap<>(users);
-        while (!addQueue.isEmpty()) {
+        while (true) {
             EconUser user = addQueue.poll();
             if (user == null)
-                continue;
+                break;
             tmp.put(user.getUuid(), user);
         }
-        while (!removeQueue.isEmpty()) {
+        while (true) {
             EconUser user = addQueue.poll();
             if (user == null)
-                continue;
+                break;
             tmp.remove(user.getUuid());
         }
         users = tmp;
