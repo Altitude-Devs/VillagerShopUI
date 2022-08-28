@@ -6,7 +6,7 @@ import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
 import com.alttd.objects.VillagerType;
 import com.alttd.util.Logger;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -42,7 +42,7 @@ public class CommandPoints extends SubCommand {
 
             AtomicBoolean allPointsAreZero = new AtomicBoolean(true);
 
-            Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
+            Object2ObjectOpenHashMap<String, Integer> pointsMap = user.getPointsMap();
             pointsMap.keySet().forEach(key -> {
                 VillagerType villagerType = VillagerType.getVillagerType(key);
                 if (villagerType == null) {
@@ -67,7 +67,7 @@ public class CommandPoints extends SubCommand {
             if (args[1].equals("all")) {
                 for (VillagerType villagerType : VillagerType.getVillagerTypes()) {
 
-                    Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
+                    Object2ObjectOpenHashMap<String, Integer> pointsMap = user.getPointsMap();
                     int currentPoints = pointsMap.getOrDefault(villagerType.getName(), 0);
                     ref.message = ref.message.append(miniMessage.deserialize("\n", TagResolver.resolver()));
                     ref.message = ref.message.append(miniMessage.deserialize(Config.POINTS_CONTENT, TagResolver.resolver(
@@ -79,7 +79,7 @@ public class CommandPoints extends SubCommand {
                 }
             } else {
                 VillagerType villagerType = VillagerType.getVillagerType(args[1].toLowerCase());
-                Object2ObjectArrayMap<String, Integer> pointsMap = user.getPointsMap();
+                Object2ObjectOpenHashMap<String, Integer> pointsMap = user.getPointsMap();
                 if (villagerType == null) {
                     player.sendMiniMessage(Config.NOT_A_VILLAGER, TagResolver.resolver(Placeholder.unparsed("villager_type", args[1])));
                     return true;

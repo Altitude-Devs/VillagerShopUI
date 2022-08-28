@@ -2,7 +2,7 @@ package com.alttd.database;
 
 import com.alttd.objects.EconUser;
 import com.alttd.util.Logger;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +20,7 @@ public class Queries {
      * @param   uuid        Uuid for the user you want to add the points to
      * @param   pointsMap   Contains all (villagerType, points) entries for user
      */
-    public static void updateUserPoints(UUID uuid, Object2ObjectArrayMap<String, Integer> pointsMap) {
+    public static void updateUserPoints(UUID uuid, Object2ObjectOpenHashMap<String, Integer> pointsMap) {
         String sql = "INSERT INTO user_points " +
                 "(uuid, villager_type, points) " +
                 "VALUES (?, ?, ?) " +
@@ -63,7 +63,7 @@ public class Queries {
             preparedStatement.setString(1, uuid.toString());
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            Object2ObjectArrayMap<String, Integer> points = new Object2ObjectArrayMap<>();
+            Object2ObjectOpenHashMap<String, Integer> points = new Object2ObjectOpenHashMap<>();
             while (resultSet.next()) {
                 points.put(
                         resultSet.getString("villager_type"),
@@ -74,7 +74,7 @@ public class Queries {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return (new EconUser(uuid, new Object2ObjectArrayMap<>()));
+        return (new EconUser(uuid, new Object2ObjectOpenHashMap<>()));
     }
 
     /**
