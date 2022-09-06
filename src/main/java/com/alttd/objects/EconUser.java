@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 public class EconUser {
 
     private static Object2ObjectOpenHashMap<UUID, EconUser> users = new Object2ObjectOpenHashMap<>();
-    private final static Queue<EconUser> addQueue = new LinkedBlockingQueue<>();
-    private final static Queue<EconUser> removeQueue = new LinkedBlockingQueue<>();
+//    private final static Queue<EconUser> addQueue = new LinkedBlockingQueue<>();
+//    private final static Queue<EconUser> removeQueue = new LinkedBlockingQueue<>();
 
     private final UUID uuid;
     private final Object2ObjectOpenHashMap<String, Integer> pointsMap;
@@ -27,10 +27,25 @@ public class EconUser {
     public EconUser(UUID uuid, Object2ObjectOpenHashMap<String, Integer> points) {
         this.uuid = uuid;
         this.pointsMap = points;
-        addQueue.offer(this);
-        updateUsers();
+        addUser(uuid, this);
         if (Config.DEBUG)
             Logger.info("Created EconUser for: %", uuid.toString());
+    }
+
+    private synchronized static void addUser(UUID uuid, EconUser econUser) {
+        users.put(uuid, econUser);
+    }
+
+    public synchronized static EconUser getUser(UUID uuid) {
+        return users.getOrDefault(uuid, null);
+    }
+
+    private synchronized static boolean containsUser(UUID uuid) {
+        return users.containsKey(uuid);
+    }
+
+    private synchronized static void removeUserFromMap(UUID uuid) {
+        users.remove(uuid);
     }
 
     public static void removeQueriedUser(UUID uuid) {
@@ -112,14 +127,9 @@ public class EconUser {
         });
     }
 
-    //Can return null
-    public static EconUser getUser(UUID uuid) {
-        return (users.get(uuid));
-    }
-
     private static HashSet<UUID> queriedUsers = new HashSet<>();
     public static void tryLoadUser(UUID uuid) {
-        if (queriedUsers.contains(uuid) || users.containsKey(uuid))
+        if (queriedUsers.contains(uuid) || containsUser(uuid))
             return;
         queriedUsers.add(uuid);
         new BukkitRunnable() {
@@ -139,34 +149,14 @@ public class EconUser {
         queriedUsers.remove(uuid);
         if (Config.DEBUG)
             Logger.info("Unloading EconUser %", uuid.toString());
-        EconUser user = users.get(uuid);
-        if (user == null)
-            return;
-        removeQueue.offer(user);
-        updateUsers();
-    }
-
-    private static void updateUsers() {
-        if (addQueue.isEmpty() && removeQueue.isEmpty())
-            return;
-        Object2ObjectOpenHashMap<UUID, EconUser> tmp = new Object2ObjectOpenHashMap<>(users);
-        while (true) {
-            EconUser user = addQueue.poll();
-            if (user == null)
-                break;
-            tmp.put(user.getUuid(), user);
-        }
-        while (true) {
-            EconUser user = addQueue.poll();
-            if (user == null)
-                break;
-            tmp.remove(user.getUuid());
-        }
-        users = tmp;
+//        EconUser user = getUser(uuid);
+//        if (user == null)
+//            return;
+        removeUserFromMap(uuid);
     }
 
     @Unmodifiable
-    public static List<EconUser> getEconUsers() {
+    public synchronized static List<EconUser> getEconUsers() {
         return Collections.unmodifiableList(users.values().stream().toList());
     }
 }
