@@ -66,8 +66,6 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                                     .collect(Collectors.joining("\n")));
                 int minutes = Queries.getMinutesSinceUpdated(uuid);
                 user.removePoints(minutes * 2);
-
-                EconUser.removeQueriedUser(uuid);
             }
         }.runTaskAsynchronously(VillagerUI.getInstance());
     }

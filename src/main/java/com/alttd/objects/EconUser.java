@@ -12,14 +12,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 public class EconUser {
 
     private static Object2ObjectOpenHashMap<UUID, EconUser> users = new Object2ObjectOpenHashMap<>();
-//    private final static Queue<EconUser> addQueue = new LinkedBlockingQueue<>();
-//    private final static Queue<EconUser> removeQueue = new LinkedBlockingQueue<>();
 
     private final UUID uuid;
     private final Object2ObjectOpenHashMap<String, Integer> pointsMap;
@@ -46,10 +43,6 @@ public class EconUser {
 
     private synchronized static void removeUserFromMap(UUID uuid) {
         users.remove(uuid);
-    }
-
-    public static void removeQueriedUser(UUID uuid) {
-        queriedUsers.remove(uuid);
     }
 
     public UUID getUuid() {
@@ -127,11 +120,7 @@ public class EconUser {
         });
     }
 
-    private static HashSet<UUID> queriedUsers = new HashSet<>();
     public static void tryLoadUser(UUID uuid) {
-        if (queriedUsers.contains(uuid) || containsUser(uuid))
-            return;
-        queriedUsers.add(uuid);
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -146,7 +135,6 @@ public class EconUser {
     }
 
     public static void removeUser(UUID uuid) {
-        queriedUsers.remove(uuid);
         if (Config.DEBUG)
             Logger.info("Unloading EconUser %", uuid.toString());
 //        EconUser user = getUser(uuid);
