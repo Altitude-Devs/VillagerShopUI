@@ -3,15 +3,18 @@ package com.alttd.objects;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.database.Queries;
+import com.alttd.datalock.DataLockAPI;
 import com.alttd.util.Logger;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class EconUser {
@@ -124,12 +127,7 @@ public class EconUser {
         new BukkitRunnable() {
             @Override
             public void run() {
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                out.writeUTF("try-lock");
-                out.writeUTF(uuid.toString());
-                Bukkit.getServer().sendPluginMessage(VillagerUI.getInstance(),
-                        "villagerui:player-data",
-                        out.toByteArray());
+                DataLockAPI.get().tryLock("villagerui:player-data", uuid.toString());
             }
         }.runTaskAsynchronously(VillagerUI.getInstance());
     }

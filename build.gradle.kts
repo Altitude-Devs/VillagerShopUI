@@ -65,4 +65,5 @@ dependencies {
     compileOnly("com.github.milkbowl:VaultAPI:1.7") {
         exclude("org.bukkit","bukkit")
     }
+    compileOnly("com.alttd.datalock:api:1.1.0-SNAPSHOT")
 }

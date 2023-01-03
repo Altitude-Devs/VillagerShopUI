@@ -3,11 +3,9 @@ package com.alttd.events;
 import com.alttd.GUI.GUI;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
+import com.alttd.datalock.DataLockAPI;
 import com.alttd.objects.EconUser;
 import com.alttd.util.Logger;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -31,12 +29,7 @@ public class LogoutEvent implements Listener {
                     user.syncPoints();
                     EconUser.removeUser(uuid);
                 }
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                out.writeUTF("try-unlock");
-                out.writeUTF(uuid.toString());
-                Bukkit.getServer().sendPluginMessage(VillagerUI.getInstance(),
-                        "villagerui:player-data",
-                        out.toByteArray());
+                DataLockAPI.get().tryUnlock("villagerui:player-data", uuid.toString());
             }
         }.runTaskAsynchronously(VillagerUI.getInstance());
     }

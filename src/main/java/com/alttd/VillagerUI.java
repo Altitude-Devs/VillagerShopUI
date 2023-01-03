@@ -7,6 +7,7 @@ import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.config.WorthConfig;
 import com.alttd.database.Queries;
+import com.alttd.datalock.DataLockAPI;
 import com.alttd.events.*;
 import com.alttd.logging.LogInOut;
 import com.alttd.objects.EconUser;
@@ -44,12 +45,13 @@ public class VillagerUI extends JavaPlugin {
             return;
         Database.getDatabase().init();
         scheduleTasks();
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "villagerui:player-data");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "villagerui:player-data", new PluginMessageListener());
-        if (Config.DEBUG) {
-            Logger.info("Incoming: %\nOutgoing: %",
-                    getServer().getMessenger().getIncomingChannels().toString(),
-                    getServer().getMessenger().getOutgoingChannels().toString());
+        DataLockAPI dataLockAPI = DataLockAPI.get();
+        if (dataLockAPI == null) {
+            Logger.severe("Unable to load datalockapi");
+        } else if (dataLockAPI.isActiveChannel("villagerui:player-data")) {
+            Logger.warning("Unable to register aquest channel");
+        } else {
+            dataLockAPI.registerChannel("villagerui:player-data");
         }
         Logger.info("--------------------------------------------------");
         Logger.info("Villager UI started");
@@ -92,6 +94,7 @@ public class VillagerUI extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new LoginEvent(), this);
         getServer().getPluginManager().registerEvents(new VehicleEvent(), this);
         getServer().getPluginManager().registerEvents(new SpawnShopListener(logInOut), this);
+        getServer().getPluginManager().registerEvents(new DataLock(), this);
     }
 
     public Economy getEconomy() {
