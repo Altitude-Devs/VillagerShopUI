@@ -11,7 +11,6 @@ import java.io.File;
 import java.util.*;
 
 public final class Config extends AbstractConfig {
-
     static Config config;
     static int version;
     public Config() {
@@ -41,6 +40,13 @@ public final class Config extends AbstractConfig {
         DATABASE_NAME = config.getString("database.name", DATABASE_NAME);
         USERNAME = config.getString("database.username", USERNAME);
         PASSWORD = config.getString("database.password", PASSWORD);
+    }
+
+    public static int SAVE_TIME = 10;
+    public static int LOG_TIME = 10;
+    private static void loadTaskSettings() {
+        SAVE_TIME = config.getInt("tasks.save-time", SAVE_TIME);
+        LOG_TIME = config.getInt("tasks.log-time", LOG_TIME);
     }
 
     public static String INITIAL_VILLAGER_WINDOW = "<trader> points: <points>";
@@ -119,6 +125,7 @@ public final class Config extends AbstractConfig {
     public static String NOT_A_VILLAGER = "<red><villager_type> is not a valid villager type.</red>";
     public static String LOADING_ECON_DATA = "<red>Loading your economy data, please wait...</red>";
     public static String NO_VILLAGER_POINTS = "<red>You don't have any villager points.</red>";
+    public static String NOTIFY_POINTS_RESET = "<green>Your points for <villager_type> reset to 0!</green>";
 
     private static void loadMessages() {
         NOT_ENOUGH_MONEY = config.getString("messages.not-enough-money", NOT_ENOUGH_MONEY);
@@ -136,6 +143,7 @@ public final class Config extends AbstractConfig {
         NOT_A_VILLAGER = config.getString("messages.not-a-villager", NOT_A_VILLAGER);
         LOADING_ECON_DATA = config.getString("messages.loading-econ-data", LOADING_ECON_DATA);
         NO_VILLAGER_POINTS = config.getString("messages.no-villager-points", NO_VILLAGER_POINTS);
+        NOTIFY_POINTS_RESET = config.getString("messages.notify-points-reset", NOTIFY_POINTS_RESET);
     }
 
     public static boolean DEBUG = false;

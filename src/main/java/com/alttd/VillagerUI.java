@@ -2,21 +2,21 @@ package com.alttd;
 
 import com.alttd.GUI.GUIListener;
 import com.alttd.commands.CommandManager;
-import com.alttd.database.Database;
 import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.config.WorthConfig;
+import com.alttd.database.Database;
 import com.alttd.database.Queries;
 import com.alttd.datalock.DataLockAPI;
 import com.alttd.events.*;
 import com.alttd.logging.LogInOut;
 import com.alttd.objects.EconUser;
 import com.alttd.util.Logger;
+import com.alttd.util.SaveTask;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class VillagerUI extends JavaPlugin {
 
@@ -69,22 +69,8 @@ public class VillagerUI extends JavaPlugin {
     }
 
     private void scheduleTasks() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (Config.DEBUG)
-                    Logger.info("Syncing users.");
-                EconUser.getEconUsers().forEach(econUser -> {
-                    if (econUser == null)
-                        return;
-                    if (Config.DEBUG)
-                        Logger.info("Syncing %", econUser.getUuid().toString());
-                    econUser.removePoints();
-                    econUser.syncPoints();
-                });
-            }
-        }.runTaskTimerAsynchronously(getInstance(), 0L, 10 * 60 * 20L);
-        logInOut.runTaskTimerAsynchronously(this, 20 * 60 * 5, 20 * 60 * 10);
+        new SaveTask().runTaskTimerAsynchronously(getInstance(), 0L, Config.SAVE_TIME * 60 * 20L);
+        logInOut.runTaskTimerAsynchronously(this, 20 * 60 * 5, Config.LOG_TIME * 60 * 20L);
     }
 
     private void registerEvents() {
