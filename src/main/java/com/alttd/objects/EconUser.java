@@ -91,6 +91,8 @@ public class EconUser {
                 points += remove;
         }
         pointsMap.put(villagerType, points);
+        if (points == 0)
+            notifyPlayer(uuid, villagerType);
         if (Config.DEBUG)
             Logger.info("Removed % points from villagerType: % for %",
                     String.valueOf(remove), villagerType, uuid.toString());
@@ -100,7 +102,7 @@ public class EconUser {
         if (pointsMap.getOrDefault(villagerType, 0) < 0)
             points *= -1;
         if (Config.DEBUG) {
-            Logger.info("Set villagerType: % to % (was %) for &",
+            Logger.info("Set villagerType: % to % (was %) for %",
                     villagerType, String.valueOf(points),
                     String.valueOf(pointsMap.getOrDefault(villagerType, 0)), uuid.toString());
         }
@@ -118,9 +120,19 @@ public class EconUser {
             int remove = points;
             if (remove < 0)
                 remove *= -1;
-            int i = (int) (0.93 * remove) - 30;
-            setPoints(villagerType, i < 10 && i > -10 ? 0 : i);
+            int newPoints = Math.max(0, (int) (0.93 * remove) - 30);
+            if (newPoints < 10)
+                newPoints = 0;
+            setPoints(villagerType, newPoints);
+            if (newPoints == 0)
+                notifyPlayer(uuid, villagerType);
         });
+    }
+
+    public void notifyPlayer(UUID uuid, String villagerType) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null && player.isOnline())
+            player.sendMiniMessage(Config.NOTIFY_POINTS_RESET, Placeholder.unparsed("villager_type", villagerType));
     }
 
     public static void tryLoadUser(UUID uuid) {
