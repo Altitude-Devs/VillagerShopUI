@@ -17,10 +17,14 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
@@ -61,6 +65,32 @@ public class SellGUI extends GUIMerchant {
         }
     }
 
+    private int countBlocksInInventory(Inventory inventory, Material material) {
+        return Arrays.stream(inventory.getContents())
+                .filter(Objects::nonNull)
+                .filter(itemStack -> itemStack.getType().equals(material))
+                .mapToInt(ItemStack::getAmount)
+                .sum();
+    }
+    private int countTotalBlocksInInventory(Inventory inventory, Material material) {
+        int total = countBlocksInInventory(inventory, material);
+        total += Arrays.stream(inventory.getStorageContents())
+                .filter(Objects::nonNull)
+                .filter(itemStack -> Tag.SHULKER_BOXES.isTagged(itemStack.getType()))
+                .map(itemStack -> {
+                    BlockStateMeta blockStateMeta = (BlockStateMeta) itemStack.getItemMeta();
+                    BlockState blockState = blockStateMeta.getBlockState();
+                    if (blockState instanceof ShulkerBox) {
+                        return (ShulkerBox) blockState;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .mapToInt(shulker -> countTotalBlocksInInventory(shulker.getInventory(), material))
+                .sum();
+        return total;
+    }
+
     private void sell(VillagerType villagerType, Player player, Material material, int amount, Price price, boolean bulk) {
         EconUser econUser = EconUser.getUser(player.getUniqueId());
         if (econUser == null) {
@@ -69,11 +99,9 @@ public class SellGUI extends GUIMerchant {
         }
 
         PlayerInventory inventory = player.getInventory();
-        if (bulk)
-            amount = Arrays.stream(inventory.getContents())
-                    .filter(Objects::nonNull)
-                    .filter(itemStack -> itemStack.getType().equals(material))
-                    .mapToInt(ItemStack::getAmount).sum();
+        if (bulk) {
+            amount = countTotalBlocksInInventory(inventory, material);
+        }
 
         int oldPoints = econUser.getPointsMap().getOrDefault(villagerType.getName(), 0);
         int itemPts = price.getPoints();
@@ -96,11 +124,7 @@ public class SellGUI extends GUIMerchant {
             return;
         }
         PlayerInventory inventory = player.getInventory();
-        if (Arrays.stream(inventory.getContents())
-                .filter(Objects::nonNull)
-                .filter(itemStack -> itemStack.getType().equals(purchase.material()))
-                .mapToInt(ItemStack::getAmount).sum()
-                < purchase.amount()) {
+        if (countTotalBlocksInInventory(inventory, purchase.material()) < purchase.amount()) {
             player.sendMiniMessage(Config.NOT_ENOUGH_ITEMS, TagResolver.resolver(
                     Placeholder.unparsed("type", purchase.material().name()),
                     Placeholder.unparsed("amount", String.valueOf(purchase.amount()))));
@@ -111,7 +135,22 @@ public class SellGUI extends GUIMerchant {
         econ.depositPlayer(player, purchase.price());
         econUser.addPoints(villagerType.getName(), purchase.totalPointCost());
 
-        removeItems(inventory, purchase.material(), purchase.amount());
+        int amount = removeItems(inventory, purchase.material(), purchase.amount());
+        for (ItemStack itemStack : inventory.getStorageContents()) {
+            if (itemStack == null) continue;
+            if (!Tag.SHULKER_BOXES.isTagged(itemStack.getType())) continue;
+
+            BlockStateMeta blockStateMeta = (BlockStateMeta) itemStack.getItemMeta();
+            BlockState blockState = blockStateMeta.getBlockState();
+            if (!(blockState instanceof ShulkerBox shulker))
+                continue;
+
+            int remaining = removeItems(shulker.getInventory(), purchase.material(), amount);
+            amount -= (amount - remaining);
+            blockStateMeta.setBlockState(shulker);
+            itemStack.setItemMeta(blockStateMeta);
+        }
+
 
         int newPoints = econUser.getPointsMap().get(villagerType.getName());
         player.sendMiniMessage(Config.SOLD_ITEM, TagResolver.resolver(
@@ -148,25 +187,21 @@ public class SellGUI extends GUIMerchant {
         return itemStack;
     }
 
-    private void removeItems(Inventory inventory, Material material, int amount) {
-        var ref = new Object() {
-            int tmpAmount = amount;
-        };
+    private int removeItems(Inventory inventory, Material material, int amount) {
+        for (ItemStack itemStack : inventory.getContents()) {
+            if (itemStack == null) continue;
+            if (!itemStack.getType().equals(material)) continue;
+            if (amount == 0) continue;
 
-        Arrays.stream(inventory.getContents())
-                .filter(Objects::nonNull)
-                .filter(itemStack -> itemStack.getType().equals(material))
-                .forEach(itemStack -> {
-                    if (ref.tmpAmount == 0)
-                        return;
-                    if (itemStack.getAmount() > ref.tmpAmount) {
-                        itemStack.setAmount(itemStack.getAmount() - ref.tmpAmount);
-                        ref.tmpAmount = 0;
-                    } else {
-                        ref.tmpAmount -= itemStack.getAmount();
-                        itemStack.setAmount(0);
-                    }
-                });
+            if (itemStack.getAmount() > amount) {
+                itemStack.setAmount(itemStack.getAmount() - amount);
+                amount = 0;
+            } else {
+                amount -= itemStack.getAmount();
+                itemStack.setAmount(0);
+            }
+        }
+        return amount;
     }
 
     private ItemStack getPriceItem(double price) {
