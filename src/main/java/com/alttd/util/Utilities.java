@@ -4,10 +4,10 @@ import com.alttd.objects.Price;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Utilities {
     /**
@@ -145,5 +145,11 @@ public class Utilities {
         if (str.length() == 1)
             return str.toUpperCase();
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static long getNextXMinuteTime(int minutes) {
+        long millis = TimeUnit.MINUTES.toMillis(minutes);
+        long currentMillis = System.currentTimeMillis();
+        return currentMillis + (currentMillis - (currentMillis % millis));
     }
 }

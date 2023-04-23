@@ -20,6 +20,7 @@ public class LogInOut extends BukkitRunnable {
     private final HashMap<String, Double> map;
     private int day;
     private File file;
+    private long nextExecution;
 
     public LogInOut() {
         createLogsDir();
@@ -29,6 +30,7 @@ public class LogInOut extends BukkitRunnable {
             map = loadFile(file);
         else
             map = new HashMap<>();
+        this.nextExecution = Utilities.getNextXMinuteTime(Config.LOG_TIME);
     }
 
     public void log(String material, double cost) {
@@ -61,6 +63,9 @@ public class LogInOut extends BukkitRunnable {
     public void run() {
         if (this.isCancelled())
             return;
+        if (System.currentTimeMillis() < nextExecution)
+            return;
+        nextExecution = Utilities.getNextXMinuteTime(Config.LOG_TIME);
         int new_day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
         if (!file.exists()) {
             boolean success = false;
