@@ -18,6 +18,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.concurrent.TimeUnit;
+
 public class VillagerUI extends JavaPlugin {
 
     public static VillagerUI instance;
@@ -69,8 +71,19 @@ public class VillagerUI extends JavaPlugin {
     }
 
     private void scheduleTasks() {
-        new SaveTask().runTaskTimerAsynchronously(getInstance(), 0L, Config.SAVE_TIME * 60 * 20L);
-        logInOut.runTaskTimerAsynchronously(this, 20 * 60 * 5, Config.LOG_TIME * 60 * 20L);
+        new SaveTask().runTaskTimerAsynchronously(
+                this,
+                getSecondsToNextXMinutes(Config.SAVE_TIME) * 20,
+                TimeUnit.MINUTES.toSeconds(Config.SAVE_TIME) * 60 * 20L);
+        logInOut.runTaskTimerAsynchronously(
+                this,
+                getSecondsToNextXMinutes(Config.LOG_TIME) * 20,
+                TimeUnit.MINUTES.toSeconds(Config.LOG_TIME) * 20L);
+    }
+
+    public static long getSecondsToNextXMinutes(int minutes) {
+        long seconds = TimeUnit.MINUTES.toSeconds(minutes);
+        return seconds - (TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) % seconds);
     }
 
     private void registerEvents() {
