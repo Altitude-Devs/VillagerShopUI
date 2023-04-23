@@ -147,9 +147,9 @@ public class Utilities {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static long getNextXMinuteTime(int minutes) {
+    public static long getMillisTillNextX(int minutes) {
         long millis = TimeUnit.MINUTES.toMillis(minutes);
         long currentMillis = System.currentTimeMillis();
-        return currentMillis + (currentMillis - (currentMillis % millis));
+        return currentMillis + (millis - (currentMillis % millis));
     }
 }
