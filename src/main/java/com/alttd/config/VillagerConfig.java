@@ -2,6 +2,7 @@ package com.alttd.config;
 
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
+import com.alttd.objects.VillagerTypeManager;
 import com.alttd.util.Logger;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class VillagerConfig extends AbstractConfig {
     private static void loadVillagers() {
         LoadedVillagers.clearLoadedVillagers();
         config.getConfigurationSection("").getKeys(false).forEach(key -> {
-            VillagerType villagerType = VillagerType.getVillagerType(config.getString(key, ""));
+            VillagerType villagerType = VillagerTypeManager.getVillagerType(config.getString(key, ""));
             if (villagerType != null)
                 LoadedVillagers.addLoadedVillager(UUID.fromString(key), villagerType);
             else

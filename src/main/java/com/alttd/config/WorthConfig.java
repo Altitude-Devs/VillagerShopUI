@@ -2,6 +2,7 @@ package com.alttd.config;
 
 import com.alttd.VillagerUI;
 import com.alttd.objects.Price;
+import com.alttd.objects.PriceRange;
 import com.alttd.util.Logger;
 import com.alttd.util.Utilities;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -30,9 +31,31 @@ public class WorthConfig extends AbstractConfig {
 
     public static Object2ObjectOpenHashMap<Material, Price> buy = new Object2ObjectOpenHashMap<>();
     public static Object2ObjectOpenHashMap<Material, Price> sell = new Object2ObjectOpenHashMap<>();
+    public static Object2ObjectOpenHashMap<Material, Double> trade = new Object2ObjectOpenHashMap<>();
     private static void loadWorth() { //TODO test after removing points
         loadWorth("buy", buy);
         loadWorth("sell", sell);
+        loadTradeWorth("trade", trade);
+    }
+
+    private static void loadTradeWorth(String path, Object2ObjectOpenHashMap<Material, Double> map) {
+        map.clear();
+        ConfigurationSection worth = config.getConfigurationSection(path);
+        if (worth == null) {
+            Logger.severe("No ? in worth.yml! Stopping VillagerUI.", path);
+            VillagerUI.getInstance().getServer().getPluginManager().disablePlugin(VillagerUI.getInstance());
+            return;
+        }
+        Set<String> materials = worth.getKeys(false);
+        for (String key : materials) {
+            if (key == null) {
+                Logger.severe("Null key in worth.yml?");
+                continue;
+            }
+            Material material = Material.getMaterial(key);
+
+            map.put(material, new PriceRange(Utilities.round(worth.getDouble(key + ".lower"), 2), Utilities.round(worth.getDouble(key + ".upper"), 2)).getRandomPrice());
+        }
     }
 
     private static void loadWorth(String path, Object2ObjectOpenHashMap<Material, Price> map) {

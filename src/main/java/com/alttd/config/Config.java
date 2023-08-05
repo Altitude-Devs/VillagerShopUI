@@ -1,14 +1,18 @@
 package com.alttd.config;
 
+import com.alttd.objects.BlackMarketVillagerType;
 import com.alttd.objects.ItemStackComparator;
-import com.alttd.objects.VillagerType;
+import com.alttd.objects.ShopVillagerType;
+import com.alttd.objects.VillagerTypeManager;
 import com.alttd.util.Logger;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public final class Config extends AbstractConfig {
     static Config config;
@@ -52,11 +56,13 @@ public final class Config extends AbstractConfig {
     public static String INITIAL_VILLAGER_WINDOW = "<trader> points: <points>";
     public static String BUY_WINDOW = "<trader> points: <points>";
     public static String SELL_WINDOW = "<trader> points: <points>";
+    public static String TRADE_WINDOW = "<trader> trades left: <remaining_trades>";
 
     private static void loadUI() {
         INITIAL_VILLAGER_WINDOW = config.getString("ui.initial-window-name", INITIAL_VILLAGER_WINDOW);
         BUY_WINDOW = config.getString("ui.buy-window-name", BUY_WINDOW);
         SELL_WINDOW = config.getString("ui.sell-window-name", SELL_WINDOW);
+        TRADE_WINDOW = config.getString("ui.trade-window-name", TRADE_WINDOW);
     }
 
     public static String HELP_MESSAGE_WRAPPER = "<gold>VillagerShopUI help:\n<commands></gold>";
@@ -82,11 +88,13 @@ public final class Config extends AbstractConfig {
     public static String NO_PERMISSION = "<red>You do not have permission to do that.</red>";
     public static String NO_CONSOLE = "<red>You cannot use this command from console.</red>";
     public static String CLICKING_TOO_FAST = "<red>You're clicking too fast.</red>";
+    public static String NO_TRADES_REMAINING = "<red>No remaining trades, wait until the next reboot</red>";
 
     private static void loadGeneric() {
         NO_PERMISSION = config.getString("generic.no-permission", NO_PERMISSION);
         NO_CONSOLE = config.getString("generic.no-console", NO_CONSOLE);
         CLICKING_TOO_FAST = config.getString("generic.clicking-too-fast", CLICKING_TOO_FAST);
+        NO_TRADES_REMAINING = config.getString("generic.no-trades-remaining", NO_TRADES_REMAINING);
     }
 
     public static String VILLAGER_NAME = "<green><name></green>";
@@ -111,6 +119,8 @@ public final class Config extends AbstractConfig {
             "<total_points> for <villager_name>!</green>";
     public static String SOLD_ITEM = "<green>You sold <amount> <item> for <price> and got <points> points for a total of " +
             "<total_points> for <villager_name>!</green>";
+
+    public static String TRADED_ITEM = "<green>You traded <amount> <item> for <price>, you have <trades_remaining> trades remaining!</green>";
     public static String REMOVED_VILLAGER = "<green>Removed villager with uuid <uuid></green>";
     public static String POINTS_HEADER = "<gold>Villager points for <player>: ";
     public static String POINTS_CONTENT = "<gold><villager_type>: points:<dark_aqua><points></dark_aqua> " +
@@ -133,6 +143,7 @@ public final class Config extends AbstractConfig {
         NOT_ENOUGH_SPACE = config.getString("messages.not-enough-space", NOT_ENOUGH_SPACE);
         PURCHASED_ITEM = config.getString("messages.purchased-item", PURCHASED_ITEM);
         SOLD_ITEM = config.getString("messages.sold-item", SOLD_ITEM);
+        TRADED_ITEM = config.getString("messages.traded-item", TRADED_ITEM);
         REMOVED_VILLAGER = config.getString("messages.removed-villager", REMOVED_VILLAGER);
         POINTS_HEADER = config.getString("messages.points-header", POINTS_HEADER);
         POINTS_CONTENT = config.getString("messages.points-content", POINTS_CONTENT);
@@ -153,7 +164,7 @@ public final class Config extends AbstractConfig {
     }
 
     private static void loadVillagerTypes() {
-        VillagerType.clearVillagerTypes();
+        VillagerTypeManager.clearVillagerTypes();
         ConfigurationSection configurationSection = config.getConfigurationSection("villager-types");
         if (configurationSection == null) {
             Logger.warning("No villager types found in config.");
@@ -169,13 +180,24 @@ public final class Config extends AbstractConfig {
             if (villagerType == null)
                 return;
 
-            VillagerType.addVillagerType(new VillagerType(
-                    key,
-                    villagerType.getString("name"),
-                    loadProducts(villagerType.getConfigurationSection("buying")),
-                    loadProducts(villagerType.getConfigurationSection("selling")),
-                    villagerType.getString("profession"))
-            );
+            if (villagerType.contains("trading")) {
+                VillagerTypeManager.addVillagerType(new BlackMarketVillagerType(
+                        key,
+                        villagerType.getString("name"),
+                        villagerType.getString("profession"),
+                        villagerType.getInt("max-available-items", 15),
+                        villagerType.getInt("max-trades-per-reboot", 5),
+                        loadProducts(villagerType.getConfigurationSection("trading")))
+                        );
+            } else {
+                VillagerTypeManager.addVillagerType(new ShopVillagerType(
+                        key,
+                        villagerType.getString("name"),
+                        loadProducts(villagerType.getConfigurationSection("buying")),
+                        loadProducts(villagerType.getConfigurationSection("selling")),
+                        villagerType.getString("profession"))
+                );
+            }
         });
     }
 

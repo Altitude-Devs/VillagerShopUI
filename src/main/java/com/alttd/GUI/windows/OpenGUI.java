@@ -4,7 +4,7 @@ import com.alttd.GUI.GUIInventory;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.objects.EconUser;
-import com.alttd.objects.VillagerType;
+import com.alttd.objects.ShopVillagerType;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -48,7 +48,7 @@ public class OpenGUI extends GUIInventory {
         }
     }
 
-    public OpenGUI(VillagerType villagerType, EconUser econUser) {
+    public OpenGUI(ShopVillagerType villagerType, EconUser econUser) {
         super(InventoryType.HOPPER, miniMessage.deserialize(Config.INITIAL_VILLAGER_WINDOW,
                 TagResolver.resolver(Placeholder.unparsed("trader", villagerType.getDisplayName()),
                     Placeholder.unparsed("points", String.valueOf(Objects.requireNonNullElse(

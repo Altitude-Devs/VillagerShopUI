@@ -5,6 +5,7 @@ import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
 import com.alttd.objects.LoadedVillagers;
 import com.alttd.objects.VillagerType;
+import com.alttd.objects.VillagerTypeManager;
 import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -29,7 +30,7 @@ public class CommandCreateVillager extends SubCommand {
             return true;
         }
 
-        Optional<VillagerType> first = VillagerType.getVillagerTypes().stream().filter(villagerType -> villagerType.getName().equalsIgnoreCase(args[1])).findFirst();
+        Optional<VillagerType> first = VillagerTypeManager.getVillagerTypes().stream().filter(villagerType -> villagerType.getName().equalsIgnoreCase(args[1])).findFirst();
         if (first.isEmpty()) {
             commandSender.sendMiniMessage(getHelpMessage(), null);
             return true;
@@ -77,7 +78,7 @@ public class CommandCreateVillager extends SubCommand {
     public List<String> getTabComplete(CommandSender commandSender, String[] args) {
         List<String> res = new ArrayList<>();
         switch (args.length) {
-            case 2 -> res.addAll(VillagerType.getVillagerTypes().stream()
+            case 2 -> res.addAll(VillagerTypeManager.getVillagerTypes().stream()
                     .map(VillagerType::getName)
                     .collect(Collectors.toList()));
             case 3 -> res.addAll(Arrays.stream(Villager.Type.values()).map(Enum::name).collect(Collectors.toList()));

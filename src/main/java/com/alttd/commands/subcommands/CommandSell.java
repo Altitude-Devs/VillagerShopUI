@@ -6,6 +6,7 @@ import com.alttd.config.WorthConfig;
 import com.alttd.objects.EconUser;
 import com.alttd.objects.Price;
 import com.alttd.objects.VillagerType;
+import com.alttd.objects.VillagerTypeManager;
 import com.alttd.util.Logger;
 import com.alttd.util.Utilities;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -43,7 +44,7 @@ public class CommandSell extends SubCommand {
             return true;
         }
         Material item = Material.valueOf(args[1].toUpperCase());
-        Optional<VillagerType> optionalVillagerType = VillagerType.getVillagerTypes().stream()
+        Optional<VillagerType> optionalVillagerType = VillagerTypeManager.getVillagerTypes().stream()
                 .filter(villagerType -> villagerType.getSelling().stream()
                         .map(ItemStack::getType)
                         .anyMatch(material -> material.equals(item)))

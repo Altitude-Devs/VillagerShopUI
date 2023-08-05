@@ -31,6 +31,16 @@ public final class SpawnShopEvent extends Event {
         return player;
     }
 
+    public SpawnShopEvent(Player player, Material material, int amount, double price, boolean buy) {
+        this.player = player;
+        this.amount = amount;
+        this.price = price;
+        this.item = material;
+        this.pointsBefore = 0;
+        this.pointsAfter = 0;
+        this.buy = buy;
+    }
+
     public int amount() {
         return amount;
     }
