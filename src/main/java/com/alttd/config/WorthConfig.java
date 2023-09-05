@@ -52,7 +52,14 @@ public class WorthConfig extends AbstractConfig {
                 Logger.severe("Null key in worth.yml?");
                 continue;
             }
-            Material material = Material.getMaterial(key);
+
+            Material material;
+            try {
+                material = Material.getMaterial(key);
+            } catch (Exception e) {
+                Logger.warning("Invalid material % in trade worth", key);
+                continue;
+            }
 
             map.put(material, new PriceRange(Utilities.round(worth.getDouble(key + ".lower"), 2), Utilities.round(worth.getDouble(key + ".upper"), 2)).getRandomPrice());
         }
@@ -72,7 +79,14 @@ public class WorthConfig extends AbstractConfig {
                 Logger.severe("Null key in worth.yml?");
                 continue;
             }
-            Material material = Material.getMaterial(key);
+
+            Material material;
+            try {
+                material = Material.getMaterial(key);
+            } catch (Exception e) {
+                Logger.warning("Invalid material % in trade worth", key);
+                continue;
+            }
             map.put(material, new Price(Utilities.round(worth.getDouble(key), 2), material));
         }
     }
