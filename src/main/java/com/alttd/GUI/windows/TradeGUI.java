@@ -15,10 +15,15 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TropicalFish;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -133,7 +138,9 @@ public class TradeGUI extends GUIMerchant {
         }
         econ.withdrawPlayer(player, price);
         villagerType.makeTrade(uuid);
-        player.getInventory().addItem(new ItemStack(material, amount));
+        ItemStack itemStack = new ItemStack(material, amount);
+        randomizeMetaIfNeeded(material, itemStack);
+        player.getInventory().addItem(itemStack);
 
         player.sendMiniMessage(Config.TRADED_ITEM, TagResolver.resolver(
                 Placeholder.parsed("amount", String.valueOf(amount)),
@@ -147,6 +154,25 @@ public class TradeGUI extends GUIMerchant {
         Bukkit.getServer().getPluginManager()
                 .callEvent(new SpawnShopEvent(player, material, amount, price, true));
         trade(villagerType, player, material, amount, price);
+    }
+
+    private void randomizeMetaIfNeeded(Material material, ItemStack itemStack) {
+        if (material.equals(Material.AXOLOTL_BUCKET)) {
+            AxolotlBucketMeta axolotlBucketMeta = (AxolotlBucketMeta) itemStack.getItemMeta();
+            int value = new Random().nextInt(0, Axolotl.Variant.values().length - 1);
+            axolotlBucketMeta.setVariant(Axolotl.Variant.values()[value]);
+            itemStack.setItemMeta(axolotlBucketMeta);
+        } else if (material.equals(Material.TROPICAL_FISH_BUCKET)) {
+            TropicalFishBucketMeta tropicalFishBucketMeta = (TropicalFishBucketMeta) itemStack.getItemMeta();
+            Random random = new Random();
+            int bodyColor = random.nextInt(0, DyeColor.values().length - 1);
+            int pattern = random.nextInt(0, TropicalFish.Pattern.values().length - 1);
+            int patternColor = random.nextInt(0, DyeColor.values().length - 1);
+            tropicalFishBucketMeta.setBodyColor(DyeColor.values()[bodyColor]);
+            tropicalFishBucketMeta.setPattern(TropicalFish.Pattern.values()[pattern]);
+            tropicalFishBucketMeta.setPatternColor(DyeColor.values()[patternColor]);
+            itemStack.setItemMeta(tropicalFishBucketMeta);
+        }
     }
 
     private ItemStack getPriceItem(double price) {
