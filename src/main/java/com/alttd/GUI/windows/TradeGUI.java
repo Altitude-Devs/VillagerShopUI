@@ -78,7 +78,7 @@ public class TradeGUI extends GUIMerchant {
                 Placeholder.unparsed("item_name", material.name())
         )));
         List<Component> lore = new ArrayList<>();
-        for (String entry : Config.TRANSACTION_ITEM_DESCRIPTION) {
+        for (String entry : Config.TRANSACTION_ITEM_DESCRIPTION_NO_POINTS) {
             lore.add(miniMessage.deserialize(entry, TagResolver.resolver(
                     Placeholder.unparsed("amount", String.valueOf(amount)),
                     Placeholder.unparsed("price", String.format("%,.2f", price))

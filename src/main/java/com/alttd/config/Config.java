@@ -105,11 +105,15 @@ public final class Config extends AbstractConfig {
             "<gold>Price: <dark_aqua><price></dark_aqua></gold>",
             "<gold>Points: <dark_aqua><points></dark_aqua></gold>");
 
+    public static List<String> TRANSACTION_ITEM_DESCRIPTION_NO_POINTS = List.of(
+            "<gold>Amount: <dark_aqua><amount></dark_aqua></gold>",
+            "<gold>Price: <dark_aqua><price></dark_aqua></gold>");
     private static void guiText() {
         VILLAGER_NAME = config.getString("gui-text.villager-name", VILLAGER_NAME);
         CONFIRM_BUTTON = config.getString("gui-text.confirm-button", CONFIRM_BUTTON);
         TRANSACTION_ITEM_NAME = config.getString("gui-text.transaction-item-name", TRANSACTION_ITEM_NAME);
         TRANSACTION_ITEM_DESCRIPTION = config.getStringList("gui-text.transaction-item-description", TRANSACTION_ITEM_DESCRIPTION);
+        TRANSACTION_ITEM_DESCRIPTION_NO_POINTS = config.getStringList("gui-text.transaction-item-description-no-points", TRANSACTION_ITEM_DESCRIPTION_NO_POINTS);
     }
 
     public static String NOT_ENOUGH_MONEY = "<red>You only have $<money>, you need at least $<price> for this purchase.</red>";
