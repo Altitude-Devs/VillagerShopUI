@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocatio
 
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("com.github.johnrengelman.shadow") version "7.1.1"
     id("maven-publish")
 }
 
@@ -14,7 +14,7 @@ apply<JavaLibraryPlugin>()
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -44,24 +44,22 @@ tasks {
     }
 
     shadowJar {
-        dependsOn(getByName("relocateJars") as ConfigureShadowRelocation)
-        archiveFileName.set("${project.name}-${project.version}.jar")
-        minimize()
-        configurations = listOf(project.configurations.shadow.get())
+        archiveFileName.set("${rootProject.name}.jar")
+        manifest {
+            attributes("Main-Class" to "VillagerUI")
+        }
     }
 
     build {
         dependsOn(shadowJar)
     }
 
-    create<ConfigureShadowRelocation>("relocateJars") {
-        target = shadowJar.get()
-        prefix = "${project.name}.lib"
-    }
 }
 
 dependencies {
-    compileOnly("com.alttd:Galaxy-API:1.19-R0.1-SNAPSHOT")
+    compileOnly("com.alttd:Galaxy-API:1.21-R0.1-SNAPSHOT") {
+        isChanging = true
+    }
     compileOnly("com.github.milkbowl:VaultAPI:1.7") {
         exclude("org.bukkit","bukkit")
     }

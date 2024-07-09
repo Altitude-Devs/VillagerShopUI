@@ -5,7 +5,9 @@ import com.alttd.GUI.windows.TradeGUI;
 import com.alttd.VillagerUI;
 import com.alttd.config.Config;
 import com.alttd.config.VillagerConfig;
+import com.alttd.galaxy.event.player.PlayerInteractOnEntityEvent;
 import com.alttd.objects.*;
+import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -63,6 +65,27 @@ public class VillagerEvents implements Listener {
                 }
             }
         }.runTaskAsynchronously(VillagerUI.getInstance());
+    }
+
+    @EventHandler
+    public void onPlayerInteractOnEntity(PlayerInteractOnEntityEvent event) {
+        Player player = event.getPlayer();
+
+        if (!(event.getEntity() instanceof Villager villager)) {
+            return;
+        }
+
+        VillagerType loadedVillager = LoadedVillagers.getLoadedVillager(villager.getUniqueId());
+        if (loadedVillager == null) {
+            return;
+        }
+
+        loadedVillager.getRandomMessage().ifPresent(player::sendMessage);
+        if (loadedVillager instanceof BlackMarketVillagerType) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1.0F, 1.0F);
+        } else if (loadedVillager instanceof ShopVillagerType) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1.0F, 1.0F);
+        }
     }
 
     @EventHandler

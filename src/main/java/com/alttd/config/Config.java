@@ -203,6 +203,7 @@ public final class Config extends AbstractConfig {
                 );
             }
         });
+        VillagerMessagesConfig.reload();
     }
 
     private static TreeSet<ItemStack> loadProducts(ConfigurationSection productsSection) {
