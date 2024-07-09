@@ -54,9 +54,8 @@ public class WorthConfig extends AbstractConfig {
             }
 
             Material material;
-            try {
-                material = Material.getMaterial(key);
-            } catch (Exception e) {
+            material = Material.getMaterial(key);
+            if (material == null) {
                 Logger.warning("Invalid material % in trade worth", key);
                 continue;
             }
@@ -81,9 +80,8 @@ public class WorthConfig extends AbstractConfig {
             }
 
             Material material;
-            try {
-                material = Material.getMaterial(key);
-            } catch (Exception e) {
+            material = Material.getMaterial(key);
+            if (material == null) {
                 Logger.warning("Invalid material % in trade worth", key);
                 continue;
             }
