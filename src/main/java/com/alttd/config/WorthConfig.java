@@ -85,10 +85,6 @@ public class WorthConfig extends AbstractConfig {
                 Logger.warning("Invalid material % in trade worth", key);
                 continue;
             }
-            if (material == null) {
-                Logger.warning("Invalid material % in trade worth", key);
-                continue;
-            }
             map.put(material, new Price(Utilities.round(worth.getDouble(key), 2), material));
         }
     }
