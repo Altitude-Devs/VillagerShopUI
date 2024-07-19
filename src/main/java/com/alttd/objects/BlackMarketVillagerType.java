@@ -2,6 +2,8 @@ package com.alttd.objects;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,10 +26,15 @@ public class BlackMarketVillagerType implements VillagerType {
     public BlackMarketVillagerType(String name, String displayName, String profession, int maxAvailableItems, int maxTradesPerReboot, Set<ItemStack> trading) {
         this.name = name;
         this.displayName = displayName;
-        this.profession = Villager.Profession.valueOf(profession.toUpperCase());
         this.maxAvailableItems = maxAvailableItems;
         this.maxTradesPerReboot = maxTradesPerReboot;
         this.trading = trading;
+        this.profession = getProfession(profession.toLowerCase());
+    }
+
+    Villager.Profession getProfession(String professionName) {
+        NamespacedKey namespacedKey = NamespacedKey.minecraft(professionName);
+        return Registry.VILLAGER_PROFESSION.get(namespacedKey);
     }
 
     private Set<ItemStack> getResizedCustomTradingSet() {

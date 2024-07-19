@@ -2,6 +2,8 @@ package com.alttd.objects;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,7 +24,12 @@ public class ShopVillagerType implements VillagerType{
         this.displayName = displayName;
         this.buying = buying;
         this.selling = selling;
-        this.profession = Villager.Profession.valueOf(profession.toUpperCase());
+        this.profession = getProfession(profession.toLowerCase());
+    }
+
+    Villager.Profession getProfession(String professionName) {
+        NamespacedKey namespacedKey = NamespacedKey.minecraft(professionName);
+        return Registry.VILLAGER_PROFESSION.get(namespacedKey);
     }
 
     public String getName() {

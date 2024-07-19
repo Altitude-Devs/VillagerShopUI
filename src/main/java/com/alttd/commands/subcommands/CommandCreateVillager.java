@@ -17,7 +17,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.util.OldEnum;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,7 +48,7 @@ public class CommandCreateVillager extends SubCommand {
             commandSender.sendMiniMessage(getHelpMessage(), null);
             return true;
         }
-        Location location = new Location(world, Double.parseDouble(args[3]),Double.parseDouble(args[4]),Double.parseDouble(args[5]), Float.parseFloat(args[6]), Float.parseFloat(args[7]));
+        Location location = new Location(world, Double.parseDouble(args[3]), Double.parseDouble(args[4]), Double.parseDouble(args[5]), Float.parseFloat(args[6]), Float.parseFloat(args[7]));
         Villager villager = (Villager) world.spawnEntity(location, EntityType.VILLAGER, CreatureSpawnEvent.SpawnReason.CUSTOM);
         villager.setPersistent(true);
         villager.setInvulnerable(true);
@@ -82,7 +81,9 @@ public class CommandCreateVillager extends SubCommand {
             case 2 -> res.addAll(VillagerTypeManager.getVillagerTypes().stream()
                     .map(VillagerType::getName)
                     .collect(Collectors.toList()));
-            case 3 -> res.addAll(Arrays.stream(Villager.Type.values()).map(OldEnum::name).collect(Collectors.toList()));
+            case 3 -> res.addAll(Arrays.stream(Villager.Type.values())
+                    .map(something -> something.name())
+                    .collect(Collectors.toList()));
             case 4 -> {
                 if (commandSender instanceof Player player) {
                     res.add(String.valueOf(Utilities.round(player.getLocation().getX(), 2)));
