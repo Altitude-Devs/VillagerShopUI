@@ -18,7 +18,7 @@ public final class Config extends AbstractConfig {
     static Config config;
     static int version;
     public Config() {
-        super(new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "configs" + File.separator + "VillagerShopUI"), "config.yml");
+        super(new File(File.separator + "mnt" + File.separator + "configs" + File.separator + "VillagerShopUI"), "config.yml");
     }
 
     public static void reload() {

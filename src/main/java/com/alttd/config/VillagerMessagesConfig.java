@@ -14,7 +14,7 @@ public class VillagerMessagesConfig extends AbstractConfig {
     static int version;
 
     protected VillagerMessagesConfig() {
-        super(new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "configs" + File.separator + "VillagerShopUI"), "villager-messages.yml");
+        super(new File(File.separator + "mnt" + File.separator + "configs" + File.separator + "VillagerShopUI"), "villager-messages.yml");
     }
 
     protected static void reload() {

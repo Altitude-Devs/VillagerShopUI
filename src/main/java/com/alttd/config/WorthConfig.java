@@ -17,7 +17,7 @@ public class WorthConfig extends AbstractConfig {
     static int version;
 
     public WorthConfig() {
-        super(new File(System.getProperty("user.home") + File.separator + "share" + File.separator + "configs" + File.separator + "VillagerShopUI"), "worth.yml");
+        super(new File(File.separator + "mnt" + File.separator + "configs" + File.separator + "VillagerShopUI"), "worth.yml");
     }
 
     public static void reload() {
